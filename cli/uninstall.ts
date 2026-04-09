@@ -45,18 +45,20 @@ try {
     changed = true;
   }
 
-  if (settings.hooks?.PostToolUse) {
-    const before = settings.hooks.PostToolUse.length;
-    settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
-      (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("claude-buddy")),
-    );
-    if (settings.hooks.PostToolUse.length < before) {
-      ok("Hooks removed");
-      changed = true;
+  for (const hookType of ["PostToolUse", "Stop"] as const) {
+    if (settings.hooks?.[hookType]) {
+      const before = settings.hooks[hookType].length;
+      settings.hooks[hookType] = settings.hooks[hookType].filter(
+        (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("claude-buddy")),
+      );
+      if (settings.hooks[hookType].length < before) {
+        ok(`${hookType} hooks removed`);
+        changed = true;
+      }
+      if (settings.hooks[hookType].length === 0) delete settings.hooks[hookType];
     }
-    if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
-    if (Object.keys(settings.hooks).length === 0) delete settings.hooks;
   }
+  if (settings.hooks && Object.keys(settings.hooks).length === 0) delete settings.hooks;
 
   if (changed) {
     writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2) + "\n");

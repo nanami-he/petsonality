@@ -1,11 +1,12 @@
 /**
  * claude-buddy installer
  *
- * Registers: MCP server, skill, hooks, status line
- * All in ~/.claude/settings.json (user scope — works for all projects)
+ * Registers: MCP server (in ~/.claude.json), skill, hooks, status line (in settings.json)
+ * Checks: bun, jq, ~/.claude/ directory
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "fs";
+import { execSync } from "child_process";
 import { join, resolve, dirname } from "path";
 import { homedir } from "os";
 
@@ -16,6 +17,7 @@ import { generateFallbackName } from "../server/reactions.ts";
 const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
+const RED = "\x1b[31m";
 const BOLD = "\x1b[1m";
 const DIM = "\x1b[2m";
 const NC = "\x1b[0m";
@@ -37,6 +39,56 @@ ${CYAN}╚═══════════════════════�
 function ok(msg: string) { console.log(`${GREEN}✓${NC}  ${msg}`); }
 function info(msg: string) { console.log(`${CYAN}→${NC}  ${msg}`); }
 function warn(msg: string) { console.log(`${YELLOW}⚠${NC}  ${msg}`); }
+function err(msg: string) { console.log(`${RED}✗${NC}  ${msg}`); }
+
+// ─── Preflight checks ──────────────────────────────────────────────────────
+
+function preflight(): boolean {
+  let pass = true;
+
+  // Check bun
+  try {
+    execSync("bun --version", { stdio: "ignore" });
+    ok("bun found");
+  } catch {
+    err("bun not found. Install: curl -fsSL https://bun.sh/install | bash");
+    pass = false;
+  }
+
+  // Check jq (needed for status line + hooks)
+  try {
+    execSync("jq --version", { stdio: "ignore" });
+    ok("jq found");
+  } catch {
+    warn("jq not found — installing...");
+    try {
+      execSync("sudo apt-get install -y jq 2>/dev/null || brew install jq 2>/dev/null", { stdio: "ignore" });
+      ok("jq installed");
+    } catch {
+      err("Could not install jq. Install manually: apt install jq / brew install jq");
+      pass = false;
+    }
+  }
+
+  // Check ~/.claude/ exists
+  if (!existsSync(CLAUDE_DIR)) {
+    err("~/.claude/ not found. Start Claude Code once first, then re-run.");
+    pass = false;
+  } else {
+    ok("~/.claude/ found");
+  }
+
+  // Check ~/.claude.json exists
+  const claudeJson = join(homedir(), ".claude.json");
+  if (!existsSync(claudeJson)) {
+    err("~/.claude.json not found. Start Claude Code once first, then re-run.");
+    pass = false;
+  } else {
+    ok("~/.claude.json found");
+  }
+
+  return pass;
+}
 
 // ─── Load / update settings.json ────────────────────────────────────────────
 
@@ -53,9 +105,9 @@ function saveSettings(settings: Record<string, any>) {
   writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2) + "\n");
 }
 
-// ─── Step 1: Register MCP server (in ~/.claude.json, NOT settings.json) ─────
+// ─── Step 1: Register MCP server (in ~/.claude.json) ────────────────────────
 
-function installMcp(_settings: Record<string, any>) {
+function installMcp() {
   const serverPath = join(PROJECT_ROOT, "server", "index.ts");
   const claudeJsonPath = join(homedir(), ".claude.json");
 
@@ -73,7 +125,7 @@ function installMcp(_settings: Record<string, any>) {
   };
 
   writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
-  ok("MCP server registered in ~/.claude.json: claude-buddy");
+  ok("MCP server registered in ~/.claude.json");
 }
 
 // ─── Step 2: Install skill ──────────────────────────────────────────────────
@@ -82,10 +134,10 @@ function installSkill() {
   const srcSkill = join(PROJECT_ROOT, "skills", "buddy", "SKILL.md");
   mkdirSync(BUDDY_DIR, { recursive: true });
   cpSync(srcSkill, join(BUDDY_DIR, "SKILL.md"), { force: true });
-  ok(`Skill installed: ${BUDDY_DIR}/SKILL.md`);
+  ok("Skill installed: ~/.claude/skills/buddy/SKILL.md");
 }
 
-// ─── Step 3: Configure status line ──────────────────────────────────────────
+// ─── Step 3: Configure status line (with animation refresh) ─────────────────
 
 function installStatusLine(settings: Record<string, any>) {
   const statusScript = join(PROJECT_ROOT, "statusline", "buddy-status.sh");
@@ -94,37 +146,58 @@ function installStatusLine(settings: Record<string, any>) {
     type: "command",
     command: statusScript,
     padding: 1,
+    refreshInterval: 1,  // 1 second — drives the buddy animation
   };
 
-  ok("Status line configured: buddy-status.sh");
+  ok("Status line configured (with animation refresh)");
 }
 
 // ─── Step 4: Register hooks ─────────────────────────────────────────────────
 
 function installHooks(settings: Record<string, any>) {
-  const hookScript = join(PROJECT_ROOT, "hooks", "react.sh");
+  const reactHook = join(PROJECT_ROOT, "hooks", "react.sh");
+  const commentHook = join(PROJECT_ROOT, "hooks", "buddy-comment.sh");
 
   if (!settings.hooks) settings.hooks = {};
-  if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
 
-  // Remove existing claude-buddy hooks
+  // PostToolUse: detect errors/test failures in Bash output
+  if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
   settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
     (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("claude-buddy")),
   );
-
-  // Add hook for Bash tool (where errors and test output appear)
   settings.hooks.PostToolUse.push({
     matcher: "Bash",
-    hooks: [{
-      type: "command",
-      command: hookScript,
-    }],
+    hooks: [{ type: "command", command: reactHook }],
   });
 
-  ok("Hooks registered: PostToolUse → react.sh");
+  // Stop: extract buddy comment from Claude's response
+  if (!settings.hooks.Stop) settings.hooks.Stop = [];
+  settings.hooks.Stop = settings.hooks.Stop.filter(
+    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("claude-buddy")),
+  );
+  settings.hooks.Stop.push({
+    hooks: [{ type: "command", command: commentHook }],
+  });
+
+  ok("Hooks registered: PostToolUse + Stop");
 }
 
-// ─── Step 5: Initialize companion ───────────────────────────────────────────
+// ─── Step 5: Ensure MCP tools are allowed ───────────────────────────────────
+
+function ensurePermissions(settings: Record<string, any>) {
+  if (!settings.permissions) settings.permissions = {};
+  if (!settings.permissions.allow) settings.permissions.allow = [];
+
+  const allow: string[] = settings.permissions.allow;
+  if (!allow.includes("mcp__*") && !allow.some((p: string) => p.startsWith("mcp__claude_buddy"))) {
+    allow.push("mcp__claude_buddy__*");
+    ok("Permission added: mcp__claude_buddy__*");
+  } else {
+    ok("MCP permissions already configured");
+  }
+}
+
+// ─── Step 6: Initialize companion ───────────────────────────────────────────
 
 function initCompanion() {
   let companion = loadCompanion();
@@ -156,20 +229,22 @@ function initCompanion() {
 
 banner();
 
-// Preflight
-if (!existsSync(join(CLAUDE_DIR))) {
-  warn("~/.claude/ not found. Start Claude Code once first, then re-run.");
+info("Checking requirements...\n");
+if (!preflight()) {
+  console.log(`\n${RED}Installation aborted. Fix the issues above and retry.${NC}\n`);
   process.exit(1);
 }
 
+console.log("");
 info("Installing claude-buddy...\n");
 
 const settings = loadSettings();
 
-installMcp(settings);
+installMcp();
 installSkill();
 installStatusLine(settings);
 installHooks(settings);
+ensurePermissions(settings);
 saveSettings(settings);
 
 console.log("");
