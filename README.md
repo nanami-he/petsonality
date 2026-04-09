@@ -46,6 +46,9 @@ cd claude-buddy
 # Install dependencies
 bun install
 
+# Optional but recommended: snapshot your existing Claude Code config
+bun run backup
+
 # Set up everything (one command)
 bun run install-buddy
 
@@ -53,7 +56,7 @@ bun run install-buddy
 /buddy
 ```
 
-Three commands. Fully automated. No manual config.
+Fully automated. No manual config. Backup is optional but recommended — restore anytime with `bun run backup restore`.
 
 ### What the installer does
 
