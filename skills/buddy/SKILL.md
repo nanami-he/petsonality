@@ -1,7 +1,7 @@
 ---
 name: buddy
 description: "Show, pet, or manage your coding companion. Use when the user types /buddy or mentions their companion by name."
-argument-hint: "[show|pet|off|on|stats|rename <name>|personality <text>]"
+argument-hint: "[show|pet|off|on|stats|rename <name>|personality <text>|frequency [seconds]|style [classic|round]|position [top|left]|rarity [on|off]]"
 allowed-tools: mcp__claude_buddy__*
 ---
 
@@ -22,6 +22,14 @@ Based on `$ARGUMENTS`:
 | `on` | Call `buddy_unmute` |
 | `rename <name>` | Call `buddy_rename` with the given name |
 | `personality <text>` | Call `buddy_set_personality` with the given text |
+| `frequency` | Call `buddy_frequency` with no args (show current) |
+| `frequency <seconds>` | Call `buddy_frequency` with cooldown=seconds |
+| `style` | Call `buddy_style` with no args (show current) |
+| `style <classic\|round>` | Call `buddy_style` with style arg |
+| `position` | Call `buddy_style` with no args (show current) |
+| `position <top\|left>` | Call `buddy_style` with position arg |
+| `rarity on` | Call `buddy_style` with showRarity=true |
+| `rarity off` | Call `buddy_style` with showRarity=false |
 
 ## CRITICAL OUTPUT RULES
 

@@ -17,10 +17,11 @@ Restart Claude Code and type `/buddy` to verify everything works.
 
 | Directory | What it does |
 |-----------|-------------|
-| `server/` | MCP server — buddy engine, tools, state, reactions |
+| `server/` | MCP server -- buddy engine, tools, state, reactions |
 | `skills/` | `/buddy` slash command (SKILL.md) |
 | `hooks/` | Shell scripts for error detection + comment extraction |
-| `statusline/` | Animated status line renderer |
+| `statusline/` | Animated status line renderer (fallback mode) |
+| `popup/` | tmux popup overlay mode (requires tmux >= 3.2) |
 | `cli/` | Install, uninstall, show, hunt, verify commands |
 
 ## How to Contribute

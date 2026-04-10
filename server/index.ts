@@ -18,6 +18,7 @@ import {
 import {
   loadCompanion, saveCompanion, resolveUserId,
   loadReaction, saveReaction, writeStatusState,
+  loadConfig, saveConfig,
 } from "./state.ts";
 import {
   getReaction, generateFallbackName, generatePersonalityPrompt,
@@ -193,7 +194,53 @@ server.tool(
   },
 );
 
-// ─── Tool: buddy_mute / buddy_unmute ────────────────────────────────────────
+// ─── Tool: buddy_frequency / buddy_style ─────────────────────────────────────
+
+server.tool(
+  "buddy_frequency",
+  "Configure how often buddy comments appear in the speech bubble. Returns current settings if called without arguments.",
+  {
+    cooldown: z.number().int().min(5).max(300).optional().describe("Minimum seconds between displayed comments (default 30). The buddy always writes comments, but the display only updates this often."),
+  },
+  async ({ cooldown }) => {
+    if (cooldown === undefined) {
+      const cfg = loadConfig();
+      return {
+        content: [{ type: "text", text: `Comment cooldown: ${cfg.commentCooldown}s between displayed comments.\nUse /buddy frequency <seconds> to change.` }],
+      };
+    }
+    const cfg = saveConfig({ commentCooldown: cooldown });
+    return {
+      content: [{ type: "text", text: `Updated: ${cfg.commentCooldown}s cooldown between displayed comments.` }],
+    };
+  },
+);
+
+server.tool(
+  "buddy_style",
+  "Configure the popup appearance. Returns current settings if called without arguments.",
+  {
+    style: z.enum(["classic", "round"]).optional().describe("Bubble border style: classic (pipes/dashes like status line) or round (parens/tildes)"),
+    position: z.enum(["top", "left"]).optional().describe("Bubble position relative to buddy: top (above) or left (beside)"),
+    showRarity: z.boolean().optional().describe("Show or hide the stars + rarity line in the popup"),
+  },
+  async ({ style, position, showRarity }) => {
+    if (style === undefined && position === undefined && showRarity === undefined) {
+      const cfg = loadConfig();
+      return {
+        content: [{ type: "text", text: `Bubble style: ${cfg.bubbleStyle}\nBubble position: ${cfg.bubblePosition}\nShow rarity: ${cfg.showRarity}\nUse /buddy style <classic|round>, /buddy position <top|left>, /buddy rarity <on|off> to change.` }],
+      };
+    }
+    const updates: Record<string, string | boolean> = {};
+    if (style !== undefined) updates.bubbleStyle = style;
+    if (position !== undefined) updates.bubblePosition = position;
+    if (showRarity !== undefined) updates.showRarity = showRarity;
+    const cfg = saveConfig(updates);
+    return {
+      content: [{ type: "text", text: `Updated: style=${cfg.bubbleStyle}, position=${cfg.bubblePosition}, showRarity=${cfg.showRarity}\nRestart Claude Code for changes to take effect.` }],
+    };
+  },
+);
 
 server.tool(
   "buddy_mute",
@@ -252,7 +299,7 @@ server.resource(
       `**${companion.name}'s personality:** ${companion.personality}`,
       `Peak stat: ${companion.bones.peak} (${companion.bones.stats[companion.bones.peak]}). Dump stat: ${companion.bones.dump} (${companion.bones.stats[companion.bones.dump]}).`,
       "",
-      "## End-of-response buddy comment (MANDATORY)",
+      "## End-of-response buddy comment",
       "",
       `At the very end of EVERY response, after your full answer, append an invisible HTML comment:`,
       "",

@@ -4,9 +4,13 @@
 # Writes reaction to ~/.claude-buddy/reaction.json for the status line
 
 STATE_DIR="$HOME/.claude-buddy"
-REACTION_FILE="$STATE_DIR/reaction.json"
+# Session ID: sanitized tmux pane number, or "default" outside tmux
+SID="${TMUX_PANE#%}"
+SID="${SID:-default}"
+REACTION_FILE="$STATE_DIR/reaction.$SID.json"
 COMPANION_FILE="$STATE_DIR/companion.json"
-COOLDOWN_FILE="$STATE_DIR/.last_reaction"
+COOLDOWN_FILE="$STATE_DIR/.last_reaction.$SID"
+CONFIG_FILE="$STATE_DIR/config.json"
 
 # Exit if no companion
 [ -f "$COMPANION_FILE" ] || exit 0
@@ -14,12 +18,19 @@ COOLDOWN_FILE="$STATE_DIR/.last_reaction"
 # Read hook input from stdin
 INPUT=$(cat)
 
-# Cooldown: max one reaction per 15 seconds
+# Read cooldown from config (default 30s)
+COOLDOWN=30
+if [ -f "$CONFIG_FILE" ]; then
+  _cd=$(jq -r '.commentCooldown // 30' "$CONFIG_FILE" 2>/dev/null || echo 30)
+  [ "$_cd" -gt 0 ] 2>/dev/null && COOLDOWN=$_cd
+fi
+
+# Cooldown: configurable
 if [ -f "$COOLDOWN_FILE" ]; then
     LAST=$(cat "$COOLDOWN_FILE" 2>/dev/null)
     NOW=$(date +%s)
     DIFF=$(( NOW - ${LAST:-0} ))
-    [ "$DIFF" -lt 15 ] && exit 0
+    [ "$DIFF" -lt "$COOLDOWN" ] && exit 0
 fi
 
 # Extract tool result
@@ -75,10 +86,10 @@ if [ -n "$REASON" ]; then
     mkdir -p "$STATE_DIR"
     date +%s > "$COOLDOWN_FILE"
 
-    # Write reaction for status line
-    cat > "$REACTION_FILE" <<EOJSON
-{"reaction":"$REACTION","timestamp":$(date +%s%3N),"reason":"$REASON"}
-EOJSON
+    # Write reaction for status line (use jq for safe JSON encoding)
+    jq -n --arg r "$REACTION" --arg ts "$(date +%s)000" --arg reason "$REASON" \
+      '{reaction: $r, timestamp: ($ts | tonumber), reason: $reason}' \
+      > "$REACTION_FILE"
 
     # Update status.json with reaction
     if [ -f "$STATE_DIR/status.json" ]; then

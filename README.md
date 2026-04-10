@@ -168,6 +168,10 @@ The mechanism is invisible: Claude appends a hidden HTML comment (`<!-- buddy: .
 | `/buddy on` | Unmute |
 | `/buddy rename <name>` | Rename (1-14 chars) |
 | `/buddy personality <text>` | Set custom personality |
+| `/buddy frequency [seconds]` | Show or set comment cooldown |
+| `/buddy style [classic\|round]` | Show or set bubble border style |
+| `/buddy position [top\|left]` | Show or set bubble position |
+| `/buddy rarity [on\|off]` | Show or hide stars + rarity line |
 
 ### CLI
 
@@ -266,6 +270,44 @@ bun run backup restore      # restore latest
 bun run backup restore <ts> # restore specific
 ```
 
+## tmux Popup Mode
+
+When running inside tmux, buddy appears as a floating popup overlay in the bottom-right corner instead of the status line. The popup supports:
+
+- Animated ASCII art with speech bubbles
+- ESC passthrough (closes popup momentarily, forwards ESC to Claude Code, then reopens)
+- Dynamic resizing when reactions appear/disappear
+- Full keyboard input forwarding to Claude Code
+
+### Requirements
+
+| tmux version | Support |
+|--------------|---------|
+| **3.4+** | Full support (borderless, positioned anchors) |
+| **3.2 -- 3.3** | Supported with border, absolute positioning |
+| **< 3.2** | Falls back to status line mode |
+
+### Recommended tmux config
+
+Add to `~/.tmux.conf`:
+
+```
+set -g set-titles on
+set -g set-titles-string "#{pane_title}"
+set -g mouse on
+set -g history-limit 10000
+```
+
+### Scrolling
+
+The popup is modal -- it captures all input including mouse wheel. To scroll:
+
+1. Press **F12** to enter scroll mode (popup hides, tmux copy-mode activates)
+2. Scroll with **mouse wheel** or **arrow keys** / **Page Up/Down**
+3. Press **q** to exit scroll mode (popup returns)
+
+`set -g mouse on` is required for mouse wheel scrolling in copy-mode. Claude Code captures `Ctrl-b`, so the standard tmux prefix can't be used to enter copy-mode. F12 bypasses this.
+
 ## Troubleshooting
 
 ### Buddy not appearing in status line
@@ -336,7 +378,7 @@ This MVP covers the core: your buddy is back, animated, talking, and permanent. 
 - [ ] **Achievement badges** — milestones like "1000 lines reviewed", "first test-fail caught", "week streak"
 - [ ] **Multi-buddy support** — hatch and switch between multiple companions
 - [ ] **Light theme colors** — auto-detect and match light theme RGB values
-- [ ] **tmux sidebar mode** — true right-side positioning via terminal multiplexer
+- [x] **tmux popup mode** -- floating overlay in bottom-right corner via `tmux display-popup`
 - [ ] **New species + community art** — submit your own species designs
 - [ ] **`npx claude-buddy`** — one-command install without cloning
 
