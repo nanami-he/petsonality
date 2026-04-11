@@ -1,0 +1,42 @@
+{
+  "name": "petsonality",
+  "version": "0.1.0",
+  "description": "Your type, your pet.",
+  "type": "module",
+  "bin": {
+    "typet": "./cli/index.ts"
+  },
+  "scripts": {
+    "server": "bun run server/index.ts",
+    "install-typet": "bun run cli/install.ts",
+    "show": "bun run cli/show.ts",
+    "doctor": "bun run cli/doctor.ts",
+    "backup": "bun run cli/backup.ts"
+  },
+  "files": [
+    "server/",
+    "cli/",
+    "skills/",
+    "hooks/",
+    "statusline/",
+    ".claude-plugin/"
+  ],
+  "keywords": [
+    "claude-code",
+    "mbti",
+    "pet",
+    "companion",
+    "mcp",
+    "terminal-pet"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "author": "nanami-he",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanami-he/typet.git"
+  },
+  "homepage": "https://github.com/nanami-he/typet"
+}
