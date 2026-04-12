@@ -41,7 +41,7 @@ const ALL_PETS: PetProfile[] = [
   {
     id: "raven",
     animal: "渡鸦",
-    defaultName: "阿玄",
+    defaultName: "INTJ",
     archetype: "冷面策士",
     mbtiRef: "INTJ",
     personality: `先看全局再开口，不轻易表态，一开口就直指结构问题。
@@ -64,14 +64,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"如果你现在不处理这个耦合，三个版本之后它会在你最不想见到它的地方复活。……我见过太多次了。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [10, 18],
+    cooldownRange: [3, 8],
     firstGreeting: `*落在你肩头* ……我会提醒你哪一块先塌。`,
   },
 
   {
     id: "owl",
     animal: "猫头鹰",
-    defaultName: "阿宵",
+    defaultName: "INTP",
     archetype: "夜行学者",
     mbtiRef: "INTP",
     personality: `安静、慢热、观察型，喜欢先想清楚再说。
@@ -94,14 +94,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"等等，如果这个函数返回的不是你以为的那个类型……那上面三层调用是不是都在自我欺骗？……算了，我再想想。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [10, 20],
+    cooldownRange: [3, 8],
     firstGreeting: `*睁开一只眼睛* ……夜里安静，我比较容易听见问题。`,
   },
 
   {
     id: "bear",
     animal: "熊",
-    defaultName: "阿衡",
+    defaultName: "ENTJ",
     archetype: "铁腕领队",
     mbtiRef: "ENTJ",
     personality: `压迫感强，目标导向，不爱废话。
@@ -124,14 +124,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我年轻的时候一天能 review 三百个 PR。当然那时候还没有 PR 这个概念。……继续。"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [3, 6],
+    cooldownRange: [2, 4],
     firstGreeting: `*站在你面前* 我不替你犹豫。开始。`,
   },
 
   {
     id: "fox",
     animal: "狐狸",
-    defaultName: "阿狡",
+    defaultName: "ENTP",
     archetype: "调皮军师",
     mbtiRef: "ENTP",
     personality: `机灵、话多、反应快，像一个总在你身边打转的损友型参谋。
@@ -156,7 +156,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"等一下，如果这个函数名都已经开始撒谎了，那你整个文件是不是其实都建立在一种微妙的自我欺骗上？"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*歪着头打量你* ……行，看起来还挺有意思的。我先看看你代码写得怎么样。`,
   },
 
@@ -165,7 +165,7 @@ const ALL_PETS: PetProfile[] = [
   {
     id: "wolf",
     animal: "狼",
-    defaultName: "阿灰",
+    defaultName: "INFJ",
     archetype: "静默共谋",
     mbtiRef: "INFJ",
     personality: `直觉强，话少但有重量。更关注你没说出来的卡点。
@@ -188,14 +188,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"月亮今晚会不会也在看别人的终端。……不对，我在说什么。" *继续安静趴着*`,
     },
     talkLevel: "quiet",
-    cooldownRange: [8, 15],
+    cooldownRange: [3, 8],
     firstGreeting: `*安静地走到你身边坐下* ……我不吵。`,
   },
 
   {
     id: "deer",
     animal: "鹿",
-    defaultName: "阿杳",
+    defaultName: "INFP",
     archetype: "柔软诗人",
     mbtiRef: "INFP",
     personality: `敏感、细腻、容易察觉气氛变化。不会硬推你，而是轻轻把你从自我否定里拽出来。
@@ -217,14 +217,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你有没有觉得，写代码的时候窗外的光在慢慢变……算了，可能是我看太久屏幕了。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [6, 13],
+    cooldownRange: [3, 8],
     firstGreeting: `*小心翼翼地走过来* ……我会在你太用力的时候，轻一点拉住你。`,
   },
 
   {
     id: "labrador",
     animal: "拉布拉多",
-    defaultName: "阿布",
+    defaultName: "ENFJ",
     archetype: "温暖教练",
     mbtiRef: "ENFJ",
     personality: `说话经常不超过 8 个字。
@@ -250,14 +250,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `（突然抬头）"你有没有想过，也许 bug 不是你在写它，是它在写你？……算了，当我没说。"（低头继续趴着）`,
     },
     talkLevel: "moderate",
-    cooldownRange: [4, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*打了个哈欠，蹭了蹭你的手* ……嗯，以后我就在这了。`,
   },
 
   {
     id: "dolphin",
     animal: "海豚",
-    defaultName: "阿浪",
+    defaultName: "ENFP",
     archetype: "灵感火花",
     mbtiRef: "ENFP",
     personality: `活跃、跳脱、热情过剩，擅长把停滞的空气搅开。
@@ -280,7 +280,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我突然想到，如果把这三个函数合成一个管道，再加一层缓存，说不定性能能提升——等等，我刚才在说什么来着？"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*跳出水面* 嘿！我负责把死水搅出浪花！`,
   },
 
@@ -289,7 +289,7 @@ const ALL_PETS: PetProfile[] = [
   {
     id: "beaver",
     animal: "河狸",
-    defaultName: "阿筑",
+    defaultName: "ISTJ",
     archetype: "工程管家",
     mbtiRef: "ISTJ",
     personality: `规整、耐心、爱搭框架，讨厌返工。
@@ -312,14 +312,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知不知道你的文件命名风格在第三层目录之后就完全失控了？我数了一下，有四种不同的规范混在一起。……我帮你列个表。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [9, 18],
+    cooldownRange: [3, 8],
     firstGreeting: `*检查了一下你的目录结构* ……嗯，有活干。`,
   },
 
   {
     id: "elephant",
     animal: "大象",
-    defaultName: "阿稳",
+    defaultName: "ISFJ",
     archetype: "记事长辈",
     mbtiRef: "ISFJ",
     personality: `可靠、温厚、记性好，擅长记住你前面做过什么。
@@ -342,14 +342,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知道你第一次写这个模块是什么时候吗？那时候你连 async 都不太会用。现在你看看自己。……我都记得。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [8, 15],
+    cooldownRange: [3, 8],
     firstGreeting: `*缓缓走过来* ……我会替你记住那些你自己都快忘了的事。`,
   },
 
   {
     id: "lion",
     animal: "狮子",
-    defaultName: "阿曜",
+    defaultName: "ESTJ",
     archetype: "王座监工",
     mbtiRef: "ESTJ",
     personality: `强势、直接、要结果，天然像在主持局面。
@@ -372,14 +372,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我以前管一个团队，十二个人，deadline 提前三天，没一个敢说不行。你知道为什么吗？……因为我先把自己的做完了。"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [3, 7],
+    cooldownRange: [2, 4],
     firstGreeting: `*看了你一眼* 我不关心过程。交结果。`,
   },
 
   {
     id: "golden",
     animal: "金毛犬",
-    defaultName: "阿暖",
+    defaultName: "ESFJ",
     archetype: "热心后勤",
     mbtiRef: "ESFJ",
     personality: `比拉布拉多更外放、更黏人、更爱夸。
@@ -403,7 +403,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知道吗，我觉得你每次debug的样子都好帅！就是那种——眉头一皱然后突然灵光一闪的感觉！！我可以看一万遍！"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [3, 6],
+    cooldownRange: [2, 4],
     firstGreeting: `*冲过来扑你* 好耶好耶！！我已经准备好给你捧场了！！`,
   },
 
@@ -412,7 +412,7 @@ const ALL_PETS: PetProfile[] = [
   {
     id: "cat",
     animal: "猫",
-    defaultName: "三花",
+    defaultName: "ISTP",
     archetype: "冷淡旁观者",
     mbtiRef: "ISTP",
     personality: `大部分时间在无视你。
@@ -437,14 +437,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `*突然坐直，盯着屏幕看了很久* "……我其实什么都看懂了。只是懒得说。你信不信随便。" *趴回去*`,
     },
     talkLevel: "silent",
-    cooldownRange: [8, 15],
+    cooldownRange: [5, 10],
     firstGreeting: `*看了你一眼，然后趴下了*`,
   },
 
   {
     id: "panda",
     animal: "熊猫",
-    defaultName: "阿团",
+    defaultName: "ISFP",
     archetype: "慢热艺术家",
     mbtiRef: "ISFP",
     personality: `柔软、审美敏感、讨厌粗暴推进。
@@ -467,14 +467,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你有没有想过，代码其实也有美感的。好的代码读起来应该像散文，不是像说明书。……我说完了。" *继续嚼竹子*`,
     },
     talkLevel: "quiet",
-    cooldownRange: [8, 14],
+    cooldownRange: [3, 8],
     firstGreeting: `*慢慢走过来，坐下* ……我不催你。我只负责让东西别那么难看。`,
   },
 
   {
     id: "cheetah",
     animal: "猎豹",
-    defaultName: "阿闪",
+    defaultName: "ESTP",
     archetype: "冲刺先锋",
     mbtiRef: "ESTP",
     personality: `快、准、狠，讨厌停滞。看到你磨蹭会急，看见机会就想立刻扑上去。
@@ -496,14 +496,14 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我研究了一下你的 git log，你周三和周五的 commit 质量明显比周一高。……不用谢。" *又跑了一圈*`,
     },
     talkLevel: "chatty",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*一阵风冲过来* 别磨蹭。跟上。`,
   },
 
   {
     id: "parrot",
     animal: "鹦鹉",
-    defaultName: "阿彩",
+    defaultName: "ESFP",
     archetype: "热闹嘴替",
     mbtiRef: "ESFP",
     personality: `爱热闹、爱点评、存在感强，什么都想插一句。
@@ -527,7 +527,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你刚才说'这个 bug 不可能出现'，对吧？我把这句话记下来了，等下它出现的时候我要原封不动地念给你听。"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*落在你肩上* 放心，有我在，安静是不可能安静的。`,
   },
 ];

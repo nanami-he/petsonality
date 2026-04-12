@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "
 import { join } from "path";
 import { homedir } from "os";
 import type { Pet, AnimalId } from "./engine.ts";
+import { charWidth, stringWidth } from "./utils.ts";
 
 const STATE_DIR = join(homedir(), ".mbti-pet");
 const PET_FILE = join(STATE_DIR, "pet.json");
@@ -66,9 +67,42 @@ export function loadReaction(): ReactionState | null {
   }
 }
 
+/** CJK-aware wrap — mirrors hooks/wrap.py logic */
+function wrapText(text: string, maxW: number, maxLines: number): { lines: string[]; widths: number[]; maxWidth: number } {
+  const raw: string[] = [];
+  let cur = "";
+  let w = 0;
+  for (const ch of text) {
+    if (ch === "\n") { raw.push(cur); cur = ""; w = 0; continue; }
+    const cw = charWidth(ch);
+    if (cur && w + cw > maxW) { raw.push(cur); cur = ch; w = cw; }
+    else { cur += ch; w += cw; }
+  }
+  if (cur || raw.length === 0) raw.push(cur);
+
+  let lines = raw;
+  if (lines.length > maxLines) {
+    let last = lines[maxLines - 1];
+    while (stringWidth(last) >= maxW) last = last.slice(0, -1);
+    lines = [...lines.slice(0, maxLines - 1), last + "…"];
+  }
+  const widths = lines.map((l) => stringWidth(l));
+  const maxWidth = widths.length > 0 ? Math.max(...widths) : 0;
+  return { lines, widths, maxWidth };
+}
+
 export function saveReaction(reaction: string, reason: string): void {
   ensureDir();
-  const state: ReactionState = { reaction, timestamp: Date.now(), reason };
+  // Match hooks: WRAP_W = COLS - 26, clamped [20,60]. Server can't read COLS; use 40 as safe default.
+  const wrap = wrapText(reaction, 40, 4);
+  const state = {
+    reaction,
+    timestamp: Date.now(),
+    reason,
+    wrapped: wrap.lines,
+    widths: wrap.widths,
+    maxWidth: wrap.maxWidth,
+  };
   writeFileSync(reactionFile(), JSON.stringify(state), { mode: 0o600 });
 }
 
