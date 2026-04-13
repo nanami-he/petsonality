@@ -58,6 +58,12 @@ export const ART_META: Partial<Record<AnimalId, AnimalMeta>> = {
       },
     ],
   },
+  labrador: {
+    accents: [{
+      varName: "TG", rgb: [240, 140, 150], comment: "pink tongue",
+      rules: [{ line: 3, patterns: [["UU", "${TG}UU${C}"], ["U", "${TG}U${C}"]] }],
+    }],
+  },
   parrot: {
     accents: [{
       varName: "CR", rgb: [230, 80, 50], comment: "warm red crest",
