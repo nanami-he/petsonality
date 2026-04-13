@@ -21,7 +21,7 @@ const NC = "\x1b[0m";
 const CLAUDE_DIR = join(homedir(), ".claude");
 const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
 const SKILL_DIR = join(CLAUDE_DIR, "skills", "pet");
-const PROJECT_ROOT = resolve(dirname(import.meta.dir));
+const PROJECT_ROOT = resolve(dirname(new URL(".", import.meta.url).pathname));
 
 function banner() {
   console.log(`
@@ -43,29 +43,20 @@ function preflight(): boolean {
   let pass = true;
 
   try {
-    execSync("bun --version", { stdio: "ignore" });
-    ok("bun found");
+    const nodeVer = execSync("node --version", { encoding: "utf8" }).trim();
+    ok(`node found (${nodeVer})`);
   } catch {
-    err("bun not found. Install: curl -fsSL https://bun.sh/install | bash");
+    err("node not found. Install: https://nodejs.org/");
     pass = false;
   }
 
+  // jq is optional — only needed for statusline bubble display
   try {
     execSync("jq --version", { stdio: "ignore" });
-    ok("jq found");
+    ok("jq found (used by status line)");
   } catch {
-    warn("jq not found — needed for status line + hooks");
-    err("Install: brew install jq");
-    pass = false;
-  }
-
-  try {
-    execSync("python3 --version", { stdio: "ignore" });
-    ok("python3 found");
-  } catch {
-    warn("python3 not found — needed for bubble text wrapping");
-    err("Install python3 for your platform");
-    pass = false;
+    warn("jq not found — status line bubbles will be limited");
+    info("Install: brew install jq (optional)");
   }
 
   if (!existsSync(CLAUDE_DIR)) {
@@ -156,10 +147,13 @@ function installStatusLine(settings: Record<string, any>) {
 // ─── Step 4: Hooks ─────────────────────────────────────────────────────────
 
 function installHooks(settings: Record<string, any>) {
-  const reactHook = join(PROJECT_ROOT, "hooks", "react.sh");
-  const commentHook = join(PROJECT_ROOT, "hooks", "pet-comment.sh");
+  const reactHook = join(PROJECT_ROOT, "hooks", "react.js");
+  const commentHook = join(PROJECT_ROOT, "hooks", "pet-comment.js");
 
   if (!settings.hooks) settings.hooks = {};
+
+  // Resolve node path for hooks
+  const nodePath = execSync("which node", { encoding: "utf8" }).trim();
 
   // PostToolUse — clean up both old (typet) and new (petsonality) entries
   if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
@@ -167,7 +161,7 @@ function installHooks(settings: Record<string, any>) {
     (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.PostToolUse.push({
-    hooks: [{ type: "command", command: reactHook }],
+    hooks: [{ type: "command", command: `${nodePath} ${reactHook}` }],
   });
 
   // Stop — same cleanup
@@ -176,7 +170,7 @@ function installHooks(settings: Record<string, any>) {
     (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.Stop.push({
-    hooks: [{ type: "command", command: commentHook }],
+    hooks: [{ type: "command", command: `${nodePath} ${commentHook}` }],
   });
 
   ok("Hooks registered: PostToolUse + Stop");

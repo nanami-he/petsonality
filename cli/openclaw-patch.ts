@@ -255,7 +255,9 @@ export function autoUpgrade(): { upgraded: boolean; message: string } {
 
 // ─── CLI entry point ───────────────────────────────────────────────────────
 
-if (import.meta.main) {
+import { fileURLToPath } from "url";
+const __isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (__isMain) {
   const action = process.argv[2] || "status";
   const scriptPath = process.argv[3];
 
