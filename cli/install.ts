@@ -300,6 +300,13 @@ installHooks(settings);
 ensurePermissions(settings);
 saveSettings(settings);
 
+// Build reactions pool for shell hooks
+try {
+  execSync("bun run build:reactions", { cwd: PROJECT_ROOT, stdio: "inherit" });
+} catch {
+  warn("Could not build reactions pool — hooks will use fallback reactions");
+}
+
 // OpenClaw support (separate from Claude Code)
 await installOpenClaw();
 

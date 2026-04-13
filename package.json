@@ -13,7 +13,8 @@
     "show": "bun run cli/show.ts",
     "doctor": "bun run cli/doctor.ts",
     "backup": "bun run cli/backup.ts",
-    "build:art": "bun run scripts/build-art.ts"
+    "build:art": "bun run scripts/build-art.ts",
+    "build:reactions": "bun run scripts/build-reactions.ts"
   },
   "files": [
     "server/",

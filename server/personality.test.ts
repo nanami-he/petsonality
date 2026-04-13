@@ -150,11 +150,11 @@ describe("talkLevel ↔ cooldown consistency", () => {
     test(`${animal}: chatty/moderate pets have short cooldowns, quiet/silent have long`, () => {
       const level = LEVEL_ORDER[profile.talkLevel];
       if (level <= 1) {
-        // chatty/moderate: max cooldown should be <= 6 min
-        expect(cdMax).toBeLessThanOrEqual(6);
+        // chatty/moderate: max cooldown should be <= 3 min
+        expect(cdMax).toBeLessThanOrEqual(3);
       } else {
-        // quiet/silent: min cooldown should be >= 3 min
-        expect(cdMin).toBeGreaterThanOrEqual(3);
+        // quiet/silent: min cooldown should be >= 2 min
+        expect(cdMin).toBeGreaterThanOrEqual(2);
       }
     });
   }

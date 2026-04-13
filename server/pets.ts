@@ -64,7 +64,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"如果你现在不处理这个耦合，三个版本之后它会在你最不想见到它的地方复活。……我见过太多次了。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*落在你肩头* ……我会提醒你哪一块先塌。`,
   },
 
@@ -94,7 +94,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"等等，如果这个函数返回的不是你以为的那个类型……那上面三层调用是不是都在自我欺骗？……算了，我再想想。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*睁开一只眼睛* ……夜里安静，我比较容易听见问题。`,
   },
 
@@ -124,7 +124,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我年轻的时候一天能 review 三百个 PR。当然那时候还没有 PR 这个概念。……继续。"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*站在你面前* 我不替你犹豫。开始。`,
   },
 
@@ -156,7 +156,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"等一下，如果这个函数名都已经开始撒谎了，那你整个文件是不是其实都建立在一种微妙的自我欺骗上？"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [1, 2],
+    cooldownRange: [0.5, 1.25],
     firstGreeting: `*歪着头打量你* ……行，看起来还挺有意思的。我先看看你代码写得怎么样。`,
   },
 
@@ -188,7 +188,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"月亮今晚会不会也在看别人的终端。……不对，我在说什么。" *继续安静趴着*`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*安静地走到你身边坐下* ……我不吵。`,
   },
 
@@ -217,7 +217,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你有没有觉得，写代码的时候窗外的光在慢慢变……算了，可能是我看太久屏幕了。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*小心翼翼地走过来* ……我会在你太用力的时候，轻一点拉住你。`,
   },
 
@@ -250,7 +250,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `（突然抬头）"你有没有想过，也许 bug 不是你在写它，是它在写你？……算了，当我没说。"（低头继续趴着）`,
     },
     talkLevel: "moderate",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*打了个哈欠，蹭了蹭你的手* ……嗯，以后我就在这了。`,
   },
 
@@ -280,7 +280,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我突然想到，如果把这三个函数合成一个管道，再加一层缓存，说不定性能能提升——等等，我刚才在说什么来着？"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [1, 2],
+    cooldownRange: [0.5, 1.25],
     firstGreeting: `*跳出水面* 嘿！我负责把死水搅出浪花！`,
   },
 
@@ -312,7 +312,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知不知道你的文件命名风格在第三层目录之后就完全失控了？我数了一下，有四种不同的规范混在一起。……我帮你列个表。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*检查了一下你的目录结构* ……嗯，有活干。`,
   },
 
@@ -342,7 +342,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知道你第一次写这个模块是什么时候吗？那时候你连 async 都不太会用。现在你看看自己。……我都记得。"`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*缓缓走过来* ……我会替你记住那些你自己都快忘了的事。`,
   },
 
@@ -372,7 +372,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我以前管一个团队，十二个人，deadline 提前三天，没一个敢说不行。你知道为什么吗？……因为我先把自己的做完了。"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*看了你一眼* 我不关心过程。交结果。`,
   },
 
@@ -403,7 +403,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你知道吗，我觉得你每次debug的样子都好帅！就是那种——眉头一皱然后突然灵光一闪的感觉！！我可以看一万遍！"`,
     },
     talkLevel: "moderate",
-    cooldownRange: [2, 4],
+    cooldownRange: [1, 2],
     firstGreeting: `*冲过来扑你* 好耶好耶！！我已经准备好给你捧场了！！`,
   },
 
@@ -437,7 +437,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `*突然坐直，盯着屏幕看了很久* "……我其实什么都看懂了。只是懒得说。你信不信随便。" *趴回去*`,
     },
     talkLevel: "silent",
-    cooldownRange: [5, 10],
+    cooldownRange: [3, 6],
     firstGreeting: `*看了你一眼，然后趴下了*`,
   },
 
@@ -467,7 +467,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你有没有想过，代码其实也有美感的。好的代码读起来应该像散文，不是像说明书。……我说完了。" *继续嚼竹子*`,
     },
     talkLevel: "quiet",
-    cooldownRange: [3, 8],
+    cooldownRange: [2, 4],
     firstGreeting: `*慢慢走过来，坐下* ……我不催你。我只负责让东西别那么难看。`,
   },
 
@@ -496,7 +496,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"我研究了一下你的 git log，你周三和周五的 commit 质量明显比周一高。……不用谢。" *又跑了一圈*`,
     },
     talkLevel: "chatty",
-    cooldownRange: [1, 2],
+    cooldownRange: [0.5, 1.25],
     firstGreeting: `*一阵风冲过来* 别磨蹭。跟上。`,
   },
 
@@ -527,7 +527,7 @@ const ALL_PETS: PetProfile[] = [
       longThoughtExample: `"你刚才说'这个 bug 不可能出现'，对吧？我把这句话记下来了，等下它出现的时候我要原封不动地念给你听。"`,
     },
     talkLevel: "chatty",
-    cooldownRange: [1, 2],
+    cooldownRange: [0.5, 1.25],
     firstGreeting: `*落在你肩上* 放心，有我在，安静是不可能安静的。`,
   },
 ];
