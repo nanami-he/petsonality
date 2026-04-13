@@ -27,40 +27,48 @@
 #### 2d. 测试 ✅（2026-04-13）
 - charWidth / stringWidth / padDisplay 单测
 - art 网格校验（16 动物 × 全帧 × 5 行 = 12 字符宽度）
-- 20 tests, 622 assertions
+- 性格/行为测试 302 tests, 2645 assertions
+- 覆盖：MBTI 映射一致性、签名行自验证、禁词执行、talkLevel ↔ cooldown 一致性
+
+### 3. OpenClaw reaction 适配 ✅（P0, 2026-04-13）
+- Model-driven: OpenClaw 模型调 pet_react，Claude Code 走 `<!-- pet: -->` 不变
+- Host 检测: PETSONALITY_HOST env 切换 instructions
+- Cooldown: recordSpeak 时固定 next-allowed-at
+- 参谋长复查通过（修了 4 条: SID 写死、prompt 回归、随机冷却、空返回）
+
+### 4. 三态检测 + Doctor ✅（P1.5, 2026-04-13）
+- diagnosePatch() 五态: native / patched / stale / unpatched / not-installed
+- Installer 用三态决策: native→config+清理, stale→重 apply, unpatched→首次 apply
+- autoUpgrade(): native 到来时自动清理旧 patch
+- `doctor` CLI 子命令: 一键诊断 OpenClaw 安装状态
+
+### 5. 说话系统重设计 ✅（2026-04-13）
+- **问题:** 宠物只在出错时说话，正常工作时完全沉默（error notifier）
+- **重设计:** 从风险控制改为陪伴节奏（70% 轻存在 + 20% 关键节点 + 10% 记忆点）
+- react.sh 重写:
+  - 日常成功触发 (8-15% by talkLevel)
+  - 里程碑触发 (12-30%: test pass, commit, build)
+  - Silent streak 保底 (7-18 次沉默后强制)
+  - 动物专属池 (reactions-pool.json, 420 反应)
+  - 废弃硬编码通用句
+- Cooldown 下调: moderate [2,4]→[1,2]分钟, chatty [1,2]→[0.5,1.25]分钟
+- OpenClaw prompt 对齐新节奏
+- 参谋长复议: "把说话设计成陪伴节奏问题，不是风险控制问题"
 
 ---
 
-## Phase 1 剩余 — 接下来做的事
-
-### P0: OpenClaw reaction 适配
-- 当前问题：宠物在 OpenClaw 上能显示但**不会说话**
-- Claude Code 靠 hooks（PostToolUse/Stop）触发 reaction
-- **不复刻 Claude hook 模型**，直接基于 OpenClaw 的 agent/tool/session event 触发
-- 实施顺序：
-  1. 定义统一 reaction 写入协议（reaction/reason/ts/sessionId）
-  2. 先接 tool fail / error → 写 reaction.json
-  3. 再补 turn-end 轻反应
-- **MVP 完成标准：** tool fail 会说话 + cooldown 正常 + 不串 session
+## 待办
 
 ### P1: OpenClaw PR 跟进
 - 等 openclaw/openclaw#65886 维护者审核
 - 根据反馈调整
 - 合并后 installer 切换到 native config 模式，停用 patch
 
-### P1.5: 注入/原生 capability 检测稳定性
-- installer/doctor 需清晰判断三种 OpenClaw 状态：
-  1. 原生未支持（无 statusLine）
-  2. 已注入 patch
-  3. 原生支持（PR 合并后版本）
-- 原生支持后自动停用 patch
-- 防止重复注入、版本不兼容时安全降级
-
 ### P2: npx 安装流
 - `npx petsonality` 一键安装
-- CLI 改 node 兼容（去掉 bun 依赖）
+- 开发用 bun，发布编译成纯 JS（`bun build` 单文件）
 - 去掉 wrap.py（Python 依赖，用 TS 替代）
-- 目标：安装只需 node，不需要 bun/python/jq
+- 目标：安装只需 node
 
 ### P3: README + GIF
 - 录制终端 GIF（展示宠物动画 + 气泡说话）
@@ -69,7 +77,30 @@
 
 ### P4: statusline action 通用化
 - 提取通用 action runner（减少 statusline 重复代码）
-- 目前每只动物的 elif action 块结构完全一样，可以合并
+
+### P5: 说话系统 v2 — hint 架构
+- Hook 只写 event hint，模型才是唯一说话者
+- 固定池降级为纯兜底
+- 统一 reaction budget（talkLevel 控制全局频率）
+- 风格锚点 + validateVoice 升级
+
+---
+
+## Phase 2 — 体验深化
+
+### 成长系统
+- 互动次数 → 等级/状态变化
+
+### 帽子/换肤 DLC
+- 帽子系统（第一行预留位）
+- 稀有帽子通过互动解锁
+
+### 多宠物切换
+- 收集多只，/pet switch 切换
+- 宠物图鉴
+
+### vibe-pick
+- 不知道 MBTI 的用户，问几个问题推测性格
 
 ---
 
@@ -84,30 +115,14 @@
 ### 每次发版前检查
 - `bun test` 全部通过
 - `bun run build:art` 后 `git diff` 为零（shell 和 art.ts 同步）
+- `bun run build:reactions` 后检查 reactions-pool.json 更新
 - `bash -n statusline/pet-status.sh` 语法检查
-- action 帧数 = art.ts 帧数（action 块引用的 FRAME 号不超过 art.ts 帧数）
+- `bash -n hooks/react.sh` 语法检查
 
 ### 教训记录
-- **2026-04-13**: build:art 覆盖了 shell 里重新设计的早期动物 art（shell 是真源但 art.ts 没同步）。根因：art.ts 和 shell 双份维护时期的遗留。修复：从旧 shell 提取所有帧录入 art.ts，总帧数 92→113
-- **2026-04-13**: OpenClaw patch 把 statusLine 放在 editor 上方，会被 TUI 重绘覆盖。修复：改为放在 editor 下方（与 Claude Code 一致）。同步更新 PR 分支
-
----
-
-## Phase 2 — 体验深化
-
-### 4. 成长系统
-- 互动次数 → 等级/状态变化
-
-### 5. 帽子/换肤 DLC
-- 帽子系统（第一行预留位）
-- 稀有帽子通过互动解锁
-
-### 6. 多宠物切换
-- 收集多只，/pet switch 切换
-- 宠物图鉴
-
-### 10. vibe-pick
-- 不知道 MBTI 的用户，问几个问题推测性格
+- **2026-04-13**: build:art 覆盖了 shell 里重新设计的早期动物 art。根因：art.ts 和 shell 双份维护时期的遗留。修复：从旧 shell 提取所有帧录入 art.ts，总帧数 92→113
+- **2026-04-13**: OpenClaw patch 把 statusLine 放在 editor 上方，会被 TUI 重绘覆盖。修复：改为放在 editor 下方
+- **2026-04-13**: 说话系统设计成"只在出错时反应"导致宠物几乎不说话。根因：把说话当风险控制而非陪伴节奏。修复：加日常触发 + 里程碑触发 + silent streak 保底
 
 ---
 
@@ -121,21 +136,21 @@
 - **参与者：** 皇帝、侍从长、参谋长、mimo、deepseek
 - 排除：tmux / /dev/tty daemon / 终端私有协议 / 桌面浮窗
 - 决议：三线并行（Claude statusLine + OpenClaw PR + installer capability 检测）
-- 追加：OpenClaw 注入方案（PR 合并前的过渡）+ MCP 注册
 
 ### 2026-04-13 外部审查
-- 审查报告：petsonality-review.md
 - eval 安全问题被误判（所有 12 只有 action 的动物都有 grep 校验）
 - 有效建议：加单测（已做 ✅）、README 重构（待做）、去 Python 依赖（排入 npx 阶段）
 
 ### 2026-04-13 优先级排序复议（第三次国会）
 - **参与者：** 侍从长、参谋长
-- **确认排序：** P0 reaction → P1 PR → P1.5 检测稳定性 → P2 npx → P3 README → P4 action 通用化
-- **参谋长关键建议：**
-  1. P0 不要找 Claude 同构 hook，直接用 OpenClaw event 流
-  2. 补 P1.5 注入/原生三态检测
-  3. 定义 OpenClaw MVP 完成标准（tool fail 会说话 + cooldown + 不串 session）
+- **确认排序：** P0 → P1 → P1.5 → P2 → P3 → P4
+
+### 2026-04-13 说话系统复议（第四、五次国会）
+- **参与者：** 侍从长、参谋长
+- **诊断:** hook 只对 error 反应 + 通用硬编码句 + cooldown 过长 = error notifier
+- **决议:** 陪伴节奏（日常触发 + 动物专属 + 低 cooldown + silent streak 保底）
+- **长期方向:** hint 架构（hook 只写事件，模型才说话，固定池兜底）
 
 ---
 
-*PRD v3 — 2026-04-12 初版 / 2026-04-13 v3.1 全面更新*
+*PRD v3 — 2026-04-12 初版 / 2026-04-13 v3.2 说话系统重设计*

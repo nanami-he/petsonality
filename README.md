@@ -51,14 +51,31 @@ Restart your MCP client, then type `/pet` to adopt your companion.
 
 1. **MCP Server** — Runs as stdio transport, spawned automatically by the client
 2. **Status Line** — Animated pet with speech bubble in your terminal
-3. **Stop Hook** — Extracts `<!-- pet: ... -->` comments from responses
-4. **PostToolUse Hook** — Detects errors/test failures, pet reacts in character
+3. **Companion Rhythm** — Pets speak on errors, milestones (test pass, commit), and daily events
+4. **Multi-Host** — Works with Claude Code (hooks) and OpenClaw (pet_react MCP tool)
+
+## Roadmap
+
+- [x] 16 MBTI animals with full personality profiles (113 animation frames)
+- [x] Animated status line with speech bubbles (Claude Code + OpenClaw)
+- [x] Companion rhythm: daily triggers, milestone reactions, silent streak guardrail
+- [x] Animal-specific reaction pool (420 reactions from 16 animals x 7 event types)
+- [x] Voice validation: forbidden words, length constraints, style enforcement
+- [x] OpenClaw support: statusLine patch + PR [#65886](https://github.com/openclaw/openclaw/pull/65886)
+- [x] Three-state OpenClaw detection + `doctor` diagnostic command
+- [x] 302 tests / 2645 assertions
+- [ ] `npx petsonality` one-command install (remove bun/python/jq deps)
+- [ ] README with terminal GIF demo
+- [ ] Growth system (interaction count -> level/mood evolution)
+- [ ] Hat/skin DLC (unlockable accessories)
+- [ ] Multi-pet collection + switching
+- [ ] Vibe-pick: MBTI quiz for users who don't know their type
 
 ## Requirements
 
 - [Bun](https://bun.sh) runtime
 - [jq](https://jqlang.github.io/jq/) for JSON processing
-- Any MCP-compatible client
+- Any MCP-compatible client (Claude Code, OpenClaw)
 
 ## Architecture
 
