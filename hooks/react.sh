@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# mbti-pet PostToolUse hook
+# petsonality PostToolUse hook
 # Detects errors, test failures, and large diffs in tool output
-# Writes reaction to ~/.mbti-pet/reaction.json for the status line
+# Writes reaction to ~/.petsonality/reaction.json for the status line
 
-STATE_DIR="$HOME/.mbti-pet"
+STATE_DIR="$HOME/.petsonality"
 umask 077  # ensure files created by this hook are 0600
 
 SID="${TMUX_PANE#%}"

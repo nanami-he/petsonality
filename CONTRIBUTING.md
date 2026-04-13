@@ -1,12 +1,12 @@
-# Contributing to Typet
+# Contributing to Petsonality
 
 Thanks for your interest! Here's how to contribute.
 
 ## Setup
 
 ```bash
-git clone https://github.com/nanami-he/typet.git
-cd typet
+git clone https://github.com/nanami-he/petsonality.git
+cd petsonality
 bun install
 ```
 

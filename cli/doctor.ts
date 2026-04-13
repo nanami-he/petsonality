@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * typet doctor — comprehensive diagnostic report
+ * petsonality doctor — comprehensive diagnostic report
  *
  * Run: bun run doctor
  *
@@ -54,11 +54,14 @@ function tryParseJson(text: string | null): any | null {
   try { return JSON.parse(text); } catch { return null; }
 }
 
+// Resolve state directory (new or legacy)
+const STATE_DIR = existsSync(join(HOME, ".petsonality")) ? join(HOME, ".petsonality") : join(HOME, ".mbti-pet");
+
 // ─── Header ─────────────────────────────────────────────────────────────────
 
 console.log(`${CYAN}${BOLD}
 ╔══════════════════════════════════════════════════════════╗
-║  typet doctor — diagnostic report                 ║
+║  petsonality doctor — diagnostic report            ║
 ╚══════════════════════════════════════════════════════════╝${NC}`);
 
 console.log(`\n${DIM}Copy this entire output into your GitHub issue.${NC}`);
@@ -93,17 +96,19 @@ const procExists = existsSync("/proc");
 row("/proc exists", procExists ? `${GREEN}yes${NC} (Linux)` : `${RED}no${NC} (macOS/BSD)`);
 row("~/.claude/ exists", existsSync(join(HOME, ".claude")) ? "yes" : "no");
 row("~/.claude.json exists", existsSync(join(HOME, ".claude.json")) ? "yes" : "no");
-row("~/.mbti-pet/ exists", existsSync(join(HOME, ".mbti-pet")) ? "yes" : "no");
+row("~/.petsonality/ exists", existsSync(join(HOME, ".petsonality")) ? "yes" : "no");
+row("~/.mbti-pet/ exists (legacy)", existsSync(join(HOME, ".mbti-pet")) ? "yes" : "no");
 row("Project root", PROJECT_ROOT);
 row("Status script exists", existsSync(STATUS_SCRIPT) ? "yes" : `${RED}no${NC}`);
 
-// ─── typet state ─────────────────────────────────────────────────────
+// ─── petsonality state ─────────────────────────────────────────────────────
 
-section("typet state");
-const pet = tryParseJson(tryRead(join(HOME, ".mbti-pet", "pet.json")));
-const status = tryParseJson(tryRead(join(HOME, ".mbti-pet", "status.json")));
+section("petsonality state");
+const pet = tryParseJson(tryRead(join(STATE_DIR, "pet.json")));
+const status = tryParseJson(tryRead(join(STATE_DIR, "status.json")));
 
 if (pet) {
+  row("State directory", STATE_DIR);
   row("Pet name", pet.petName ?? "(none)");
   row("Animal", pet.petId ?? "(none)");
   row("MBTI", pet.userMbti ?? "(none)");
@@ -112,14 +117,14 @@ if (pet) {
   row("Adopted", pet.adopted ? "yes" : "no");
   row("Adopted at", pet.adoptedAt ?? "(none)");
 } else {
-  err("No pet data found at ~/.mbti-pet/pet.json");
+  err(`No pet data found at ${STATE_DIR}/pet.json`);
 }
 
 if (status) {
   row("Status muted", String(status.muted ?? false));
   row("Current reaction", status.reaction || "(none)");
 } else {
-  warn("No status state at ~/.mbti-pet/status.json");
+  warn(`No status state at ${STATE_DIR}/status.json`);
 }
 
 // ─── settings.json ──────────────────────────────────────────────────────────
@@ -145,9 +150,12 @@ if (settings?.hooks) {
   warn("No hooks configured");
 }
 
-if (claudeJson?.mcpServers?.["typet"]) {
-  ok("MCP server registered in ~/.claude.json");
-  console.log(`    ${JSON.stringify(claudeJson.mcpServers["typet"], null, 2).split("\n").join("\n    ")}`);
+// Check both new and legacy MCP keys
+const mcpKey = claudeJson?.mcpServers?.["petsonality"] ? "petsonality" : claudeJson?.mcpServers?.["typet"] ? "typet" : null;
+if (mcpKey) {
+  ok(`MCP server registered in ~/.claude.json (key: ${mcpKey})`);
+  console.log(`    ${JSON.stringify(claudeJson.mcpServers[mcpKey], null, 2).split("\n").join("\n    ")}`);
+  if (mcpKey === "typet") warn("Using legacy key 'typet' — re-run installer to update");
 } else {
   err("MCP server NOT registered in ~/.claude.json");
 }

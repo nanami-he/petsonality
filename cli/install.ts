@@ -1,5 +1,5 @@
 /**
- * typet installer
+ * petsonality installer
  *
  * Registers: MCP server (in ~/.claude.json), skill, hooks, status line (in settings.json)
  * Checks: bun, jq, ~/.claude/ directory
@@ -26,7 +26,7 @@ const PROJECT_ROOT = resolve(dirname(import.meta.dir));
 function banner() {
   console.log(`
 ${CYAN}╔══════════════════════════════════════════════════════════╗${NC}
-${CYAN}║${NC}  ${BOLD}typet${NC} — MBTI terminal pet companion           ${CYAN}║${NC}
+${CYAN}║${NC}  ${BOLD}petsonality${NC} — MBTI terminal pet companion       ${CYAN}║${NC}
 ${CYAN}║${NC}  ${DIM}MCP + Skill + StatusLine + Hooks${NC}                  ${CYAN}║${NC}
 ${CYAN}╚══════════════════════════════════════════════════════════╝${NC}
 `);
@@ -109,7 +109,13 @@ function installMcp() {
   catch { /* fresh */ }
 
   if (!claudeJson.mcpServers) claudeJson.mcpServers = {};
-  claudeJson.mcpServers["typet"] = {
+
+  // Clean up legacy "typet" entry
+  if (claudeJson.mcpServers["typet"]) {
+    delete claudeJson.mcpServers["typet"];
+  }
+
+  claudeJson.mcpServers["petsonality"] = {
     command: bunPath,
     args: [serverPath],
     cwd: PROJECT_ROOT,
@@ -131,12 +137,12 @@ function installSkill() {
 // ─── Step 3: Status line ───────────────────────────────────────────────────
 
 function installStatusLine(settings: Record<string, any>) {
-  if (settings.statusLine?.command && !settings.statusLine.command.includes("typet")) {
+  if (settings.statusLine?.command && !settings.statusLine.command.includes("petsonality") && !settings.statusLine.command.includes("typet")) {
     warn(`Existing statusLine found: ${settings.statusLine.command}`);
-    warn("Replacing with typet status line. Old config backed up in ~/.mbti-pet/statusline.bak");
-    
-    mkdirSync(join(homedir(), ".mbti-pet"), { recursive: true });
-    writeFileSync(join(homedir(), ".mbti-pet", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
+    warn("Replacing with petsonality status line. Old config backed up in ~/.petsonality/statusline.bak");
+
+    mkdirSync(join(homedir(), ".petsonality"), { recursive: true });
+    writeFileSync(join(homedir(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
   }
   settings.statusLine = {
     type: "command",
@@ -155,19 +161,19 @@ function installHooks(settings: Record<string, any>) {
 
   if (!settings.hooks) settings.hooks = {};
 
-  // PostToolUse
+  // PostToolUse — clean up both old (typet) and new (petsonality) entries
   if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
   settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
-    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("typet")),
+    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.PostToolUse.push({
     hooks: [{ type: "command", command: reactHook }],
   });
 
-  // Stop
+  // Stop — same cleanup
   if (!settings.hooks.Stop) settings.hooks.Stop = [];
   settings.hooks.Stop = settings.hooks.Stop.filter(
-    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("typet")),
+    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.Stop.push({
     hooks: [{ type: "command", command: commentHook }],
@@ -183,9 +189,14 @@ function ensurePermissions(settings: Record<string, any>) {
   if (!settings.permissions.allow) settings.permissions.allow = [];
 
   const allow: string[] = settings.permissions.allow;
-  if (!allow.some((p: string) => p.includes("typet") || p.includes("mbti_pet"))) {
-    allow.push("mcp__typet__*");
-    ok("Permission added: mcp__typet__*");
+
+  // Remove legacy permission
+  const legacyIdx = allow.findIndex((p: string) => p.includes("typet"));
+  if (legacyIdx !== -1) allow.splice(legacyIdx, 1);
+
+  if (!allow.some((p: string) => p.includes("petsonality"))) {
+    allow.push("mcp__petsonality__*");
+    ok("Permission added: mcp__petsonality__*");
   } else {
     ok("MCP permissions already configured");
   }
@@ -202,7 +213,7 @@ if (!preflight()) {
 }
 
 console.log("");
-info("Installing typet...\n");
+info("Installing petsonality...\n");
 
 const settings = loadSettings();
 installMcp();

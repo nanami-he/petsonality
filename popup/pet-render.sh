@@ -5,7 +5,7 @@
 # Only writes to stdout (popup display).
 #
 # Env vars:
-#   BUDDY_DIR -- ~/.mbti-pet
+#   BUDDY_DIR -- ~/.petsonality
 
 set -uo pipefail
 
@@ -14,7 +14,7 @@ set -uo pipefail
 PANE_W="${POPUP_INNER_W:-$(tput cols 2>/dev/null || echo 24)}"
 PANE_H="${POPUP_INNER_H:-$(tput lines 2>/dev/null || echo 14)}"
 
-BUDDY_STATE_DIR="${BUDDY_DIR:-$HOME/.mbti-pet}"
+BUDDY_STATE_DIR="${BUDDY_DIR:-$HOME/.petsonality}"
 # Session ID from env (set by popup-manager via -e or env file)
 _SID="${BUDDY_SID:-${CC_PANE#%}}"
 _SID="${_SID:-default}"

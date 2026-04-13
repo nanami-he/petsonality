@@ -16,7 +16,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BUDDY_DIR="$HOME/.mbti-pet"
+BUDDY_DIR="$HOME/.petsonality"
 
 # Session ID: sanitized tmux pane number, or "default" outside tmux
 SID="${TMUX_PANE#%}"

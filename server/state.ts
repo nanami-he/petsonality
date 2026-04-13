@@ -1,14 +1,14 @@
 /**
- * State management — reads/writes pet data to ~/.mbti-pet/
+ * State management — reads/writes pet data to ~/.petsonality/
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync, renameSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 import type { Pet, AnimalId } from "./engine.ts";
 import { charWidth, stringWidth } from "./utils.ts";
 
-const STATE_DIR = join(homedir(), ".mbti-pet");
+const STATE_DIR = join(homedir(), ".petsonality");
 const PET_FILE = join(STATE_DIR, "pet.json");
 const CONFIG_FILE = join(STATE_DIR, "config.json");
 
@@ -24,6 +24,11 @@ function reactionFile(): string {
 }
 
 function ensureDir(): void {
+  // Auto-migrate from old directory name
+  const oldDir = join(homedir(), ".mbti-pet");
+  if (!existsSync(STATE_DIR) && existsSync(oldDir)) {
+    try { renameSync(oldDir, STATE_DIR); } catch { /* another process already migrated */ }
+  }
   if (!existsSync(STATE_DIR)) mkdirSync(STATE_DIR, { recursive: true });
 }
 
@@ -59,7 +64,7 @@ export interface ReactionState {
 export function loadReaction(): ReactionState | null {
   try {
     const data: ReactionState = JSON.parse(readFileSync(reactionFile(), "utf8"));
-    // 20s for tool reads (pet_show). Statusline has shorter 4s TTL in pet-status.sh.
+    // 10s TTL for MCP tool reads (pet_show). Statusline has shorter 4s TTL in pet-status.sh.
     if (Date.now() - data.timestamp > 10_000) return null;
     return data;
   } catch {
@@ -129,7 +134,7 @@ export function writeStatusState(pet: Pet, reaction?: string, muted?: boolean): 
     reaction: reaction !== undefined ? reaction : (existing.reaction ?? ""),
     muted: muted !== undefined ? muted : (existing.muted ?? false),
   };
-  writeFileSync(statusPath, JSON.stringify(state), { mode: 0o600 });
+  writeFileSync(statusPath, JSON.stringify(state, null, 2), { mode: 0o600 });
 }
 
 // ─── Config persistence ────────────────────────────────────────────────────

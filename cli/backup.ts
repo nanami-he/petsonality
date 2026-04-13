@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * typet backup — snapshot all typet related state
+ * petsonality backup — snapshot all petsonality related state
  *
  * Usage:
  *   bun run backup                 Create a new snapshot
@@ -10,15 +10,15 @@
  *   bun run backup restore <ts>    Restore a specific backup
  *   bun run backup delete <ts>     Delete a specific backup
  *
- * Backups are stored in ~/.mbti-pet/backups/YYYY-MM-DD-HHMMSS/
+ * Backups are stored in ~/.petsonality/backups/YYYY-MM-DD-HHMMSS/
  *
  * What gets backed up:
  *   - ~/.claude/settings.json (full file)
- *   - ~/.claude.json mcpServers["typet"] block (only our entry)
+ *   - ~/.claude.json mcpServers["petsonality"] block (only our entry)
  *   - ~/.claude/skills/pet/SKILL.md
- *   - ~/.mbti-pet/pet.json
- *   - ~/.mbti-pet/status.json
- *   - ~/.mbti-pet/reaction.\*.json
+ *   - ~/.petsonality/pet.json
+ *   - ~/.petsonality/status.json
+ *   - ~/.petsonality/reaction.*.json
  */
 
 import {
@@ -29,11 +29,11 @@ import { join } from "path";
 import { homedir } from "os";
 
 const HOME = homedir();
-const BACKUPS_DIR = join(HOME, ".mbti-pet", "backups");
+const BACKUPS_DIR = join(HOME, ".petsonality", "backups");
 const SETTINGS = join(HOME, ".claude", "settings.json");
 const CLAUDE_JSON = join(HOME, ".claude.json");
 const SKILL = join(HOME, ".claude", "skills", "pet", "SKILL.md");
-const STATE_DIR = join(HOME, ".mbti-pet");
+const STATE_DIR = existsSync(join(HOME, ".petsonality")) ? join(HOME, ".petsonality") : join(HOME, ".mbti-pet");
 
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
@@ -85,18 +85,18 @@ function createBackup(): string {
     warn(`Skipped: ~/.claude/settings.json (not found)`);
   }
 
-  // 2. claude.json mcpServers["typet"]
+  // 2. claude.json mcpServers["petsonality"] (or legacy "typet")
   const claudeJsonRaw = tryRead(CLAUDE_JSON);
   if (claudeJsonRaw) {
     try {
       const claudeJson = JSON.parse(claudeJsonRaw);
-      const ourMcp = claudeJson.mcpServers?.["typet"];
+      const ourMcp = claudeJson.mcpServers?.["petsonality"] ?? claudeJson.mcpServers?.["typet"];
       if (ourMcp) {
         writeFileSync(join(dir, "mcpserver.json"), JSON.stringify(ourMcp, null, 2));
         manifest.files.push("mcpserver.json");
-        ok(`Backed up: ~/.claude.json → mcpServers["typet"]`);
+        ok(`Backed up: ~/.claude.json → mcpServers`);
       } else {
-        warn(`Skipped: ~/.claude.json mcpServers["typet"] (not registered)`);
+        warn(`Skipped: ~/.claude.json mcpServers (not registered)`);
       }
     } catch {
       err(`Failed to parse ~/.claude.json`);
@@ -113,16 +113,22 @@ function createBackup(): string {
     warn(`Skipped: ~/.claude/skills/pet/SKILL.md (not found)`);
   }
 
-  // 4-6. ~/.mbti-pet/ state files (don't back up the backups dir itself)
-  const stateDestDir = join(dir, "typet");
+  // 4-6. state files
+  const stateDestDir = join(dir, "state");
   mkdirSync(stateDestDir, { recursive: true });
-  const stateFiles = ["pet.json", "status.json", "reaction.*.json"];
+  const stateFiles = ["pet.json", "status.json"];
+  // Also grab reaction files
+  if (existsSync(STATE_DIR)) {
+    for (const f of readdirSync(STATE_DIR)) {
+      if (f.startsWith("reaction.") && f.endsWith(".json")) stateFiles.push(f);
+    }
+  }
   for (const f of stateFiles) {
     const src = join(STATE_DIR, f);
     if (existsSync(src)) {
       copyFileSync(src, join(stateDestDir, f));
-      manifest.files.push(`typet/${f}`);
-      ok(`Backed up: ~/.mbti-pet/${f}`);
+      manifest.files.push(`state/${f}`);
+      ok(`Backed up: ${f}`);
     }
   }
 
@@ -140,7 +146,7 @@ function cmdList() {
     info(`Run '${BOLD}bun run backup${NC}' to create one.`);
     return;
   }
-  console.log(`\n${BOLD}typet backups${NC}\n`);
+  console.log(`\n${BOLD}petsonality backups${NC}\n`);
   for (const ts of backups) {
     const manifestPath = join(BACKUPS_DIR, ts, "manifest.json");
     const manifest = tryRead(manifestPath);
@@ -207,9 +213,9 @@ function restoreBackup(ts: string) {
       claudeJson = JSON.parse(readFileSync(CLAUDE_JSON, "utf8"));
     } catch { /* empty */ }
     if (!claudeJson.mcpServers) claudeJson.mcpServers = {};
-    claudeJson.mcpServers["typet"] = ourMcp;
+    claudeJson.mcpServers["petsonality"] = ourMcp;
     writeFileSync(CLAUDE_JSON, JSON.stringify(claudeJson, null, 2));
-    ok("Restored: ~/.claude.json → mcpServers[\"typet\"]");
+    ok('Restored: ~/.claude.json → mcpServers["petsonality"]');
   }
 
   // 3. SKILL.md
@@ -220,13 +226,13 @@ function restoreBackup(ts: string) {
     ok("Restored: ~/.claude/skills/pet/SKILL.md");
   }
 
-  // 4. ~/.mbti-pet/ state files
-  const stateDir = join(dir, "typet");
-  if (existsSync(stateDir)) {
+  // 4. state files (check both new "state/" and legacy "typet/" subdirs)
+  const stateSubDir = existsSync(join(dir, "state")) ? join(dir, "state") : join(dir, "typet");
+  if (existsSync(stateSubDir)) {
     mkdirSync(STATE_DIR, { recursive: true });
-    for (const f of readdirSync(stateDir)) {
-      copyFileSync(join(stateDir, f), join(STATE_DIR, f));
-      ok(`Restored: ~/.mbti-pet/${f}`);
+    for (const f of readdirSync(stateSubDir)) {
+      copyFileSync(join(stateSubDir, f), join(STATE_DIR, f));
+      ok(`Restored: ${f}`);
     }
   }
 
@@ -253,7 +259,7 @@ const arg = process.argv[3];
 switch (action) {
   case "create":
   case undefined: {
-    console.log(`\n${BOLD}Creating typet backup...${NC}\n`);
+    console.log(`\n${BOLD}Creating petsonality backup...${NC}\n`);
     const ts = createBackup();
     console.log(`\n${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}`);
     console.log(`${GREEN}  Backup created: ${ts}${NC}`);
@@ -306,7 +312,7 @@ switch (action) {
   case "--help":
   case "-h":
     console.log(`
-${BOLD}typet backup${NC} — snapshot and restore all typet state
+${BOLD}petsonality backup${NC} — snapshot and restore all petsonality state
 
 ${BOLD}Commands:${NC}
   bun run backup                 Create a new snapshot
@@ -318,11 +324,11 @@ ${BOLD}Commands:${NC}
 
 ${BOLD}What gets backed up:${NC}
   - ~/.claude/settings.json (full)
-  - ~/.claude.json mcpServers["typet"] (only our entry)
+  - ~/.claude.json mcpServers["petsonality"] (only our entry)
   - ~/.claude/skills/pet/SKILL.md
-  - ~/.mbti-pet/pet.json
-  - ~/.mbti-pet/status.json
-  - ~/.mbti-pet/reaction.\*.json
+  - ~/.petsonality/pet.json
+  - ~/.petsonality/status.json
+  - ~/.petsonality/reaction.*.json
 
 ${BOLD}Backup location:${NC}
   ${BACKUPS_DIR}/<timestamp>/

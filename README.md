@@ -21,7 +21,7 @@ cd petsonality
 bun install
 
 # Register with your MCP client
-bun run install-typet
+bun run install-petsonality
 ```
 
 Restart your MCP client, then type `/pet` to adopt your companion.
@@ -63,7 +63,7 @@ Restart your MCP client, then type `/pet` to adopt your companion.
 ## Architecture
 
 ```
-~/.mbti-pet/
+~/.petsonality/
 ├── pet.json          — Pet state (adopted, mood, interactions)
 ├── status.json       — Compact state for status line
 ├── reaction.*.json   — Session-specific speech bubbles

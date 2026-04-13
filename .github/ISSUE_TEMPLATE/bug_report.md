@@ -28,5 +28,5 @@ If applicable, add screenshots.
 **Status line output**
 ```
 # Run this and paste the output:
-echo '{}' | ~/.mbti-pet/../statusline/pet-status.sh 2>/dev/null
+echo '{}' | ~/.petsonality/../statusline/pet-status.sh 2>/dev/null
 ```

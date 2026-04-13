@@ -1,5 +1,5 @@
 /**
- * typet uninstall — remove all integrations
+ * petsonality uninstall — remove all integrations
  */
 
 import { readFileSync, writeFileSync, existsSync, rmSync, readdirSync } from "fs";
@@ -16,16 +16,18 @@ function warn(msg: string) { console.log(`${YELLOW}⚠${NC}  ${msg}`); }
 const CLAUDE_DIR = join(homedir(), ".claude");
 const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
 const SKILL_DIR = join(CLAUDE_DIR, "skills", "pet");
-const STATE_DIR = join(homedir(), ".mbti-pet");
+const STATE_DIR = join(homedir(), ".petsonality");
+const LEGACY_STATE_DIR = join(homedir(), ".mbti-pet");
 
-console.log("\ntypet uninstall\n");
+console.log("\npetsonality uninstall\n");
 
 // Stop all popup reopen loops and close any running popup
 try {
-  if (existsSync(STATE_DIR)) {
+  for (const dir of [STATE_DIR, LEGACY_STATE_DIR]) {
+    if (!existsSync(dir)) continue;
     // Kill all session popup loops (popup-reopen-pid.*)
-    for (const f of readdirSync(STATE_DIR).filter(f => f.startsWith("popup-reopen-pid."))) {
-      const pidPath = join(STATE_DIR, f);
+    for (const f of readdirSync(dir).filter(f => f.startsWith("popup-reopen-pid."))) {
+      const pidPath = join(dir, f);
       const pid = parseInt(readFileSync(pidPath, "utf8").trim(), 10);
       if (pid > 0) { try { process.kill(pid); } catch { /* already dead */ } }
       rmSync(pidPath, { force: true });
@@ -33,9 +35,9 @@ try {
     // Clean up all session-scoped files
     const patterns = ["popup-stop.", "popup-resize.", "popup-env.", "popup-scroll.",
                       "reaction.", ".last_reaction.", ".last_comment."];
-    for (const f of readdirSync(STATE_DIR)) {
+    for (const f of readdirSync(dir)) {
       if (patterns.some(p => f.startsWith(p))) {
-        rmSync(join(STATE_DIR, f), { force: true });
+        rmSync(join(dir, f), { force: true });
       }
     }
   }
@@ -47,13 +49,19 @@ try {
   ok("Popup stopped");
 } catch { /* not in tmux or no popup */ }
 
-// Remove MCP server from ~/.claude.json
+// Remove MCP server from ~/.claude.json (both new and legacy keys)
 try {
   const claudeJsonPath = join(homedir(), ".claude.json");
   const claudeJson = JSON.parse(readFileSync(claudeJsonPath, "utf8"));
-  if (claudeJson.mcpServers?.["typet"]) {
-    delete claudeJson.mcpServers["typet"];
-    if (Object.keys(claudeJson.mcpServers).length === 0) delete claudeJson.mcpServers;
+  let removed = false;
+  for (const key of ["petsonality", "typet"]) {
+    if (claudeJson.mcpServers?.[key]) {
+      delete claudeJson.mcpServers[key];
+      removed = true;
+    }
+  }
+  if (removed) {
+    if (Object.keys(claudeJson.mcpServers ?? {}).length === 0) delete claudeJson.mcpServers;
     writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
     ok("MCP server removed from ~/.claude.json");
   }
@@ -76,7 +84,7 @@ try {
     if (settings.hooks?.[hookType]) {
       const before = settings.hooks[hookType].length;
       settings.hooks[hookType] = settings.hooks[hookType].filter(
-        (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("typet")),
+        (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
       );
       if (settings.hooks[hookType].length < before) {
         ok(`${hookType} hooks removed`);
@@ -105,6 +113,8 @@ if (existsSync(SKILL_DIR)) {
 // Keep state dir (pet data) — user might want it back
 if (existsSync(STATE_DIR)) {
   warn(`Pet data kept at ${STATE_DIR} — delete manually if not needed`);
+} else if (existsSync(LEGACY_STATE_DIR)) {
+  warn(`Pet data kept at ${LEGACY_STATE_DIR} — delete manually if not needed`);
 }
 
 console.log(`\n${GREEN}Done.${NC} Restart Claude Code to apply changes.\n`);

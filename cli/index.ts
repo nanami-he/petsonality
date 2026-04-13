@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
 /**
- * typet CLI
+ * petsonality CLI
  *
  * Usage:
- *   npx typet              Interactive install
- *   npx typet install      Install MCP + skill + hooks + statusline
- *   npx typet show         Show current pet
- *   npx typet uninstall    Remove all integrations
+ *   npx petsonality              Interactive install
+ *   npx petsonality install      Install MCP + skill + hooks + statusline
+ *   npx petsonality show         Show current pet
+ *   npx petsonality uninstall    Remove all integrations
  */
 
 const args = process.argv.slice(2);
@@ -31,7 +31,7 @@ switch (command) {
   case "--help":
   case "-h":
     console.log(`
-typet — MBTI-based terminal pet companion for Claude Code
+petsonality — MBTI-based terminal pet companion for Claude Code
 
 Commands:
   install           Set up MCP server, skill, hooks, and status line
@@ -45,6 +45,6 @@ Options:
 `);
     break;
   default:
-    console.error(`Unknown command: ${command}\nRun 'typet --help' for usage.`);
+    console.error(`Unknown command: ${command}\nRun 'petsonality --help' for usage.`);
     process.exit(1);
 }

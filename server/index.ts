@@ -97,7 +97,7 @@ function getInstructions(): string {
 }
 
 const server = new McpServer({
-  name: "typet",
+  name: "petsonality",
   version: "0.2.0",
 }, {
   instructions: getInstructions(),

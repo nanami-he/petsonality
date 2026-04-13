@@ -4,14 +4,16 @@
   "description": "Your type, your pet.",
   "type": "module",
   "bin": {
+    "petsonality": "./cli/index.ts",
     "typet": "./cli/index.ts"
   },
   "scripts": {
     "server": "bun run server/index.ts",
-    "install-typet": "bun run cli/install.ts",
+    "install-petsonality": "bun run cli/install.ts",
     "show": "bun run cli/show.ts",
     "doctor": "bun run cli/doctor.ts",
-    "backup": "bun run cli/backup.ts"
+    "backup": "bun run cli/backup.ts",
+    "build:art": "bun run scripts/build-art.ts"
   },
   "files": [
     "server/",
@@ -36,7 +38,7 @@
   "author": "nanami-he",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nanami-he/typet.git"
+    "url": "https://github.com/nanami-he/petsonality.git"
   },
-  "homepage": "https://github.com/nanami-he/typet"
+  "homepage": "https://github.com/nanami-he/petsonality"
 }

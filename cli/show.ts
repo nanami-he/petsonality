@@ -1,5 +1,5 @@
 /**
- * typet show — display current pet in terminal
+ * petsonality show — display current pet in terminal
  */
 
 import { ANIMAL_DISPLAY, ANIMAL_DESC } from "../server/engine.ts";
@@ -9,7 +9,7 @@ import { renderPetCard } from "../server/art.ts";
 const pet = loadPet();
 
 if (!pet?.adopted) {
-  console.log("No pet found. Run 'typet install' first, then use /pet to adopt.");
+  console.log("No pet found. Run 'petsonality install' first, then use /pet to adopt.");
   process.exit(1);
 }
 

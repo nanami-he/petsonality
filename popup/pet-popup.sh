@@ -12,7 +12,7 @@
 #
 # Env vars (set by popup-manager.sh via -e):
 #   CC_PANE    -- tmux pane ID for Claude Code (e.g. %0)
-#   BUDDY_DIR  -- ~/.mbti-pet
+#   BUDDY_DIR  -- ~/.petsonality
 #   BUDDY_SID  -- session ID (sanitized pane number, e.g. "0")
 # Args: $1 = SID (fallback for tmux < 3.4 without -e support)
 
@@ -24,7 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUDDY_SID="${BUDDY_SID:-${1:-default}}"
 
 # On tmux 3.2-3.3, env vars are passed via file (no -e flag support)
-ENV_FILE="${HOME}/.mbti-pet/popup-env.$BUDDY_SID"
+ENV_FILE="${HOME}/.petsonality/popup-env.$BUDDY_SID"
 if [ -z "${CC_PANE:-}" ] && [ -f "$ENV_FILE" ]; then
   . "$ENV_FILE"
 fi
@@ -80,7 +80,7 @@ exec perl -e '
 
     # F12 (\e[24~) = close popup and enter scroll mode
     if ($buf =~ /\e\[24~/) {
-      my $pet_dir = $ENV{BUDDY_DIR} || "$ENV{HOME}/.mbti-pet";
+      my $pet_dir = $ENV{BUDDY_DIR} || "$ENV{HOME}/.petsonality";
       my $sid = $ENV{BUDDY_SID} || "default";
       open(my $fh, ">", "$pet_dir/popup-scroll.$sid");
       close($fh) if $fh;

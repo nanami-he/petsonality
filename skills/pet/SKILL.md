@@ -2,12 +2,12 @@
 name: pet
 description: "Your MBTI pet companion. Use when the user types /pet or mentions their pet by name."
 argument-hint: "[show|pet|off|on|setup|rename <name>]"
-allowed-tools: mcp__typet__*
+allowed-tools: mcp__petsonality__*
 ---
 
 # Pet — Your MBTI Companion
 
-Handle the user's `/pet` command using the mbti-pet MCP tools.
+Handle the user's `/pet` command using the petsonality MCP tools.
 
 ## Command Routing
 

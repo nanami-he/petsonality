@@ -4,7 +4,7 @@
 # Claude writes: <!-- pet: *歪头* 那个 error handler 少了 finally -->
 # This hook extracts it and updates the status line bubble.
 
-STATE_DIR="$HOME/.mbti-pet"
+STATE_DIR="$HOME/.petsonality"
 umask 077  # ensure files created by this hook are 0600
 SID="${TMUX_PANE#%}"
 SID="${SID:-default}"
