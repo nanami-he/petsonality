@@ -165,10 +165,10 @@ export function applyPatch(statusLineScript: string): { success: boolean; messag
 
   let patched = content;
 
-  // Injection 1: Add statusLine container + code between footer and editor
+  // Injection 1: Add statusLine container + code after editor (below input)
   patched = patched.replace(
-    "root.addChild(footer);\n\troot.addChild(editor);",
-    `root.addChild(footer);\n${patchCode}\n\troot.addChild(editor);`,
+    "root.addChild(editor);",
+    `root.addChild(editor);\n${patchCode}`,
   );
 
   // Injection 2: Start timer after tui.setFocus(editor)
