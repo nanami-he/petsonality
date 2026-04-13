@@ -75,11 +75,14 @@ export const ANIMAL_ART: Record<AnimalId, string[][]> = {
     ["            ", "      __/\\  ", "    __/- )  ", "   O  ______", "   U/     \\-"],  // liedown B (blink)
     ["            ", "      __/\\  ", "    __/@ )  ", "   O  ______", "   U/     \\~"],  // liedown C (tail)
   ],
-  // 8. ENFP dolphin — streamlined arc, dorsal fin
+  // 8. ENFP dolphin — side profile, ʘ eye, <( mouth, ^ dorsal fin, wave actions
   dolphin: [
-    ["            ", "       ,    ", "  _.-~o)    ", " /    /~~   ", " \\___/      "],
-    ["            ", "       ,    ", "  _.-~o)    ", " /    /~~   ", " \\___/~     "],
-    ["            ", "       ,    ", "  _.-~-)    ", " /    /~~   ", " \\___/      "],
+    ["            ", "  _.-~ʘ)    ", " <(   ^ /   ", "  \\_.  /    ", "            "],
+    ["            ", "  _.-~ʘ)    ", " <(   ^ /   ", "  \\_.  /    ", "            "],
+    ["            ", "  _.-~-)    ", " <(   ^ /   ", "  \\_.  /    ", "            "],
+    ["            ", "     _.-~ʘ) ", "    <(   ^ /", "  \\_.  /    ", "            "],  // swim right
+    ["            ", "  _.-~ʘ)    ", " <(   ^ /   ", "  \\_.  /    ", "     \\      "],  // tail splash
+    ["            ", "  _.-~ʘ)    ", " <(   ^ /   ", "  \\_.  /    ", "            "],  // back to idle
   ],
   // 9. ISTJ beaver — n-ears, wide face, buck teeth >TT<, round bottom
   beaver: [

@@ -31,23 +31,61 @@ char_h = int(FONT_SIZE * 1.5)  # line height
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-def render_frame(lines, color, width_chars=12, height_lines=5):
-    """Render a single ASCII frame to a PIL Image."""
+def build_accent_map(accents):
+    """Build a map: (art_line_index, char_pattern) → accent_rgb.
+    art lines are 0-indexed from the SECOND line (line 1-4 in the 5-line frame,
+    since line 0 is the hat slot which is always empty)."""
+    accent_map = {}  # line_index → [(pattern, rgb)]
+    for acc in accents:
+        rgb = tuple(acc["rgb"])
+        for rule in acc["rules"]:
+            line_idx = rule["line"]  # 0=L1(art line 2), 1=L2, 2=L3, 3=L4
+            actual_line = line_idx + 1  # offset by 1 since frame[0] is hat slot
+            if actual_line not in accent_map:
+                accent_map[actual_line] = []
+            for pat_pair in rule["patterns"]:
+                pattern = pat_pair[0]  # the raw text to find
+                accent_map[actual_line].append((pattern, rgb))
+    return accent_map
+
+
+def render_frame(lines, color, width_chars=12, height_lines=5, accents=None):
+    """Render a single ASCII frame to a PIL Image with accent colors."""
     img_w = width_chars * char_w + PADDING * 2
     img_h = height_lines * char_h + PADDING * 2
 
     img = Image.new("RGB", (img_w, img_h), BG_COLOR)
     draw = ImageDraw.Draw(img)
 
-    r, g, b = color
-    text_color = (r, g, b)
+    body_color = tuple(color)
+    accent_map = build_accent_map(accents) if accents else {}
 
     for row, line in enumerate(lines):
         if row >= height_lines:
             break
-        x = PADDING
         y = PADDING + row * char_h
-        draw.text((x, y), line, font=font, fill=text_color)
+
+        # Build per-character color array
+        char_colors = [body_color] * len(line)
+
+        if row in accent_map:
+            for pattern, rgb in accent_map[row]:
+                # Find all occurrences of pattern in line
+                start = 0
+                while True:
+                    idx = line.find(pattern, start)
+                    if idx == -1:
+                        break
+                    for i in range(idx, idx + len(pattern)):
+                        char_colors[i] = rgb
+                    start = idx + 1
+
+        # Draw character by character
+        x = PADDING
+        for i, ch in enumerate(line):
+            if ch != " ":
+                draw.text((x, y), ch, font=font, fill=char_colors[i])
+            x += char_w
 
     return img
 
@@ -56,13 +94,11 @@ def make_gif(animal, info):
     """Generate a looping GIF for one animal."""
     frames_data = info["frames"]
     color = tuple(info["color"])
+    accents = info.get("accents", [])
 
-    # Build animation sequence:
-    # idle frames loop, then play action frames if any, then back to idle
-    # Simple approach: just cycle through all frames
     images = []
     for frame_lines in frames_data:
-        img = render_frame(frame_lines, color)
+        img = render_frame(frame_lines, color, accents=accents)
         images.append(img)
 
     if not images:
