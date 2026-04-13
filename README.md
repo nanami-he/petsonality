@@ -65,6 +65,7 @@ Restart your MCP client, then type `/pet` to adopt your companion.
 - [x] Three-state OpenClaw detection + `doctor` diagnostic command
 - [x] 302 tests / 2645 assertions
 - [ ] `npx petsonality` one-command install (remove bun/python/jq deps)
+- [ ] Multi-language support (English first, then others)
 - [ ] README with terminal GIF demo
 - [ ] Growth system (interaction count -> level/mood evolution)
 - [ ] Hat/skin DLC (unlockable accessories)

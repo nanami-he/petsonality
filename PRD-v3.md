@@ -78,7 +78,13 @@
 ### P4: statusline action 通用化
 - 提取通用 action runner（减少 statusline 重复代码）
 
-### P5: 说话系统 v2 — hint 架构
+### P5: 多语言支持
+- 当前所有反应/签名行/性格描述/prompt 都是中文
+- 支持英文（优先）和其他语言
+- 需要：反应池多语言、prompt 多语言、voice.ts 适配
+- 语言检测：跟随用户系统语言 or MCP client 语言设置
+
+### P6: 说话系统 v2 — hint 架构
 - Hook 只写 event hint，模型才是唯一说话者
 - 固定池降级为纯兜底
 - 统一 reaction budget（talkLevel 控制全局频率）
