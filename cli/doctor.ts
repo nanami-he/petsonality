@@ -167,6 +167,23 @@ if (existsSync(skillPath)) {
   err(`Skill missing: ${skillPath}`);
 }
 
+// ─── OpenClaw status ────────────────────────────────────────────────────────
+
+section("OpenClaw");
+try {
+  const { diagnosePatch } = await import("./openclaw-patch.ts");
+  const diag = diagnosePatch();
+  switch (diag.status) {
+    case "not-installed": row("OpenClaw", "not found"); break;
+    case "native": ok(`Native statusLine support (${diag.file})`); break;
+    case "patched": ok(`Patch active (${diag.file})`); break;
+    case "stale": warn(`Patch lost — OpenClaw updated. Run 'petsonality install' to re-apply`); break;
+    case "unpatched": info(`Found but not patched (${diag.file}). Run 'petsonality install' to enable`); break;
+  }
+} catch {
+  row("OpenClaw", "check skipped");
+}
+
 // ─── Live status line test ──────────────────────────────────────────────────
 
 section("Live status line output");

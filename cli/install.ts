@@ -202,6 +202,47 @@ function ensurePermissions(settings: Record<string, any>) {
   }
 }
 
+// ─── Step 6: OpenClaw patch ────────────────────────────────────────────────
+
+async function installOpenClaw() {
+  const { findOpenClawTuiFile, hasNativeStatusLine, applyPatch } = await import("./openclaw-patch.ts");
+  const tuiFile = findOpenClawTuiFile();
+  if (!tuiFile) return;
+
+  info("OpenClaw detected");
+
+  if (hasNativeStatusLine(tuiFile)) {
+    ok("OpenClaw has native statusLine support — writing config");
+    // Write to openclaw config
+    const ocConfigPath = join(homedir(), ".openclaw", "openclaw.json");
+    try {
+      let ocConfig: Record<string, any> = {};
+      try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
+      if (!ocConfig.ui) ocConfig.ui = {};
+      ocConfig.ui.statusLine = {
+        command: join(PROJECT_ROOT, "statusline", "pet-status.sh"),
+        refreshInterval: 1000,
+      };
+      writeFileSync(ocConfigPath, JSON.stringify(ocConfig, null, 2));
+      ok("OpenClaw statusLine configured");
+    } catch {
+      warn("Could not write OpenClaw config");
+    }
+    return;
+  }
+
+  // No native support — apply temporary patch
+  info("Applying temporary statusLine patch...");
+  warn("This is a compatibility patch until OpenClaw merges statusLine support");
+  const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+  const result = applyPatch(scriptPath);
+  if (result.success) {
+    ok(result.message);
+  } else {
+    warn(result.message);
+  }
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────────
 
 banner();
@@ -222,6 +263,9 @@ installStatusLine(settings);
 installHooks(settings);
 ensurePermissions(settings);
 saveSettings(settings);
+
+// OpenClaw support (separate from Claude Code)
+await installOpenClaw();
 
 console.log(`
 ${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}

@@ -110,6 +110,15 @@ if (existsSync(SKILL_DIR)) {
   warn("Skill not found (already removed)");
 }
 
+// Remove OpenClaw patch if present
+try {
+  const { removePatch } = await import("./openclaw-patch.ts");
+  const result = removePatch();
+  if (result.success && result.message !== "No patch to remove") {
+    ok(result.message);
+  }
+} catch { /* openclaw not installed */ }
+
 // Keep state dir (pet data) — user might want it back
 if (existsSync(STATE_DIR)) {
   warn(`Pet data kept at ${STATE_DIR} — delete manually if not needed`);
