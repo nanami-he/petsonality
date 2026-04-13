@@ -1,107 +1,153 @@
-# Petsonality
+<p align="center">
+  <strong>petsonality</strong><br>
+  <em>Your type, your pet.</em>
+</p>
 
-> Your type, your pet.
+<p align="center">
+  <a href="https://github.com/nanami-he/petsonality"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
+  <a href="https://github.com/nanami-he/petsonality/stargazers"><img src="https://img.shields.io/github/stars/nanami-he/petsonality?style=flat" alt="stars"></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-powered-orange" alt="MCP"></a>
+</p>
 
-A personality-based terminal pet companion. Each pet has a unique MBTI personality, speaks in character, and lives in your terminal status line.
+---
 
-## Features
+A tiny ASCII pet that lives in the corner of your terminal while you code. It watches what you do, reacts to your errors, celebrates when tests pass, and speaks with a personality shaped by MBTI — all in 5 lines of art.
 
-- **16 MBTI Animals** — Each with distinct personality, voice, and behavior
-- **ASCII Art** — Animated pets with blinking, head movement, paw gestures
-- **Speech Bubbles** — Pets react to your code with in-character comments
-- **MBTI Matching** — Mirror (like you) and Complement (balances you) recommendations
-- **MCP Server** — Works with any MCP-compatible client
+```
+                  ╭──────────────────╮
+      __/\        │ *叹气* 喝水了没  │
+    __/@ )        ╰──────────────────╯
+   O     \          labrador · ENFJ
+    U \___\-        "温暖教练"
+```
+
+It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and says something like "*看了你一眼* ……这段逻辑有点怪" — and somehow you feel less alone.
+
+## 16 Animals, 16 Personalities
+
+```
+  NT Analysts              NF Diplomats             SJ Sentinels             SP Explorers
+                                                                            
+   <(✦)         /\  /\      _Λ/ᐠ       }|/  \|{    c  .-.  C       ,       /\_/\      ,__    
+    (\ \_      ( -.-  )    (✦   |__  )   (\__/)    ( ʘ  .  ʘ )  _.-~o)     ( •.• )   >(o  )  
+     \\//       > ^ <       \\  /   -    (o  o)    (   ww    )  /    /~~      > ^ <     \\__/  
+   --" "---      /_\~~~     |  |  ||      (  )       d|   |b    \___/       (_____)~     |||   
+                                                                                               
+   Raven         Fox         Wolf         Deer        Bear       Dolphin      Cat       Parrot 
+   INTJ          ENTP        INFJ         INFP        ENTJ       ENFP         ISTP      ESFP  
+```
+
+Every animal speaks differently. The Fox asks "你确定？" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "改。" and waits.
+
+<details>
+<summary><strong>All 16 animals</strong></summary>
+
+| MBTI | Animal | Archetype | How It Talks |
+|------|--------|-----------|------------|
+| INTJ | Raven | Cold Strategist | Quiet. Speaks like writing prophecy |
+| INTP | Owl | Night Scholar | Asks questions you didn't think to ask |
+| ENTJ | Bear | Iron Captain | Commands only. No questions |
+| ENTP | Fox | Trickster Advisor | Challenges everything with a grin |
+| INFJ | Wolf | Silent Ally | Says one sentence that cuts deep |
+| INFP | Deer | Soft Poet | Talks about code like it's weather |
+| ENFJ | Labrador | Warm Coach | Sighs first, then asks if you drank water |
+| ENFP | Dolphin | Spark of Ideas | Can't stop suggesting new approaches |
+| ISTJ | Beaver | Project Manager | "Wrong order." "Fix the structure first." |
+| ISFJ | Elephant | Memory Keeper | "You solved this before. Remember?" |
+| ESTJ | Lion | Throne Inspector | Expects results. Not excuses |
+| ESFJ | Golden Retriever | Enthusiastic Support | Tail spin when you fix anything |
+| ISTP | Cat | Cold Observer | 90% actions. Occasionally one word |
+| ISFP | Panda | Slow Artist | Frowns at ugly indentation |
+| ESTP | Cheetah | Sprint Lead | "Don't think. Run it." |
+| ESFP | Parrot | Loud Echo | Repeats your words back, but with commentary |
+
+</details>
 
 ## Quick Start
 
-```bash
-# Clone and install
-git clone https://github.com/nanami-he/petsonality.git
-cd petsonality
-bun install
+Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.com/openclaw/openclaw).
 
-# Register with your MCP client
+```bash
+# 1. Clone
+git clone https://github.com/nanami-he/petsonality.git
+cd petsonality && bun install
+
+# 2. Build (compiles server + hooks for Node.js)
+bun run build
+
+# 3. Register with your AI coding assistant
 bun run install-petsonality
 ```
 
-Restart your MCP client, then type `/pet` to adopt your companion.
+Restart Claude Code (or OpenClaw), then type **`/pet`** in the chat. Your pet will guide you through adoption.
+
+## How It Speaks
+
+Pets don't just react to errors. They have a rhythm:
+
+| What happens | Pet reacts? |
+|-------------|-------------|
+| Your code throws an error | Always |
+| Tests pass, git commit succeeds | Sometimes (12–30%) |
+| Normal file edits, searches | Occasionally (3–15%) |
+| Nothing happened for a while | Guaranteed (won't stay silent forever) |
+
+Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 minutes. Each animal has **420 unique reactions** across 7 event types, validated against personality constraints.
 
 ## Commands
 
-| Command | Action |
-|---------|--------|
+| Command | What it does |
+|---------|-------------|
 | `/pet` | Show your pet or start adoption |
-| `/pet pet` | Interact with your pet |
-| `/pet setup` | Start adoption flow |
-| `/pet browse` | Browse all 16 pets |
-| `/pet off` | Mute reactions |
-| `/pet on` | Unmute reactions |
+| `/pet pet` | Give your pet attention |
+| `/pet setup` | Restart the adoption flow |
+| `/pet browse` | See all 16 animals |
+| `/pet off` / `/pet on` | Mute / unmute reactions |
 | `/pet rename <name>` | Rename your pet |
-
-## The 16 Animals
-
-| Group | Animals |
-|-------|---------|
-| NT Analysts | Raven (INTJ), Owl (INTP), Bear (ENTJ), Fox (ENTP) |
-| NF Diplomats | Wolf (INFJ), Deer (INFP), Labrador (ENFJ), Dolphin (ENFP) |
-| SJ Sentinels | Beaver (ISTJ), Elephant (ISFJ), Lion (ESTJ), Golden Retriever (ESFJ) |
-| SP Explorers | Cat (ISTP), Panda (ISFP), Cheetah (ESTP), Parrot (ESFP) |
-
-## How It Works
-
-1. **MCP Server** — Runs as stdio transport, spawned automatically by the client
-2. **Status Line** — Animated pet with speech bubble in your terminal
-3. **Companion Rhythm** — Pets speak on errors, milestones (test pass, commit), and daily events
-4. **Multi-Host** — Works with Claude Code (hooks) and OpenClaw (pet_react MCP tool)
 
 ## Roadmap
 
-- [x] 16 MBTI animals with full personality profiles (113 animation frames)
-- [x] Animated status line with speech bubbles (Claude Code + OpenClaw)
-- [x] Companion rhythm: daily triggers, milestone reactions, silent streak guardrail
-- [x] Animal-specific reaction pool (420 reactions from 16 animals x 7 event types)
-- [x] Voice validation: forbidden words, length constraints, style enforcement
-- [x] OpenClaw support: statusLine patch + PR [#65886](https://github.com/openclaw/openclaw/pull/65886)
-- [x] Three-state OpenClaw detection + `doctor` diagnostic command
-- [x] 302 tests / 2645 assertions
-- [ ] `npx petsonality` one-command install (remove bun/python/jq deps)
-- [ ] Multi-language support (English first, then others)
-- [ ] README with terminal GIF demo
-- [ ] Growth system (interaction count -> level/mood evolution)
-- [ ] Hat/skin DLC (unlockable accessories)
-- [ ] Multi-pet collection + switching
-- [ ] Vibe-pick: MBTI quiz for users who don't know their type
+- [x] 16 MBTI animals with full personality profiles
+- [x] Animated status line with speech bubbles
+- [x] Companion rhythm (daily triggers, milestones, silent streak guardrail)
+- [x] 420 animal-specific reactions
+- [x] Multi-host support (Claude Code + OpenClaw)
+- [x] Node.js powered (no python/jq dependency for hooks)
+- [ ] `npx petsonality` one-command install
+- [ ] Multi-language support
+- [ ] Growth system (level up through interaction)
+- [ ] Hat / skin DLC
+- [ ] Multi-pet collection
+- [ ] Vibe-pick: MBTI quiz for new users
 
-## Requirements
-
-- [Bun](https://bun.sh) runtime
-- [jq](https://jqlang.github.io/jq/) for JSON processing
-- Any MCP-compatible client (Claude Code, OpenClaw)
-
-## Architecture
+<details>
+<summary><strong>Architecture</strong></summary>
 
 ```
 ~/.petsonality/
-├── pet.json          — Pet state (adopted, mood, interactions)
-├── status.json       — Compact state for status line
-├── reaction.*.json   — Session-specific speech bubbles
-└── config.json       — User preferences
+├── pet.json              Your pet's state
+├── status.json           What the status line reads
+├── reaction.*.json       Current speech bubble
+└── reactions-pool.json   420 pre-built reactions
 
 petsonality/
-├── server/           — MCP server (TypeScript)
-│   ├── index.ts      — Tools: setup, adopt, show, pet, react
-│   ├── engine.ts     — MBTI mappings, types, colors
-│   ├── art.ts        — ASCII art (16 animals x 3 frames)
-│   ├── pets.ts       — Full personality profiles
-│   ├── voice.ts      — Speech constraints + validation
-│   ├── reactions.ts  — Event-based reaction templates
-│   ├── state.ts      — Persistence layer
-│   └── utils.ts      — CJK display width helpers
-├── statusline/       — Terminal status line (bash)
-├── hooks/            — Stop + PostToolUse hooks
-├── skills/           — Skill routing
-└── cli/              — Install, doctor, show, backup
+├── dist/                 Built JS (Node.js runtime)
+├── server/               MCP server (TypeScript)
+├── hooks/                PostToolUse + Stop hooks
+├── statusline/           Terminal animation (bash)
+├── skills/               /pet command routing
+└── cli/                  Install, doctor, npx entry
 ```
+
+</details>
+
+## Requirements
+
+- [Node.js](https://nodejs.org/) 20+ (runtime)
+- [Bun](https://bun.sh) (build only)
+- [jq](https://jqlang.github.io/jq/) (optional — status line bubbles)
+- Claude Code or OpenClaw
 
 ## License
 
