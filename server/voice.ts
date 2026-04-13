@@ -25,6 +25,10 @@ export function validateVoice(text: string, pet: PetProfile): boolean {
 
   // Strip action descriptions (*xxx*) — they don't count toward length
   const speechOnly = text.replace(/\*[^*]+\*/g, "").trim();
+
+  // Pure-action lines (no speech text) are always valid
+  if (speechOnly.length === 0) return true;
+
   // Strip punctuation for length count
   const cleanText = speechOnly.replace(/[（）()「」""。，！？、：；…—]/g, "").trim();
 
