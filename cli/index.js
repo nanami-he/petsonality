@@ -9,23 +9,19 @@
  *   npx petsonality uninstall → remove
  */
 
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = resolve(__dirname, "..");
+const DIST_CLI = resolve(__dirname, "..", "dist", "cli");
 
 const command = process.argv[2] || "install";
 
-// For now, delegate to bun for TS files (dev mode).
-// After full build, these will be dist/*.js files.
-function run(script) {
+function runDist(name) {
+  const script = resolve(DIST_CLI, `${name}.js`);
   try {
-    execSync(`bun run ${script}`, {
-      cwd: PROJECT_ROOT,
-      stdio: "inherit",
-    });
+    execFileSync(process.execPath, [script], { stdio: "inherit" });
   } catch (e) {
     process.exit(e.status || 1);
   }
@@ -33,10 +29,10 @@ function run(script) {
 
 switch (command) {
   case "install":
-    run("cli/install.ts");
+    runDist("install");
     break;
   case "doctor":
-    run("cli/doctor.ts");
+    runDist("doctor");
     break;
   case "uninstall":
     console.log("Uninstall not yet implemented. Remove manually:");

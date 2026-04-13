@@ -15,7 +15,8 @@
     "build:art": "bun run scripts/build-art.ts",
     "build:reactions": "bun run scripts/build-reactions.ts",
     "build:server": "bun build server/index.ts --target node --outfile dist/server.js",
-    "build": "bun run build:server && bun run build:art && bun run build:reactions"
+    "build:cli": "bun build cli/install.ts --target node --outfile dist/cli/install.js && bun build cli/doctor.ts --target node --outfile dist/cli/doctor.js",
+    "build": "bun run build:server && bun run build:cli && bun run build:art && bun run build:reactions"
   },
   "files": [
     "dist/",
