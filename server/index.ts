@@ -12,7 +12,7 @@ import { z } from "zod";
 
 import {
   MBTI_TYPES, ANIMALS,
-  MBTI_ANIMAL_MAP, RECOMMENDATION_MAP, ANIMAL_DISPLAY, ANIMAL_DESC,
+  RECOMMENDATION_MAP, ANIMAL_DISPLAY, ANIMAL_DESC,
   type MbtiType, type AnimalId, type Pet,
 } from "./engine.ts";
 import {
@@ -239,7 +239,7 @@ server.tool(
   {
     mbti: z.enum(MBTI_TYPES).describe("Your MBTI type"),
     animal: z.enum(ANIMALS).describe("Animal ID to adopt"),
-    name: z.string().min(1).max(14).optional().describe("Custom name for your pet"),
+    name: z.string().min(1).max(14).regex(/^[^"\\\/\n\r\t{}]+$/, "No special characters").optional().describe("Custom name for your pet"),
   },
   async ({ mbti, animal, name }) => {
     const display = ANIMAL_DISPLAY[animal];
@@ -405,7 +405,7 @@ server.tool(
   "pet_rename",
   "Rename your pet companion",
   {
-    name: z.string().min(1).max(14).describe("New name (1-14 characters)"),
+    name: z.string().min(1).max(14).regex(/^[^"\\\/\n\r\t{}]+$/, "No special JSON/path characters").describe("New name (1-14 characters)"),
   },
   async ({ name }) => {
     const pet = loadPet();

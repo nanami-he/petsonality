@@ -76,10 +76,11 @@
 - 根据反馈调整
 - 合并后 installer 切换到 native config 模式，停用 patch
 
-### P3: README + GIF
-- 录制终端 GIF（展示宠物动画 + 气泡说话）
-- README 重构：先展示体验，再讲技术
-- 建议结构：GIF → 一句话 → 安装 → 宠物列表 → 技术细节（折叠）
+### P3: README + GIF `[部分完成]`
+- ✅ README 重构完成（情感开头 + 渐进展开 + 技术折叠）
+- ✅ 内阁总理审查通过
+- **待做：16 只动物动画 GIF** — 每只单独录制，上传到 GitHub，嵌入 README
+- **待做：Hero GIF** — 完整终端演示（领养流程 + 宠物说话）
 
 ### P4: statusline action 通用化
 - 提取通用 action runner（减少 statusline 重复代码）
