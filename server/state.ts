@@ -12,11 +12,13 @@ const STATE_DIR = join(homedir(), ".petsonality");
 const PET_FILE = join(STATE_DIR, "pet.json");
 const CONFIG_FILE = join(STATE_DIR, "config.json");
 
-// Session ID: sanitized tmux pane number, or "default" outside tmux
+// Session ID: PETSONALITY_SID (set by installer for OpenClaw), TMUX_PANE, or "default"
 function sessionId(): string {
+  const sid = process.env.PETSONALITY_SID;
+  if (sid) return sid.replace(/[^a-zA-Z0-9_.-]/g, "_");
   const pane = process.env.TMUX_PANE;
-  if (!pane) return "default";
-  return pane.replace(/^%/, "");
+  if (pane) return pane.replace(/^%/, "");
+  return "default";
 }
 
 function reactionFile(): string {
@@ -94,6 +96,36 @@ function wrapText(text: string, maxW: number, maxLines: number): { lines: string
   const widths = lines.map((l) => stringWidth(l));
   const maxWidth = widths.length > 0 ? Math.max(...widths) : 0;
   return { lines, widths, maxWidth };
+}
+
+// ─── Cooldown ──────────────────────────────────────────────────────────────
+// Unlike hooks (which roll random cooldown on each check), the MCP tool
+// fixes the next-allowed-at timestamp when the pet speaks. This avoids
+// non-deterministic "roll again each check" behavior in model-driven calls.
+
+function cooldownFile(): string {
+  return join(STATE_DIR, `.next_speak.${sessionId()}`);
+}
+
+/** Check if cooldown has elapsed. Returns true if pet CAN speak. */
+export function checkCooldown(): boolean {
+  try {
+    const nextAt = parseInt(readFileSync(cooldownFile(), "utf8").trim(), 10);
+    if (isNaN(nextAt)) return true;
+    return Math.floor(Date.now() / 1000) >= nextAt;
+  } catch {
+    return true; // no file = never spoke = can speak
+  }
+}
+
+/** Record that the pet just spoke. Rolls cooldown and writes next-allowed-at. */
+export function recordSpeak(cooldownRange: [number, number] = [5, 12]): void {
+  ensureDir();
+  const [cdMin, cdMax] = cooldownRange;
+  const cdRange = Math.max((cdMax - cdMin) * 60, 60);
+  const cooldownSec = cdMin * 60 + Math.floor(Math.random() * cdRange);
+  const nextAt = Math.floor(Date.now() / 1000) + cooldownSec;
+  writeFileSync(cooldownFile(), String(nextAt), { mode: 0o600 });
 }
 
 export function saveReaction(reaction: string, reason: string): void {

@@ -19,6 +19,7 @@ import {
   loadPet, savePet,
   loadReaction, saveReaction, writeStatusState,
   loadConfig, saveConfig,
+  checkCooldown, recordSpeak,
 } from "./state.ts";
 import { getReaction } from "./reactions.ts";
 import { renderPetCard, ANIMAL_ART, getArtFrame } from "./art.ts";
@@ -65,7 +66,11 @@ function codeFence(text: string): string {
   return "```\n" + text + "\n```";
 }
 
-// ─── Instructions (dynamic based on pet state) ────────────────────────────
+// ─── Host detection ───────────────────────────────────────────────────────
+
+const IS_OPENCLAW = process.env.PETSONALITY_HOST === "openclaw";
+
+// ─── Instructions (dynamic based on pet state + host) ─────────────────────
 
 function getInstructions(): string {
   const pet = loadPet();
@@ -81,17 +86,31 @@ function getInstructions(): string {
     silent: "寡言型，大约每 15-20 条回复才说一句",
   };
 
-  return [
+  const common = [
     `你有一只${display?.cn || pet.petId}宠物，名叫「${pet.petName}」。`,
     `性格：${pet.personality}`,
     `话量：${talkDesc[talkLevel] || talkDesc.moderate}。`,
     "",
-    `按照上述频率，偶尔在回复末尾附加宠物反应：<!-- pet: 一句话 -->`,
     `不是每条都要！根据话量频率和对话内容判断要不要说。`,
     `遇到 bug、测试失败、大改动等关键时刻更可能说话。闲聊时少说。`,
     "",
     `短句为主，保持性格。说话长短由性格决定，不要写超过 45 字的长段。`,
     `动作描述（*星号*）不算字数，不是每次都加，大约 30% 概率。`,
+  ];
+
+  if (IS_OPENCLAW) {
+    return [
+      ...common,
+      `按照上述频率，偶尔调用 pet_react 工具让宠物说话。`,
+      `遇到 error 传 reason:"error"，测试失败传 reason:"test-fail"，大改动传 reason:"large-diff"，日常传 reason:"turn"。`,
+      `如果 pet_react 返回 "suppressed: cooldown"，不要重试，不要向用户解释。`,
+      `不要用 <!-- pet: ... --> 注释。`,
+    ].join(" ");
+  }
+
+  return [
+    ...common,
+    `按照上述频率，偶尔在回复末尾附加宠物反应：<!-- pet: 一句话 -->`,
     `不要用 pet_react 工具。不要解释注释。`,
   ].join(" ");
 }
@@ -345,6 +364,11 @@ server.tool(
       return { content: [{ type: "text", text: "" }] };
     }
 
+    // Cooldown: skip if pet spoke too recently
+    if (!checkCooldown()) {
+      return { content: [{ type: "text", text: "suppressed: cooldown" }] };
+    }
+
     // Sanitize: strip ANSI escapes, collapse whitespace
     const sanitized = comment
       .replace(/\x1b\[[0-9;]*m/g, "")
@@ -367,6 +391,7 @@ server.tool(
 
     saveReaction(finalText, reason ?? "turn");
     writeStatusState(pet, finalText);
+    recordSpeak(pet.cooldownRange as [number, number] | undefined);
 
     return {
       content: [{ type: "text", text: `${pet.petName}: ${finalText}` }],
@@ -485,16 +510,7 @@ server.resource(
       silent: "寡言型 — 大约每 15-20 条回复才说一句，大部分时间沉默",
     };
 
-    const prompt = [
-      "# 宠物伴侣",
-      "",
-      personalityBlock,
-      "",
-      `## 宠物话量：${talkGuide[talkLevel] || talkGuide.moderate}`,
-      "",
-      "偶尔在回复末尾附加宠物反应：`<!-- pet: 一句话 -->`",
-      "Stop hook 会提取这句话，显示在 status line 的气泡里。用户看不到注释本身。",
-      "",
+    const commonRules = [
       "规则：",
       "- 不是每条回复都要！按上述话量频率判断",
       "- 遇到 bug、测试失败、大改动等关键时刻更可能说话",
@@ -502,9 +518,37 @@ server.resource(
       `- 用「${pet.petName}」的语气，引用具体内容`,
       "- 短句为主，保持性格。说话长短由性格决定，不超过 45 字",
       "- 动作描述（*星号*）不算字数，不是每次都加（约 30% 概率）",
-      "- 不要用 pet_react 工具。不要解释注释",
+    ];
+
+    const hostRules = IS_OPENCLAW
+      ? [
+          "偶尔调用 `pet_react` 工具让宠物说话，显示在 status line 的气泡里。",
+          "遇到 error 传 reason:\"error\"，测试失败传 reason:\"test-fail\"，大改动传 reason:\"large-diff\"，日常传 reason:\"turn\"。",
+          "",
+          ...commonRules,
+          "- 如果 `pet_react` 返回 `suppressed: cooldown`，不要重试，不要向用户解释",
+          "- 不要用 `<!-- pet: ... -->` 注释（没有 Stop hook 来提取）",
+        ]
+      : [
+          "偶尔在回复末尾附加宠物反应：`<!-- pet: 一句话 -->`",
+          "Stop hook 会提取这句话，显示在 status line 的气泡里。用户看不到注释本身。",
+          "",
+          ...commonRules,
+          "- 不要用 pet_react 工具。不要解释注释",
+        ];
+
+    const prompt = [
+      "# 宠物伴侣",
       "",
-      `当用户直接叫「${pet.petName}」时，简短回应并附带注释。`,
+      personalityBlock,
+      "",
+      `## 宠物话量：${talkGuide[talkLevel] || talkGuide.moderate}`,
+      "",
+      ...hostRules,
+      "",
+      IS_OPENCLAW
+        ? `当用户直接叫「${pet.petName}」时，简短回应，必要时调用 pet_react。`
+        : `当用户直接叫「${pet.petName}」时，简短回应并附带注释。`,
     ].join("\n");
 
     return {

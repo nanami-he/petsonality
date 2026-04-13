@@ -224,8 +224,11 @@ async function installOpenClaw() {
     command: bunPath,
     args: [serverPath],
     cwd: PROJECT_ROOT,
+    env: {
+      PETSONALITY_HOST: "openclaw",
+    },
   };
-  ok("MCP server registered in OpenClaw config");
+  ok("MCP server registered in OpenClaw config (with host env)");
 
   // StatusLine: native support or temporary patch
   if (hasNativeStatusLine(tuiFile)) {
