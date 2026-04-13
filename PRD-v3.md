@@ -57,18 +57,24 @@
 
 ---
 
+### 6. npx 安装流 ✅（P2, 2026-04-13）
+- hooks JS 化: react.js + pet-comment.js（去掉 jq/python/wrap.py）
+- bun API 替换: import.meta.dir/main → node 兼容
+- server 编译: dist/server.js (1MB bundle, 231 modules)
+- CLI 编译: dist/cli/install.js + doctor.js (22KB + 21KB)
+- cli/index.js npx 入口: install / doctor / uninstall / --help
+- MCP 注册改用 node（Claude Code + OpenClaw）
+- 旧 .sh hooks 移入 hooks/legacy/
+- 参谋长复查通过
+
+---
+
 ## 待办
 
 ### P1: OpenClaw PR 跟进
 - 等 openclaw/openclaw#65886 维护者审核
 - 根据反馈调整
 - 合并后 installer 切换到 native config 模式，停用 patch
-
-### P2: npx 安装流
-- `npx petsonality` 一键安装
-- 开发用 bun，发布编译成纯 JS（`bun build` 单文件）
-- 去掉 wrap.py（Python 依赖，用 TS 替代）
-- 目标：安装只需 node
 
 ### P3: README + GIF
 - 录制终端 GIF（展示宠物动画 + 气泡说话）
