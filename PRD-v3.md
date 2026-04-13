@@ -73,6 +73,25 @@
 
 ---
 
+## 维护检查流程
+
+### art 变更流程（必须遵守）
+1. **只改 `server/art.ts`** — 唯一真源
+2. 运行 `bun run build:art` — 自动生成 statusline shell
+3. 运行 `bun test` — 验证所有帧 5×12 网格
+4. **禁止直接改 statusline shell 的 GENERATED 区块**
+
+### 每次发版前检查
+- `bun test` 全部通过
+- `bun run build:art` 后 `git diff` 为零（shell 和 art.ts 同步）
+- `bash -n statusline/pet-status.sh` 语法检查
+- action 帧数 = art.ts 帧数（action 块引用的 FRAME 号不超过 art.ts 帧数）
+
+### 教训记录
+- **2026-04-13**: build:art 覆盖了 shell 里重新设计的早期动物 art（shell 是真源但 art.ts 没同步）。根因：art.ts 和 shell 双份维护时期的遗留。修复：从旧 shell 提取所有帧录入 art.ts，总帧数 92→113
+
+---
+
 ## Phase 2 — 体验深化
 
 ### 4. 成长系统
