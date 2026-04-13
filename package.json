@@ -4,8 +4,7 @@
   "description": "Your type, your pet.",
   "type": "module",
   "bin": {
-    "petsonality": "./cli/index.ts",
-    "typet": "./cli/index.ts"
+    "petsonality": "./cli/index.js"
   },
   "scripts": {
     "server": "bun run server/index.ts",
@@ -14,15 +13,21 @@
     "doctor": "bun run cli/doctor.ts",
     "backup": "bun run cli/backup.ts",
     "build:art": "bun run scripts/build-art.ts",
-    "build:reactions": "bun run scripts/build-reactions.ts"
+    "build:reactions": "bun run scripts/build-reactions.ts",
+    "build:server": "bun build server/index.ts --target node --outfile dist/server.js",
+    "build": "bun run build:server && bun run build:art && bun run build:reactions"
   },
   "files": [
+    "dist/",
+    "cli/index.js",
+    "cli/install.ts",
+    "cli/doctor.ts",
+    "cli/openclaw-patch.ts",
     "server/",
-    "cli/",
     "skills/",
-    "hooks/",
+    "hooks/*.js",
     "statusline/",
-    ".claude-plugin/"
+    "scripts/"
   ],
   "keywords": [
     "claude-code",

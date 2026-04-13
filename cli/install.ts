@@ -91,8 +91,8 @@ function saveSettings(settings: Record<string, any>) {
 // ─── Step 1: Register MCP server ───────────────────────────────────────────
 
 function installMcp() {
-  const bunPath = execSync("which bun", { encoding: "utf8" }).trim();
-  const serverPath = join(PROJECT_ROOT, "server", "index.ts");
+  const nodePath = execSync("which node", { encoding: "utf8" }).trim();
+  const serverPath = join(PROJECT_ROOT, "dist", "server.js");
   const claudeJsonPath = join(homedir(), ".claude.json");
 
   let claudeJson: Record<string, any> = {};
@@ -107,9 +107,8 @@ function installMcp() {
   }
 
   claudeJson.mcpServers["petsonality"] = {
-    command: bunPath,
+    command: nodePath,
     args: [serverPath],
-    cwd: PROJECT_ROOT,
   };
 
   writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
@@ -211,14 +210,13 @@ async function installOpenClaw() {
   try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
 
   // Register MCP server in OpenClaw config
-  const bunPath = execSync("which bun", { encoding: "utf8" }).trim();
-  const serverPath = join(PROJECT_ROOT, "server", "index.ts");
+  const ocNodePath = execSync("which node", { encoding: "utf8" }).trim();
+  const ocServerPath = join(PROJECT_ROOT, "dist", "server.js");
   if (!ocConfig.mcp) ocConfig.mcp = {};
   if (!ocConfig.mcp.servers) ocConfig.mcp.servers = {};
   ocConfig.mcp.servers["petsonality"] = {
-    command: bunPath,
-    args: [serverPath],
-    cwd: PROJECT_ROOT,
+    command: ocNodePath,
+    args: [ocServerPath],
     env: {
       PETSONALITY_HOST: "openclaw",
     },
