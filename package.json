@@ -21,14 +21,9 @@
   "files": [
     "dist/",
     "cli/index.js",
-    "cli/install.ts",
-    "cli/doctor.ts",
-    "cli/openclaw-patch.ts",
-    "server/",
     "skills/",
     "hooks/*.js",
-    "statusline/",
-    "scripts/"
+    "statusline/"
   ],
   "keywords": [
     "claude-code",
