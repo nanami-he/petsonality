@@ -226,6 +226,33 @@ export function diagnosePatch(): { status: "native" | "patched" | "unpatched" | 
   return { status: "unpatched", file: tuiFile };
 }
 
+// ─── Auto-upgrade: native arrived, clean up patch ─────────────────────────
+
+export function autoUpgrade(): { upgraded: boolean; message: string } {
+  const diag = diagnosePatch();
+
+  if (diag.status === "native" && diag.file) {
+    // Native support arrived — clean up backup if it exists
+    const backupPath = diag.file + ".petsonality-backup";
+    if (existsSync(backupPath)) {
+      unlinkSync(backupPath);
+      return { upgraded: true, message: "Native statusLine detected — removed old patch backup" };
+    }
+    return { upgraded: false, message: "Native statusLine detected — already clean" };
+  }
+
+  if (diag.status === "stale" && diag.file) {
+    // OpenClaw updated and removed our patch, but backup lingers
+    const backupPath = diag.file + ".petsonality-backup";
+    if (existsSync(backupPath)) {
+      unlinkSync(backupPath);
+    }
+    return { upgraded: false, message: "Stale patch detected — cleaned backup, needs re-patch or native upgrade" };
+  }
+
+  return { upgraded: false, message: `No upgrade needed (status: ${diag.status})` };
+}
+
 // ─── CLI entry point ───────────────────────────────────────────────────────
 
 if (import.meta.main) {
@@ -262,8 +289,75 @@ if (import.meta.main) {
       }
       break;
     }
+    case "doctor": {
+      console.log(`\n${CYAN}Petsonality OpenClaw Doctor${NC}\n`);
+      const diag = diagnosePatch();
+
+      // 1. OpenClaw installation
+      if (diag.status === "not-installed") {
+        err("OpenClaw not found");
+        console.log(`${DIM}  Install OpenClaw or check your PATH${NC}`);
+        process.exit(1);
+      }
+      ok(`OpenClaw found: ${diag.file}`);
+
+      // 2. Three-state detection
+      switch (diag.status) {
+        case "native":
+          ok("StatusLine: native support (PR merged)");
+          // Check for leftover backup
+          if (diag.file && existsSync(diag.file + ".petsonality-backup")) {
+            warn("Leftover patch backup found — run 'install' to clean up");
+          }
+          break;
+        case "patched":
+          ok("StatusLine: patch active");
+          info("This is a temporary patch — will auto-switch when OpenClaw adds native support");
+          break;
+        case "stale":
+          warn("StatusLine: patch was removed by OpenClaw update");
+          console.log(`${DIM}  Run 'bun cli/openclaw-patch.ts apply <path>' or reinstall to fix${NC}`);
+          break;
+        case "unpatched":
+          warn("StatusLine: not configured");
+          console.log(`${DIM}  Run 'bun cli/install.ts' to set up${NC}`);
+          break;
+      }
+
+      // 3. MCP config
+      const ocConfigPath = join(homedir(), ".openclaw", "openclaw.json");
+      try {
+        const ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8"));
+        const petServer = ocConfig?.mcp?.servers?.petsonality;
+        if (petServer) {
+          ok("MCP server: registered");
+          if (petServer.env?.PETSONALITY_HOST === "openclaw") {
+            ok("Host env: PETSONALITY_HOST=openclaw");
+          } else {
+            warn("Host env: PETSONALITY_HOST not set — pet_react instructions won't activate");
+          }
+        } else {
+          warn("MCP server: not registered in OpenClaw config");
+        }
+      } catch {
+        warn("OpenClaw config not found or unreadable");
+      }
+
+      // 4. Pet status
+      const statusPath = join(homedir(), ".petsonality", "status.json");
+      try {
+        const status = JSON.parse(readFileSync(statusPath, "utf8"));
+        ok(`Pet: ${status.name} (${status.petId})${status.muted ? " [muted]" : ""}`);
+      } catch {
+        info("No pet adopted yet");
+      }
+
+      console.log("");
+      break;
+    }
     default:
       err(`Unknown action: ${action}`);
+      console.log(`${DIM}  Usage: openclaw-patch [status|apply|remove|doctor]${NC}`);
       process.exit(1);
   }
 }

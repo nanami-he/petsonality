@@ -205,9 +205,10 @@ function ensurePermissions(settings: Record<string, any>) {
 // ─── Step 6: OpenClaw patch ────────────────────────────────────────────────
 
 async function installOpenClaw() {
-  const { findOpenClawTuiFile, hasNativeStatusLine, applyPatch } = await import("./openclaw-patch.ts");
-  const tuiFile = findOpenClawTuiFile();
-  if (!tuiFile) return;
+  const { diagnosePatch, applyPatch, autoUpgrade } = await import("./openclaw-patch.ts");
+  const diag = diagnosePatch();
+
+  if (diag.status === "not-installed") return;
 
   info("OpenClaw detected");
 
@@ -230,25 +231,43 @@ async function installOpenClaw() {
   };
   ok("MCP server registered in OpenClaw config (with host env)");
 
-  // StatusLine: native support or temporary patch
-  if (hasNativeStatusLine(tuiFile)) {
-    ok("OpenClaw has native statusLine support — writing config");
-    if (!ocConfig.ui) ocConfig.ui = {};
-    ocConfig.ui.statusLine = {
-      command: join(PROJECT_ROOT, "statusline", "pet-status.sh"),
-      refreshInterval: 1000,
-    };
-    ok("OpenClaw statusLine configured");
-  } else {
-    // No native support — apply temporary patch
-    info("Applying temporary statusLine patch...");
-    warn("This is a compatibility patch until OpenClaw merges statusLine support");
-    const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
-    const result = applyPatch(scriptPath);
-    if (result.success) {
-      ok(result.message);
-    } else {
-      warn(result.message);
+  // StatusLine: decide based on three-state detection
+  const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+
+  switch (diag.status) {
+    case "native": {
+      // PR merged — use native config, clean up old patch artifacts
+      if (!ocConfig.ui) ocConfig.ui = {};
+      ocConfig.ui.statusLine = {
+        command: scriptPath,
+        refreshInterval: 1000,
+      };
+      ok("OpenClaw has native statusLine support — using config");
+      const upgrade = autoUpgrade();
+      if (upgrade.upgraded) ok(upgrade.message);
+      break;
+    }
+    case "patched": {
+      // Already patched — nothing to do
+      ok("Patch already active");
+      break;
+    }
+    case "stale": {
+      // OpenClaw updated and removed our patch — re-apply
+      warn("OpenClaw updated — patch was removed, re-applying...");
+      const result = applyPatch(scriptPath);
+      if (result.success) ok(result.message);
+      else warn(result.message);
+      break;
+    }
+    case "unpatched": {
+      // Fresh OpenClaw without native support — apply patch
+      info("Applying temporary statusLine patch...");
+      warn("This is a compatibility patch until OpenClaw merges statusLine support");
+      const result = applyPatch(scriptPath);
+      if (result.success) ok(result.message);
+      else warn(result.message);
+      break;
     }
   }
 
