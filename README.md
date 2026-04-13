@@ -14,29 +14,46 @@
 
 A tiny ASCII pet that lives in the corner of your terminal while you code. It watches what you do, reacts to your errors, celebrates when tests pass, and speaks with a personality shaped by MBTI — all in 5 lines of art.
 
-```
-                  ╭──────────────────╮
-      __/\        │ *叹气* 喝水了没  │
-    __/@ )        ╰──────────────────╯
-   O     \          labrador · ENFJ
-    U \___\-        "温暖教练"
-```
+<p align="center">
+  <img src="assets/gifs/hero.gif" alt="petsonality demo" width="800">
+</p>
 
 It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and says something like "*看了你一眼* ……这段逻辑有点怪" — and somehow you feel less alone.
 
 ## 16 Animals, 16 Personalities
 
-```
-  NT Analysts              NF Diplomats             SJ Sentinels             SP Explorers
-                                                                            
-   <(✦)         /\  /\      _Λ/ᐠ       }|/  \|{    c  .-.  C       ,       /\_/\      ,__    
-    (\ \_      ( -.-  )    (✦   |__  )   (\__/)    ( ʘ  .  ʘ )  _.-~o)     ( •.• )   >(o  )  
-     \\//       > ^ <       \\  /   -    (o  o)    (   ww    )  /    /~~      > ^ <     \\__/  
-   --" "---      /_\~~~     |  |  ||      (  )       d|   |b    \___/       (_____)~     |||   
-                                                                                               
-   Raven         Fox         Wolf         Deer        Bear       Dolphin      Cat       Parrot 
-   INTJ          ENTP        INFJ         INFP        ENTJ       ENFP         ISTP      ESFP  
-```
+<table>
+<tr>
+<td align="center"><strong>NT Analysts</strong></td>
+<td align="center"><strong>NF Diplomats</strong></td>
+<td align="center"><strong>SJ Sentinels</strong></td>
+<td align="center"><strong>SP Explorers</strong></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/gifs/raven.gif" width="100"><br><sub>Raven · INTJ</sub></td>
+<td align="center"><img src="assets/gifs/wolf.gif" width="100"><br><sub>Wolf · INFJ</sub></td>
+<td align="center"><img src="assets/gifs/beaver.gif" width="100"><br><sub>Beaver · ISTJ</sub></td>
+<td align="center"><img src="assets/gifs/cat.gif" width="100"><br><sub>Cat · ISTP</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/gifs/owl.gif" width="100"><br><sub>Owl · INTP</sub></td>
+<td align="center"><img src="assets/gifs/deer.gif" width="100"><br><sub>Deer · INFP</sub></td>
+<td align="center"><img src="assets/gifs/elephant.gif" width="100"><br><sub>Elephant · ISFJ</sub></td>
+<td align="center"><img src="assets/gifs/panda.gif" width="100"><br><sub>Panda · ISFP</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/gifs/bear.gif" width="100"><br><sub>Bear · ENTJ</sub></td>
+<td align="center"><img src="assets/gifs/labrador.gif" width="100"><br><sub>Labrador · ENFJ</sub></td>
+<td align="center"><img src="assets/gifs/lion.gif" width="100"><br><sub>Lion · ESTJ</sub></td>
+<td align="center"><img src="assets/gifs/cheetah.gif" width="100"><br><sub>Cheetah · ESTP</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/gifs/fox.gif" width="100"><br><sub>Fox · ENTP</sub></td>
+<td align="center"><img src="assets/gifs/dolphin.gif" width="100"><br><sub>Dolphin · ENFP</sub></td>
+<td align="center"><img src="assets/gifs/golden.gif" width="100"><br><sub>Golden · ESFJ</sub></td>
+<td align="center"><img src="assets/gifs/parrot.gif" width="100"><br><sub>Parrot · ESFP</sub></td>
+</tr>
+</table>
 
 Every animal speaks differently. The Fox asks "你确定？" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "改。" and waits.
 
