@@ -89,6 +89,7 @@
 
 ### 教训记录
 - **2026-04-13**: build:art 覆盖了 shell 里重新设计的早期动物 art（shell 是真源但 art.ts 没同步）。根因：art.ts 和 shell 双份维护时期的遗留。修复：从旧 shell 提取所有帧录入 art.ts，总帧数 92→113
+- **2026-04-13**: OpenClaw patch 把 statusLine 放在 editor 上方，会被 TUI 重绘覆盖。修复：改为放在 editor 下方（与 Claude Code 一致）。同步更新 PR 分支
 
 ---
 
