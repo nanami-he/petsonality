@@ -74,8 +74,6 @@ export function buildPersonalityPrompt(pet: PetProfile, petName: string): string
     `偶尔（${Math.round(pet.voiceConstraints.quirkFrequency * 100)}% 概率）会突然说一句很长的胡思乱想：`,
     pet.voiceConstraints.longThoughtExample,
     "",
-    `每次回复末尾用「${petName}」的语气写一句：`,
-    `<!-- pet: 这里写一句话 -->`,
     `用 *星号* 表示动作。只写一句，不要解释。`,
   ].join("\n");
 }

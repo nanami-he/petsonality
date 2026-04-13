@@ -80,10 +80,10 @@ function getInstructions(): string {
   const profile = getPetById(pet.petId);
   const talkLevel = profile?.talkLevel || "moderate";
   const talkDesc: Record<string, string> = {
-    chatty: "话多型，大约每 3-5 条回复说一句",
-    moderate: "适中，大约每 5-8 条回复说一句",
-    quiet: "偏沉默，大约每 10-15 条回复说一句",
-    silent: "寡言型，大约每 15-20 条回复才说一句",
+    chatty: "话多型，大约每 2-4 条回复说一句，正常工作时也会插嘴",
+    moderate: "适中，大约每 3-6 条回复说一句，顺利工作时偶尔冒泡",
+    quiet: "偏沉默，大约每 6-10 条回复说一句，但关键时刻一定开口",
+    silent: "寡言型，大约每 10-15 条回复才说一句，大部分时间用动作",
   };
 
   const common = [
@@ -91,8 +91,8 @@ function getInstructions(): string {
     `性格：${pet.personality}`,
     `话量：${talkDesc[talkLevel] || talkDesc.moderate}。`,
     "",
-    `不是每条都要！根据话量频率和对话内容判断要不要说。`,
-    `遇到 bug、测试失败、大改动等关键时刻更可能说话。闲聊时少说。`,
+    `宠物是陪伴型的，不只在出错时才说话。正常工作时也会偶尔冒泡（一句轻评、一个动作），让用户感觉"它在这儿"。`,
+    `遇到 error、测试失败、大改动时更积极地说话。测试通过、commit 成功等好事也值得反应。`,
     "",
     `短句为主，保持性格。说话长短由性格决定，不要写超过 45 字的长段。`,
     `动作描述（*星号*）不算字数，不是每次都加，大约 30% 概率。`,
@@ -504,17 +504,17 @@ server.resource(
 
     const talkLevel = profile?.talkLevel || "moderate";
     const talkGuide: Record<string, string> = {
-      chatty: "话多型 — 大约每 3-5 条回复说一句，闲聊也可以插嘴",
-      moderate: "适中 — 大约每 5-8 条回复说一句，有意义的时候才说",
-      quiet: "偏沉默 — 大约每 10-15 条回复说一句，只在关键时刻开口",
-      silent: "寡言型 — 大约每 15-20 条回复才说一句，大部分时间沉默",
+      chatty: "话多型 — 大约每 2-4 条回复说一句，正常工作也插嘴",
+      moderate: "适中 — 大约每 3-6 条回复说一句，顺利时偶尔冒泡",
+      quiet: "偏沉默 — 大约每 6-10 条回复说一句，关键时刻一定开口",
+      silent: "寡言型 — 大约每 10-15 条回复才说一句，大部分时间用动作",
     };
 
     const commonRules = [
       "规则：",
-      "- 不是每条回复都要！按上述话量频率判断",
-      "- 遇到 bug、测试失败、大改动等关键时刻更可能说话",
-      "- 闲聊、简短问答时通常不说",
+      "- 宠物是陪伴型的，正常工作时也偶尔说一句，不只在出错时说",
+      "- 错误、测试失败、大改动时更积极说话",
+      "- 测试通过、commit 成功等好事也值得一句反应",
       `- 用「${pet.petName}」的语气，引用具体内容`,
       "- 短句为主，保持性格。说话长短由性格决定，不超过 45 字",
       "- 动作描述（*星号*）不算字数，不是每次都加（约 30% 概率）",
