@@ -211,35 +211,49 @@ async function installOpenClaw() {
 
   info("OpenClaw detected");
 
+  const ocConfigPath = join(homedir(), ".openclaw", "openclaw.json");
+  let ocConfig: Record<string, any> = {};
+  try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
+
+  // Register MCP server in OpenClaw config
+  const bunPath = execSync("which bun", { encoding: "utf8" }).trim();
+  const serverPath = join(PROJECT_ROOT, "server", "index.ts");
+  if (!ocConfig.mcp) ocConfig.mcp = {};
+  if (!ocConfig.mcp.servers) ocConfig.mcp.servers = {};
+  ocConfig.mcp.servers["petsonality"] = {
+    command: bunPath,
+    args: [serverPath],
+    cwd: PROJECT_ROOT,
+  };
+  ok("MCP server registered in OpenClaw config");
+
+  // StatusLine: native support or temporary patch
   if (hasNativeStatusLine(tuiFile)) {
     ok("OpenClaw has native statusLine support — writing config");
-    // Write to openclaw config
-    const ocConfigPath = join(homedir(), ".openclaw", "openclaw.json");
-    try {
-      let ocConfig: Record<string, any> = {};
-      try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
-      if (!ocConfig.ui) ocConfig.ui = {};
-      ocConfig.ui.statusLine = {
-        command: join(PROJECT_ROOT, "statusline", "pet-status.sh"),
-        refreshInterval: 1000,
-      };
-      writeFileSync(ocConfigPath, JSON.stringify(ocConfig, null, 2));
-      ok("OpenClaw statusLine configured");
-    } catch {
-      warn("Could not write OpenClaw config");
+    if (!ocConfig.ui) ocConfig.ui = {};
+    ocConfig.ui.statusLine = {
+      command: join(PROJECT_ROOT, "statusline", "pet-status.sh"),
+      refreshInterval: 1000,
+    };
+    ok("OpenClaw statusLine configured");
+  } else {
+    // No native support — apply temporary patch
+    info("Applying temporary statusLine patch...");
+    warn("This is a compatibility patch until OpenClaw merges statusLine support");
+    const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+    const result = applyPatch(scriptPath);
+    if (result.success) {
+      ok(result.message);
+    } else {
+      warn(result.message);
     }
-    return;
   }
 
-  // No native support — apply temporary patch
-  info("Applying temporary statusLine patch...");
-  warn("This is a compatibility patch until OpenClaw merges statusLine support");
-  const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
-  const result = applyPatch(scriptPath);
-  if (result.success) {
-    ok(result.message);
-  } else {
-    warn(result.message);
+  // Write OpenClaw config
+  try {
+    writeFileSync(ocConfigPath, JSON.stringify(ocConfig, null, 2));
+  } catch {
+    warn("Could not write OpenClaw config");
   }
 }
 

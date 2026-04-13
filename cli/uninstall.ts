@@ -110,12 +110,34 @@ if (existsSync(SKILL_DIR)) {
   warn("Skill not found (already removed)");
 }
 
-// Remove OpenClaw patch if present
+// Remove OpenClaw patch + MCP config if present
 try {
   const { removePatch } = await import("./openclaw-patch.ts");
   const result = removePatch();
   if (result.success && result.message !== "No patch to remove") {
     ok(result.message);
+  }
+
+  // Remove MCP server from OpenClaw config
+  const ocConfigPath = join(homedir(), ".openclaw", "openclaw.json");
+  if (existsSync(ocConfigPath)) {
+    const ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8"));
+    let changed = false;
+    if (ocConfig.mcp?.servers?.["petsonality"]) {
+      delete ocConfig.mcp.servers["petsonality"];
+      if (Object.keys(ocConfig.mcp.servers).length === 0) delete ocConfig.mcp.servers;
+      if (Object.keys(ocConfig.mcp).length === 0) delete ocConfig.mcp;
+      changed = true;
+    }
+    if (ocConfig.ui?.statusLine) {
+      delete ocConfig.ui.statusLine;
+      if (Object.keys(ocConfig.ui).length === 0) delete ocConfig.ui;
+      changed = true;
+    }
+    if (changed) {
+      writeFileSync(ocConfigPath, JSON.stringify(ocConfig, null, 2));
+      ok("OpenClaw MCP + statusLine config removed");
+    }
   }
 } catch { /* openclaw not installed */ }
 
