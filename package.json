@@ -1,10 +1,10 @@
 {
   "name": "petsonality",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Your type, your pet.",
   "type": "module",
   "bin": {
-    "petsonality": "./cli/index.js"
+    "petsonality": "cli/index.js"
   },
   "scripts": {
     "server": "bun run server/index.ts",
@@ -38,7 +38,7 @@
   "author": "nanami-he",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nanami-he/petsonality.git"
+    "url": "git+https://github.com/nanami-he/petsonality.git"
   },
   "homepage": "https://github.com/nanami-he/petsonality"
 }
