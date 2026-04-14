@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/nanami-he/petsonality"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="version"></a>
+  <a href="https://www.npmjs.com/package/petsonality"><img src="https://img.shields.io/badge/npm-0.2.0-blue" alt="npm"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
   <a href="https://github.com/nanami-he/petsonality/stargazers"><img src="https://img.shields.io/github/stars/nanami-he/petsonality?style=flat" alt="stars"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-powered-orange" alt="MCP"></a>
@@ -14,46 +14,69 @@
 
 A tiny ASCII pet that lives in the corner of your terminal while you code. It watches what you do, reacts to your errors, celebrates when tests pass, and speaks with a personality shaped by MBTI — all in 5 lines of art.
 
-<p align="center">
-  <img src="assets/gifs/hero.gif" alt="petsonality demo" width="800">
-</p>
-
 It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and says something like "*看了你一眼* ……这段逻辑有点怪" — and somehow you feel less alone.
 
 ## 16 Animals, 16 Personalities
 
-<table>
-<tr>
-<td align="center"><strong>NT Analysts</strong></td>
-<td align="center"><strong>NF Diplomats</strong></td>
-<td align="center"><strong>SJ Sentinels</strong></td>
-<td align="center"><strong>SP Explorers</strong></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/gifs/raven.gif" width="100"><br><sub>Raven · INTJ</sub></td>
-<td align="center"><img src="assets/gifs/wolf.gif" width="100"><br><sub>Wolf · INFJ</sub></td>
-<td align="center"><img src="assets/gifs/beaver.gif" width="100"><br><sub>Beaver · ISTJ</sub></td>
-<td align="center"><img src="assets/gifs/cat.gif" width="100"><br><sub>Cat · ISTP</sub></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/gifs/owl.gif" width="100"><br><sub>Owl · INTP</sub></td>
-<td align="center"><img src="assets/gifs/deer.gif" width="100"><br><sub>Deer · INFP</sub></td>
-<td align="center"><img src="assets/gifs/elephant.gif" width="100"><br><sub>Elephant · ISFJ</sub></td>
-<td align="center"><img src="assets/gifs/panda.gif" width="100"><br><sub>Panda · ISFP</sub></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/gifs/bear.gif" width="100"><br><sub>Bear · ENTJ</sub></td>
-<td align="center"><img src="assets/gifs/labrador.gif" width="100"><br><sub>Labrador · ENFJ</sub></td>
-<td align="center"><img src="assets/gifs/lion.gif" width="100"><br><sub>Lion · ESTJ</sub></td>
-<td align="center"><img src="assets/gifs/cheetah.gif" width="100"><br><sub>Cheetah · ESTP</sub></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/gifs/fox.gif" width="100"><br><sub>Fox · ENTP</sub></td>
-<td align="center"><img src="assets/gifs/dolphin.gif" width="100"><br><sub>Dolphin · ENFP</sub></td>
-<td align="center"><img src="assets/gifs/golden.gif" width="100"><br><sub>Golden · ESFJ</sub></td>
-<td align="center"><img src="assets/gifs/parrot.gif" width="100"><br><sub>Parrot · ESFP</sub></td>
-</tr>
-</table>
+**NT Analysts**
+
+<p>
+  <img src="assets/gifs/raven.gif" width="120" alt="Raven">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/owl.gif" width="120" alt="Owl">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/bear.gif" width="120" alt="Bear">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/fox.gif" width="120" alt="Fox">
+</p>
+<sub>Raven · INTJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Owl · INTP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bear · ENTJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fox · ENTP</sub>
+
+<br><br>
+
+**NF Diplomats**
+
+<p>
+  <img src="assets/gifs/wolf.gif" width="120" alt="Wolf">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/deer.gif" width="120" alt="Deer">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/labrador.gif" width="120" alt="Labrador">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/dolphin.gif" width="120" alt="Dolphin">
+</p>
+<sub>Wolf · INFJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Deer · INFP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Labrador · ENFJ &nbsp;&nbsp;&nbsp;&nbsp; Dolphin · ENFP</sub>
+
+<br><br>
+
+**SJ Sentinels**
+
+<p>
+  <img src="assets/gifs/beaver.gif" width="120" alt="Beaver">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/elephant.gif" width="120" alt="Elephant">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/lion.gif" width="120" alt="Lion">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/golden.gif" width="120" alt="Golden">
+</p>
+<sub>Beaver · ISTJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Elephant · ISFJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lion · ESTJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Golden · ESFJ</sub>
+
+<br><br>
+
+**SP Explorers**
+
+<p>
+  <img src="assets/gifs/cat.gif" width="120" alt="Cat">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/panda.gif" width="120" alt="Panda">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/cheetah.gif" width="120" alt="Cheetah">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/gifs/parrot.gif" width="120" alt="Parrot">
+</p>
+<sub>Cat · ISTP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Panda · ISFP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cheetah · ESTP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parrot · ESFP</sub>
+
+<br>
 
 Every animal speaks differently. The Fox asks "你确定？" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "改。" and waits.
 
@@ -86,18 +109,19 @@ Every animal speaks differently. The Fox asks "你确定？" with a smirk. The C
 Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.com/openclaw/openclaw).
 
 ```bash
-# 1. Clone
-git clone https://github.com/nanami-he/petsonality.git
-cd petsonality && bun install
-
-# 2. Build (compiles server + hooks for Node.js)
-bun run build
-
-# 3. Register with your AI coding assistant
-bun run install-petsonality
+# Install
+npx petsonality
 ```
 
-Restart Claude Code (or OpenClaw), then type **`/pet`** in the chat. Your pet will guide you through adoption.
+Or manually:
+
+```bash
+git clone https://github.com/nanami-he/petsonality.git
+cd petsonality && npm install && npm run build
+npm run install-petsonality
+```
+
+Restart your AI coding assistant, then type **`/pet`** in the chat.
 
 ## How It Speaks
 
@@ -110,7 +134,7 @@ Pets don't just react to errors. They have a rhythm:
 | Normal file edits, searches | Occasionally (3–15%) |
 | Nothing happened for a while | Guaranteed (won't stay silent forever) |
 
-Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 minutes. Each animal has **420 unique reactions** across 7 event types, validated against personality constraints.
+Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 minutes. Each animal has **638 unique reactions** across 7 event types, validated against personality constraints.
 
 ## Commands
 
@@ -128,10 +152,10 @@ Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 m
 - [x] 16 MBTI animals with full personality profiles
 - [x] Animated status line with speech bubbles
 - [x] Companion rhythm (daily triggers, milestones, silent streak guardrail)
-- [x] 420 animal-specific reactions
+- [x] 638 animal-specific reactions
 - [x] Multi-host support (Claude Code + OpenClaw)
-- [x] Node.js powered (no python/jq dependency for hooks)
-- [ ] `npx petsonality` one-command install
+- [x] Node.js powered (no python/jq dependency)
+- [x] Published on npm
 - [ ] Multi-language support
 - [ ] Growth system (level up through interaction)
 - [ ] Hat / skin DLC
@@ -146,7 +170,7 @@ Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 m
 ├── pet.json              Your pet's state
 ├── status.json           What the status line reads
 ├── reaction.*.json       Current speech bubble
-└── reactions-pool.json   420 pre-built reactions
+└── reactions-pool.json   638 pre-built reactions
 
 petsonality/
 ├── dist/                 Built JS (Node.js runtime)
@@ -161,9 +185,7 @@ petsonality/
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) 20+ (runtime)
-- [Bun](https://bun.sh) (build only)
-- [jq](https://jqlang.github.io/jq/) (optional — status line bubbles)
+- [Node.js](https://nodejs.org/) 20+
 - Claude Code or OpenClaw
 
 ## License
