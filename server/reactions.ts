@@ -7,7 +7,7 @@ import type { AnimalId } from "./engine.ts";
 export type ReactionReason = "adopt" | "pet" | "error" | "test-fail" | "large-diff" | "turn" | "idle";
 
 // General reactions by event type
-const REACTIONS: Record<ReactionReason, string[]> = {
+export const REACTIONS: Record<ReactionReason, string[]> = {
   adopt: [
     "*看了看你* ……嗯。",
     "*眨眨眼* 你好。",
@@ -51,7 +51,7 @@ const REACTIONS: Record<ReactionReason, string[]> = {
 };
 
 // Animal-specific flavor (40% chance when available)
-const ANIMAL_REACTIONS: Partial<Record<AnimalId, Partial<Record<ReactionReason, string[]>>>> = {
+export const ANIMAL_REACTIONS: Partial<Record<AnimalId, Partial<Record<ReactionReason, string[]>>>> = {
 
   // ═══ NT Analysts ═══════════════════════════════════════════════════════════
 
