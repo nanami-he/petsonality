@@ -97,6 +97,30 @@ esac
 
 ROLL=$(( RANDOM % 1000 ))  # per-mille: values designed for 1fps work at ~10fps
 SKIP_ART=0
+ACT_DIR="$HOME/.petsonality"
+
+# ─── Action helpers (shared by all animals except dolphin) ──────────────────
+# read_action <state_file> <valid_types_regex>
+# Sets: ACT_TYPE, ACT_LEFT, ACT_STEP. Returns 0 if valid action active.
+read_action() {
+    [ -f "$1" ] || return 1
+    _ACT_RAW=$(cat "$1" 2>/dev/null)
+    if echo "$_ACT_RAW" | grep -qE "^ACT_TYPE=($2); ACT_LEFT=[0-9]+(; ACT_STEP=[0-9]+)?$"; then
+        eval "$_ACT_RAW"; ACT_STEP=${ACT_STEP:-0}
+        [ "${ACT_LEFT:-0}" -gt 0 ] && return 0
+    fi
+    rm -f "$1"; return 1
+}
+# tick_action <state_file> [on_end_eval]
+# Decrements ACT_LEFT, increments ACT_STEP, writes state or cleans up.
+tick_action() {
+    local _nl=$(( ACT_LEFT - 1 )) _ns=$(( ACT_STEP + 1 ))
+    if [ $_nl -le 0 ]; then
+        if [ -n "$2" ]; then eval "$2"; else rm -f "$1"; fi
+    else
+        echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$_nl; ACT_STEP=$_ns" > "$1"
+    fi
+}
 
 # Dolphin: continuous swim cycle (bypasses normal idle/move logic)
 if [ "$PET_ID" = "dolphin" ]; then
@@ -227,367 +251,83 @@ if [ "$PET_ID" = "dolphin" ]; then
         fi
     fi
 elif
-# Labrador action: check if mid-action
-LAB_ACT="$HOME/.petsonality/.lab_act"; [ "$PET_ID" = "labrador" ] && [ -f "$LAB_ACT" ]; then
-    _ACT_RAW=$(cat "$LAB_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(nuzzle|yawn|pant|liedown); ACT_LEFT=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$LAB_ACT"
-    fi
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          nuzzle)  FRAME=3 ;;
-          yawn)    FRAME=4 ;;
-          pant)    FRAME=5 ;;
-          liedown)
-            # While lying down: 80% normal, 10% blink, 10% tail wag
-            _LI=$(( RANDOM % 100 ))
-            if [ $_LI -lt 10 ]; then FRAME=7
-            elif [ $_LI -lt 20 ]; then FRAME=8
-            else FRAME=6
-            fi ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$LAB_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT" > "$LAB_ACT"
-        fi
-    else
-        rm -f "$LAB_ACT"
-        FRAME=0
-    fi
-elif
-# Deer action: check if mid-action
-DEER_ACT="$HOME/.petsonality/.deer_act"; [ "$PET_ID" = "deer" ] && [ -f "$DEER_ACT" ]; then
-    _ACT_RAW=$(cat "$DEER_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(graze|tilt|gaze|nuzzle); ACT_LEFT=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$DEER_ACT"
-    fi
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          graze)   FRAME=3 ;;
-          tilt)    FRAME=4 ;;
-          gaze)    FRAME=5 ;;
-          nuzzle)  FRAME=6 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$DEER_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT" > "$DEER_ACT"
-        fi
-    else
-        rm -f "$DEER_ACT"
-        FRAME=0
-    fi
-elif
-# Wolf action: check if mid-action
-WOLF_ACT="$HOME/.petsonality/.wolf_act"; [ "$PET_ID" = "wolf" ] && [ -f "$WOLF_ACT" ]; then
-    _ACT_RAW=$(cat "$WOLF_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(walk|howl|alert|stretch|sniff); ACT_LEFT=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$WOLF_ACT"
-    fi
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          walk)    FRAME=3 ;;
-          howl)    FRAME=4 ;;
-          alert)   FRAME=5 ;;
-          stretch) FRAME=6 ;;
-          sniff)   FRAME=7 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$WOLF_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT" > "$WOLF_ACT"
-        fi
-    else
-        rm -f "$WOLF_ACT"
-        FRAME=0
-    fi
-elif
-# Bear combo: check if mid-action (slam or wave)
-BEAR_ACT="$HOME/.petsonality/.bear_act"
-[ "$PET_ID" = "bear" ] && [ -f "$BEAR_ACT" ]; then
-    # Safe parse: validate format before eval
-    _ACT_RAW=$(cat "$BEAR_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(slam|wave|cooldown); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$BEAR_ACT"  # corrupted, remove
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          slam)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=4; else FRAME=5; fi ;;
-          wave)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=1; else FRAME=3; fi ;;
-          cooldown)
-            FRAME=0 ;;  # forced idle after combo
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            if [ "$ACT_TYPE" = "cooldown" ]; then
-                rm -f "$BEAR_ACT"  # cooldown done, back to normal
-            else
-                # Combo done → cooldown for 3 seconds
-                echo "ACT_TYPE=cooldown; ACT_LEFT=30; ACT_STEP=0" > "$BEAR_ACT"
-            fi
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$BEAR_ACT"
-        fi
-    else
-        rm -f "$BEAR_ACT"
-        FRAME=0
-    fi
-elif
-# Beaver action: check if mid-action
-BEAVER_ACT="$HOME/.petsonality/.beaver_act"; [ "$PET_ID" = "beaver" ] && [ -f "$BEAVER_ACT" ]; then
-    _ACT_RAW=$(cat "$BEAVER_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(gnaw|slap|inspect|sigh); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$BEAVER_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          gnaw)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=7; fi ;;
-          slap)    FRAME=4 ;;
-          inspect)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=8; fi ;;
-          sigh)    FRAME=6 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$BEAVER_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$BEAVER_ACT"
-        fi
-    else
-        rm -f "$BEAVER_ACT"
-        FRAME=0
-    fi
-elif
-# Elephant action: check if mid-action
-ELEPH_ACT="$HOME/.petsonality/.eleph_act"; [ "$PET_ID" = "elephant" ] && [ -f "$ELEPH_ACT" ]; then
-    _ACT_RAW=$(cat "$ELEPH_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(stomp|trunk|listen|nod); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$ELEPH_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          stomp)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
-          trunk)   FRAME=5 ;;
-          listen)  FRAME=6 ;;
-          nod)     FRAME=7 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$ELEPH_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$ELEPH_ACT"
-        fi
-    else
-        rm -f "$ELEPH_ACT"
-        FRAME=0
-    fi
-elif
-# Lion action: check if mid-action
-LION_ACT="$HOME/.petsonality/.lion_act"; [ "$PET_ID" = "lion" ] && [ -f "$LION_ACT" ]; then
-    _ACT_RAW=$(cat "$LION_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(roar|shake|glare|yawn); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$LION_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          roar)    FRAME=3 ;;
-          shake)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=4; else FRAME=5; fi ;;
-          glare)   FRAME=6 ;;
-          yawn)    FRAME=7 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$LION_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$LION_ACT"
-        fi
-    else
-        rm -f "$LION_ACT"
-        FRAME=0
-    fi
-elif
-# Golden action: check if mid-action
-GOLD_ACT="$HOME/.petsonality/.gold_act"; [ "$PET_ID" = "golden" ] && [ -f "$GOLD_ACT" ]; then
-    _ACT_RAW=$(cat "$GOLD_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(wag|jump|lick|spin); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$GOLD_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          wag)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=1; fi ;;
-          jump)    FRAME=4 ;;
-          lick)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=7; fi ;;
-          spin)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=6; else FRAME=0; fi ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$GOLD_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$GOLD_ACT"
-        fi
-    else
-        rm -f "$GOLD_ACT"
-        FRAME=0
-    fi
-elif
-# Cat action: check if mid-action
-CAT_ACT="$HOME/.petsonality/.cat_act"; [ "$PET_ID" = "cat" ] && [ -f "$CAT_ACT" ]; then
-    _ACT_RAW=$(cat "$CAT_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(stare|lick|stretch); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$CAT_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          stare)   FRAME=3 ;;
-          lick)    FRAME=4 ;;
-          stretch) FRAME=5 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$CAT_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$CAT_ACT"
-        fi
-    else
-        rm -f "$CAT_ACT"
-        FRAME=0
-    fi
-elif
-# Panda action: check if mid-action (eating bamboo)
-PANDA_ACT="$HOME/.petsonality/.panda_act"; [ "$PET_ID" = "panda" ] && [ -f "$PANDA_ACT" ]; then
-    _ACT_RAW=$(cat "$PANDA_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(eat|roll|stare|frown); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$PANDA_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          eat)
-            _ES=$(( ACT_STEP / 10 ))
-            case "$_ES" in
-              0) FRAME=3 ;; 1) FRAME=4 ;; 2) FRAME=5 ;; 3) FRAME=6 ;; 4) FRAME=7 ;;
-              *) FRAME=0 ;;
-            esac ;;
-          roll)   FRAME=8 ;;
-          stare)  FRAME=9 ;;
-          frown)  FRAME=10 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$PANDA_ACT"
-        else
-            echo "ACT_TYPE=eat; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$PANDA_ACT"
-        fi
-    else
-        rm -f "$PANDA_ACT"
-        FRAME=0
-    fi
-elif
-# Cheetah action: check if mid-action
-CHEETAH_ACT="$HOME/.petsonality/.cheetah_act"; [ "$PET_ID" = "cheetah" ] && [ -f "$CHEETAH_ACT" ]; then
-    _ACT_RAW=$(cat "$CHEETAH_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(sprint|pounce|twitch|yawn); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$CHEETAH_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          sprint)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
-          pounce)  FRAME=5 ;;
-          twitch)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=6; else FRAME=7; fi ;;
-          yawn)    FRAME=8 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$CHEETAH_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$CHEETAH_ACT"
-        fi
-    else
-        rm -f "$CHEETAH_ACT"
-        FRAME=0
-    fi
-elif
-# Parrot action: check if mid-action
-PARROT_ACT="$HOME/.petsonality/.parrot_act"; [ "$PET_ID" = "parrot" ] && [ -f "$PARROT_ACT" ]; then
-    _ACT_RAW=$(cat "$PARROT_ACT" 2>/dev/null)
-    if echo "$_ACT_RAW" | grep -qE '^ACT_TYPE=(sing|flap|bob|preen); ACT_LEFT=[0-9]+; ACT_STEP=[0-9]+$'; then
-        eval "$_ACT_RAW"
-    else
-        rm -f "$PARROT_ACT"
-    fi
-    ACT_STEP=${ACT_STEP:-0}
-    if [ "${ACT_LEFT:-0}" -gt 0 ]; then
-        case "$ACT_TYPE" in
-          sing)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
-          flap)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=6; fi ;;
-          bob)
-            if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=7; else FRAME=8; fi ;;
-          preen)   FRAME=9 ;;
-        esac
-        NEW_LEFT=$(( ACT_LEFT - 1 ))
-        NEW_STEP=$(( ACT_STEP + 1 ))
-        if [ $NEW_LEFT -le 0 ]; then
-            rm -f "$PARROT_ACT"
-        else
-            echo "ACT_TYPE=$ACT_TYPE; ACT_LEFT=$NEW_LEFT; ACT_STEP=$NEW_STEP" > "$PARROT_ACT"
-        fi
-    else
-        rm -f "$PARROT_ACT"
-        FRAME=0
-    fi
+# ─── Animal actions (using shared read_action/tick_action helpers) ──────────
+[ "$PET_ID" = "labrador" ] && read_action "$ACT_DIR/.lab_act" "nuzzle|yawn|pant|liedown"; then
+    case "$ACT_TYPE" in
+      nuzzle) FRAME=3 ;; yawn) FRAME=4 ;; pant) FRAME=5 ;;
+      liedown) _LI=$(( RANDOM % 100 ))
+        if [ $_LI -lt 10 ]; then FRAME=7; elif [ $_LI -lt 20 ]; then FRAME=8; else FRAME=6; fi ;;
+    esac
+    tick_action "$ACT_DIR/.lab_act"
+elif [ "$PET_ID" = "deer" ] && read_action "$ACT_DIR/.deer_act" "graze|tilt|gaze|nuzzle"; then
+    case "$ACT_TYPE" in graze) FRAME=3 ;; tilt) FRAME=4 ;; gaze) FRAME=5 ;; nuzzle) FRAME=6 ;; esac
+    tick_action "$ACT_DIR/.deer_act"
+elif [ "$PET_ID" = "wolf" ] && read_action "$ACT_DIR/.wolf_act" "walk|howl|alert|stretch|sniff"; then
+    case "$ACT_TYPE" in walk) FRAME=3 ;; howl) FRAME=4 ;; alert) FRAME=5 ;; stretch) FRAME=6 ;; sniff) FRAME=7 ;; esac
+    tick_action "$ACT_DIR/.wolf_act"
+elif [ "$PET_ID" = "bear" ] && read_action "$ACT_DIR/.bear_act" "slam|wave|cooldown"; then
+    case "$ACT_TYPE" in
+      slam) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=4; else FRAME=5; fi ;;
+      wave) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=1; else FRAME=3; fi ;;
+      cooldown) FRAME=0 ;;
+    esac
+    _BEAR_END=""; [ "$ACT_TYPE" != "cooldown" ] && _BEAR_END="echo 'ACT_TYPE=cooldown; ACT_LEFT=30; ACT_STEP=0' > '$ACT_DIR/.bear_act'"
+    [ "$ACT_TYPE" = "cooldown" ] && _BEAR_END=""
+    tick_action "$ACT_DIR/.bear_act" "$_BEAR_END"
+elif [ "$PET_ID" = "beaver" ] && read_action "$ACT_DIR/.beaver_act" "gnaw|slap|inspect|sigh"; then
+    case "$ACT_TYPE" in
+      gnaw) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=7; fi ;;
+      slap) FRAME=4 ;;
+      inspect) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=8; fi ;;
+      sigh) FRAME=6 ;;
+    esac
+    tick_action "$ACT_DIR/.beaver_act"
+elif [ "$PET_ID" = "elephant" ] && read_action "$ACT_DIR/.eleph_act" "stomp|trunk|listen|nod"; then
+    case "$ACT_TYPE" in
+      stomp) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
+      trunk) FRAME=5 ;; listen) FRAME=6 ;; nod) FRAME=7 ;;
+    esac
+    tick_action "$ACT_DIR/.eleph_act"
+elif [ "$PET_ID" = "lion" ] && read_action "$ACT_DIR/.lion_act" "roar|shake|glare|yawn"; then
+    case "$ACT_TYPE" in
+      roar) FRAME=3 ;;
+      shake) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=4; else FRAME=5; fi ;;
+      glare) FRAME=6 ;; yawn) FRAME=7 ;;
+    esac
+    tick_action "$ACT_DIR/.lion_act"
+elif [ "$PET_ID" = "golden" ] && read_action "$ACT_DIR/.gold_act" "wag|jump|lick|spin"; then
+    case "$ACT_TYPE" in
+      wag) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=1; fi ;;
+      jump) FRAME=4 ;;
+      lick) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=7; fi ;;
+      spin) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=6; else FRAME=0; fi ;;
+    esac
+    tick_action "$ACT_DIR/.gold_act"
+elif [ "$PET_ID" = "cat" ] && read_action "$ACT_DIR/.cat_act" "stare|lick|stretch"; then
+    case "$ACT_TYPE" in stare) FRAME=3 ;; lick) FRAME=4 ;; stretch) FRAME=5 ;; esac
+    tick_action "$ACT_DIR/.cat_act"
+elif [ "$PET_ID" = "panda" ] && read_action "$ACT_DIR/.panda_act" "eat|roll|stare|frown"; then
+    case "$ACT_TYPE" in
+      eat) _ES=$(( ACT_STEP / 10 )); case "$_ES" in 0) FRAME=3 ;; 1) FRAME=4 ;; 2) FRAME=5 ;; 3) FRAME=6 ;; 4) FRAME=7 ;; *) FRAME=0 ;; esac ;;
+      roll) FRAME=8 ;; stare) FRAME=9 ;; frown) FRAME=10 ;;
+    esac
+    tick_action "$ACT_DIR/.panda_act"
+elif [ "$PET_ID" = "cheetah" ] && read_action "$ACT_DIR/.cheetah_act" "sprint|pounce|twitch|yawn"; then
+    case "$ACT_TYPE" in
+      sprint) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
+      pounce) FRAME=5 ;;
+      twitch) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=6; else FRAME=7; fi ;;
+      yawn) FRAME=8 ;;
+    esac
+    tick_action "$ACT_DIR/.cheetah_act"
+elif [ "$PET_ID" = "parrot" ] && read_action "$ACT_DIR/.parrot_act" "sing|flap|bob|preen"; then
+    case "$ACT_TYPE" in
+      sing) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=4; fi ;;
+      flap) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=6; fi ;;
+      bob) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=7; else FRAME=8; fi ;;
+      preen) FRAME=9 ;;
+    esac
+    tick_action "$ACT_DIR/.parrot_act"
 elif
 # Blink persistence: check if mid-blink
 BLINK_FILE="$HOME/.petsonality/.blink"; [ -f "$BLINK_FILE" ]; then
