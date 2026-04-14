@@ -349,41 +349,41 @@ elif [ $ROLL -lt $(( BLINK_PCT + MOVE_PCT )) ]; then
         # nuzzle 25%, yawn 25%, pant 25%, liedown 25% (×10 for ~10fps)
         _LR=$(( RANDOM % 100 ))
         if [ $_LR -lt 25 ]; then
-            FRAME=3; echo "ACT_TYPE=nuzzle; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$LAB_ACT"
+            FRAME=3; echo "ACT_TYPE=nuzzle; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$ACT_DIR/.lab_act"
         elif [ $_LR -lt 50 ]; then
-            FRAME=4; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$LAB_ACT"
+            FRAME=4; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.lab_act"
         elif [ $_LR -lt 75 ]; then
-            FRAME=5; echo "ACT_TYPE=pant; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$LAB_ACT"
+            FRAME=5; echo "ACT_TYPE=pant; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.lab_act"
         else
-            FRAME=6; echo "ACT_TYPE=liedown; ACT_LEFT=$(( RANDOM % 600 + 1500 ))" > "$LAB_ACT"
+            FRAME=6; echo "ACT_TYPE=liedown; ACT_LEFT=$(( RANDOM % 600 + 1500 ))" > "$ACT_DIR/.lab_act"
         fi
         ;;
       deer)
         # graze 30%, tilt 25%, gaze 30%, nuzzle 15%
         _DR=$(( RANDOM % 100 ))
         if [ $_DR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=graze; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$DEER_ACT"
+            FRAME=3; echo "ACT_TYPE=graze; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.deer_act"
         elif [ $_DR -lt 55 ]; then
-            FRAME=4; echo "ACT_TYPE=tilt; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$DEER_ACT"
+            FRAME=4; echo "ACT_TYPE=tilt; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$ACT_DIR/.deer_act"
         elif [ $_DR -lt 85 ]; then
-            FRAME=5; echo "ACT_TYPE=gaze; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$DEER_ACT"
+            FRAME=5; echo "ACT_TYPE=gaze; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.deer_act"
         else
-            FRAME=6; echo "ACT_TYPE=nuzzle; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$DEER_ACT"
+            FRAME=6; echo "ACT_TYPE=nuzzle; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$ACT_DIR/.deer_act"
         fi
         ;;
       wolf)
         # walk 30%, howl 25%, alert 25%, sniff 15%, stretch 5%
         _WR=$(( RANDOM % 100 ))
         if [ $_WR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=walk; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$WOLF_ACT"
+            FRAME=3; echo "ACT_TYPE=walk; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.wolf_act"
         elif [ $_WR -lt 55 ]; then
-            FRAME=4; echo "ACT_TYPE=howl; ACT_LEFT=$(( RANDOM % 10 + 15 ))" > "$WOLF_ACT"
+            FRAME=4; echo "ACT_TYPE=howl; ACT_LEFT=$(( RANDOM % 10 + 15 ))" > "$ACT_DIR/.wolf_act"
         elif [ $_WR -lt 80 ]; then
-            FRAME=5; echo "ACT_TYPE=alert; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$WOLF_ACT"
+            FRAME=5; echo "ACT_TYPE=alert; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.wolf_act"
         elif [ $_WR -lt 95 ]; then
-            FRAME=7; echo "ACT_TYPE=sniff; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$WOLF_ACT"
+            FRAME=7; echo "ACT_TYPE=sniff; ACT_LEFT=$(( RANDOM % 10 + 10 ))" > "$ACT_DIR/.wolf_act"
         else
-            FRAME=6; echo "ACT_TYPE=stretch; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$WOLF_ACT"
+            FRAME=6; echo "ACT_TYPE=stretch; ACT_LEFT=$(( RANDOM % 10 + 20 ))" > "$ACT_DIR/.wolf_act"
         fi
         ;;
       bear)
@@ -391,114 +391,114 @@ elif [ $ROLL -lt $(( BLINK_PCT + MOVE_PCT )) ]; then
         if [ $(( RANDOM % 100 )) -lt 60 ]; then
             FRAME=1  # wave start
             WAVE_DUR=$(( RANDOM % 40 + 120 ))  # ~12-16 seconds
-            echo "ACT_TYPE=wave; ACT_LEFT=$WAVE_DUR; ACT_STEP=1" > "$BEAR_ACT"
+            echo "ACT_TYPE=wave; ACT_LEFT=$WAVE_DUR; ACT_STEP=1" > "$ACT_DIR/.bear_act"
         else
             FRAME=4  # raise paw first
             SLAM_GROUPS=$(( RANDOM % 3 + 2 ))  # 2-4 groups
             SLAM_DUR=$(( SLAM_GROUPS * 20 ))   # each group ~2s
-            echo "ACT_TYPE=slam; ACT_LEFT=$SLAM_DUR; ACT_STEP=0" > "$BEAR_ACT"
+            echo "ACT_TYPE=slam; ACT_LEFT=$SLAM_DUR; ACT_STEP=0" > "$ACT_DIR/.bear_act"
         fi
         ;;
       beaver)
         # gnaw 30%, inspect 35%, sigh 20%, slap 15%
         _BR=$(( RANDOM % 100 ))
         if [ $_BR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=gnaw; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$BEAVER_ACT"
+            FRAME=3; echo "ACT_TYPE=gnaw; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$ACT_DIR/.beaver_act"
         elif [ $_BR -lt 65 ]; then
-            FRAME=5; echo "ACT_TYPE=inspect; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$BEAVER_ACT"
+            FRAME=5; echo "ACT_TYPE=inspect; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.beaver_act"
         elif [ $_BR -lt 85 ]; then
-            FRAME=6; echo "ACT_TYPE=sigh; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$BEAVER_ACT"
+            FRAME=6; echo "ACT_TYPE=sigh; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.beaver_act"
         else
-            FRAME=4; echo "ACT_TYPE=slap; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$BEAVER_ACT"
+            FRAME=4; echo "ACT_TYPE=slap; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$ACT_DIR/.beaver_act"
         fi
         ;;
       panda)
         # eat 40%, stare 25%, frown 20%, roll 15%
         _PR=$(( RANDOM % 100 ))
         if [ $_PR -lt 40 ]; then
-            FRAME=3; echo "ACT_TYPE=eat; ACT_LEFT=50; ACT_STEP=0" > "$PANDA_ACT"
+            FRAME=3; echo "ACT_TYPE=eat; ACT_LEFT=50; ACT_STEP=0" > "$ACT_DIR/.panda_act"
         elif [ $_PR -lt 65 ]; then
-            FRAME=9; echo "ACT_TYPE=stare; ACT_LEFT=$(( RANDOM % 20 + 50 )); ACT_STEP=0" > "$PANDA_ACT"
+            FRAME=9; echo "ACT_TYPE=stare; ACT_LEFT=$(( RANDOM % 20 + 50 )); ACT_STEP=0" > "$ACT_DIR/.panda_act"
         elif [ $_PR -lt 85 ]; then
-            FRAME=10; echo "ACT_TYPE=frown; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$PANDA_ACT"
+            FRAME=10; echo "ACT_TYPE=frown; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$ACT_DIR/.panda_act"
         else
-            FRAME=8; echo "ACT_TYPE=roll; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$PANDA_ACT"
+            FRAME=8; echo "ACT_TYPE=roll; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$ACT_DIR/.panda_act"
         fi
         ;;
       cat)
         # lick 40%, stare 35%, stretch 25%
         _CR=$(( RANDOM % 100 ))
         if [ $_CR -lt 40 ]; then
-            FRAME=4; echo "ACT_TYPE=lick; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$CAT_ACT"
+            FRAME=4; echo "ACT_TYPE=lick; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$ACT_DIR/.cat_act"
         elif [ $_CR -lt 75 ]; then
-            FRAME=3; echo "ACT_TYPE=stare; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$CAT_ACT"
+            FRAME=3; echo "ACT_TYPE=stare; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.cat_act"
         else
-            FRAME=5; echo "ACT_TYPE=stretch; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$CAT_ACT"
+            FRAME=5; echo "ACT_TYPE=stretch; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.cat_act"
         fi
         ;;
       golden)
         # wag 35%, jump 25%, lick 25%, spin 15%
         _GR=$(( RANDOM % 100 ))
         if [ $_GR -lt 35 ]; then
-            FRAME=3; echo "ACT_TYPE=wag; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$GOLD_ACT"
+            FRAME=3; echo "ACT_TYPE=wag; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         elif [ $_GR -lt 60 ]; then
-            FRAME=4; echo "ACT_TYPE=jump; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$GOLD_ACT"
+            FRAME=4; echo "ACT_TYPE=jump; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         elif [ $_GR -lt 85 ]; then
-            FRAME=5; echo "ACT_TYPE=lick; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$GOLD_ACT"
+            FRAME=5; echo "ACT_TYPE=lick; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         else
-            FRAME=6; echo "ACT_TYPE=spin; ACT_LEFT=$(( RANDOM % 20 + 80 )); ACT_STEP=0" > "$GOLD_ACT"
+            FRAME=6; echo "ACT_TYPE=spin; ACT_LEFT=$(( RANDOM % 20 + 80 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         fi
         ;;
       lion)
         # roar 30%, shake 25%, yawn 25%, glare 20%
         _LNR=$(( RANDOM % 100 ))
         if [ $_LNR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=roar; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$LION_ACT"
+            FRAME=3; echo "ACT_TYPE=roar; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$ACT_DIR/.lion_act"
         elif [ $_LNR -lt 55 ]; then
-            FRAME=4; echo "ACT_TYPE=shake; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$LION_ACT"
+            FRAME=4; echo "ACT_TYPE=shake; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$ACT_DIR/.lion_act"
         elif [ $_LNR -lt 80 ]; then
-            FRAME=7; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$LION_ACT"
+            FRAME=7; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 30 )); ACT_STEP=0" > "$ACT_DIR/.lion_act"
         else
-            FRAME=6; echo "ACT_TYPE=glare; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$LION_ACT"
+            FRAME=6; echo "ACT_TYPE=glare; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.lion_act"
         fi
         ;;
       elephant)
         # listen 35%, nod 25%, trunk 25%, stomp 15%
         _ER=$(( RANDOM % 100 ))
         if [ $_ER -lt 35 ]; then
-            FRAME=6; echo "ACT_TYPE=listen; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ELEPH_ACT"
+            FRAME=6; echo "ACT_TYPE=listen; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.eleph_act"
         elif [ $_ER -lt 60 ]; then
-            FRAME=7; echo "ACT_TYPE=nod; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ELEPH_ACT"
+            FRAME=7; echo "ACT_TYPE=nod; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.eleph_act"
         elif [ $_ER -lt 85 ]; then
-            FRAME=5; echo "ACT_TYPE=trunk; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ELEPH_ACT"
+            FRAME=5; echo "ACT_TYPE=trunk; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.eleph_act"
         else
-            FRAME=3; echo "ACT_TYPE=stomp; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$ELEPH_ACT"
+            FRAME=3; echo "ACT_TYPE=stomp; ACT_LEFT=$(( RANDOM % 20 + 40 )); ACT_STEP=0" > "$ACT_DIR/.eleph_act"
         fi
         ;;
       cheetah)
         # sprint 30%, pounce 25%, twitch 25%, yawn 20%
         _CHR=$(( RANDOM % 100 ))
         if [ $_CHR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=sprint; ACT_LEFT=$(( RANDOM % 20 + 30 )); ACT_STEP=0" > "$CHEETAH_ACT"
+            FRAME=3; echo "ACT_TYPE=sprint; ACT_LEFT=$(( RANDOM % 20 + 30 )); ACT_STEP=0" > "$ACT_DIR/.cheetah_act"
         elif [ $_CHR -lt 55 ]; then
-            FRAME=5; echo "ACT_TYPE=pounce; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$CHEETAH_ACT"
+            FRAME=5; echo "ACT_TYPE=pounce; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$ACT_DIR/.cheetah_act"
         elif [ $_CHR -lt 80 ]; then
-            FRAME=6; echo "ACT_TYPE=twitch; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$CHEETAH_ACT"
+            FRAME=6; echo "ACT_TYPE=twitch; ACT_LEFT=$(( RANDOM % 10 + 10 )); ACT_STEP=0" > "$ACT_DIR/.cheetah_act"
         else
-            FRAME=8; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$CHEETAH_ACT"
+            FRAME=8; echo "ACT_TYPE=yawn; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.cheetah_act"
         fi
         ;;
       parrot)
         # sing 30%, flap 25%, bob 25%, preen 20%
         _PAR=$(( RANDOM % 100 ))
         if [ $_PAR -lt 30 ]; then
-            FRAME=3; echo "ACT_TYPE=sing; ACT_LEFT=$(( RANDOM % 20 + 30 )); ACT_STEP=0" > "$PARROT_ACT"
+            FRAME=3; echo "ACT_TYPE=sing; ACT_LEFT=$(( RANDOM % 20 + 30 )); ACT_STEP=0" > "$ACT_DIR/.parrot_act"
         elif [ $_PAR -lt 55 ]; then
-            FRAME=5; echo "ACT_TYPE=flap; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$PARROT_ACT"
+            FRAME=5; echo "ACT_TYPE=flap; ACT_LEFT=$(( RANDOM % 10 + 15 )); ACT_STEP=0" > "$ACT_DIR/.parrot_act"
         elif [ $_PAR -lt 80 ]; then
-            FRAME=7; echo "ACT_TYPE=bob; ACT_LEFT=$(( RANDOM % 20 + 20 )); ACT_STEP=0" > "$PARROT_ACT"
+            FRAME=7; echo "ACT_TYPE=bob; ACT_LEFT=$(( RANDOM % 20 + 20 )); ACT_STEP=0" > "$ACT_DIR/.parrot_act"
         else
-            FRAME=9; echo "ACT_TYPE=preen; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$PARROT_ACT"
+            FRAME=9; echo "ACT_TYPE=preen; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.parrot_act"
         fi
         ;;
       *) FRAME=1 ;;
@@ -522,7 +522,7 @@ else
         fi
     fi
     # Bear mouth twitch while idle
-    if [ "$PET_ID" = "bear" ] && [ ! -f "$BEAR_ACT" ] && [ $(( RANDOM % 1000 )) -lt 2 ]; then
+    if [ "$PET_ID" = "bear" ] && [ ! -f "$ACT_DIR/.bear_act" ] && [ $(( RANDOM % 1000 )) -lt 2 ]; then
         FRAME=6
     fi
     # Elephant idle: trunk sway
