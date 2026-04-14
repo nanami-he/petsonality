@@ -105,7 +105,12 @@ function main() {
   const pet = readJSON(PET_FILE);
   if (!pet?.petId) process.exit(0);
 
-  const pool = readJSON(POOL_FILE);
+  const rawPool = readJSON(POOL_FILE);
+  if (!rawPool) process.exit(0);
+
+  // Language detection: zh* → Chinese, else English
+  const lang = (process.env.LANG || "").startsWith("zh") ? "zh" : "en";
+  const pool = rawPool[lang] || rawPool.zh || rawPool;
   if (!pool?.pool) process.exit(0);
 
   const petId = pet.petId;
