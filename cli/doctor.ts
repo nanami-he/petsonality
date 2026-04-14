@@ -13,7 +13,14 @@ import { execSync } from "child_process";
 import { join, resolve, dirname } from "path";
 import { homedir } from "os";
 
-const PROJECT_ROOT = resolve(dirname(new URL(".", import.meta.url).pathname));
+function findPackageRoot(): string {
+  let dir = resolve(dirname(new URL(".", import.meta.url).pathname));
+  while (dir !== "/" && !existsSync(join(dir, "package.json"))) {
+    dir = dirname(dir);
+  }
+  return dir;
+}
+const PROJECT_ROOT = findPackageRoot();
 const HOME = homedir();
 const STATUS_SCRIPT = join(PROJECT_ROOT, "statusline", "pet-status.sh");
 

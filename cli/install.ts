@@ -21,7 +21,17 @@ const NC = "\x1b[0m";
 const CLAUDE_DIR = join(homedir(), ".claude");
 const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
 const SKILL_DIR = join(CLAUDE_DIR, "skills", "pet");
-const PROJECT_ROOT = resolve(dirname(new URL(".", import.meta.url).pathname));
+// Walk up from script location to find the package root (where package.json lives).
+// In dev: cli/install.ts → dirname gives project root directly.
+// In dist: dist/cli/install.js → dirname gives dist/, need to go up one more.
+function findPackageRoot(): string {
+  let dir = resolve(dirname(new URL(".", import.meta.url).pathname));
+  while (dir !== "/" && !existsSync(join(dir, "package.json"))) {
+    dir = dirname(dir);
+  }
+  return dir;
+}
+const PROJECT_ROOT = findPackageRoot();
 
 function banner() {
   console.log(`
