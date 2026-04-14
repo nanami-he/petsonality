@@ -63,9 +63,13 @@
 - 提取通用 action runner（减少 statusline 重复代码）
 - 每只动物的 elif action 块结构完全一样，可以合并
 
-### P5: 多语言支持
-- 当前反应/签名行/prompt 全中文
-- 英文优先，检测用户语言
+### P5: 多语言支持 ✅（2026-04-14）
+- 自动检测 LANG 环境变量（zh*→中文，其他→英文）
+- reactions-en.ts: 638 英文反应（总理+DeepSeek 写）
+- pets-en.ts: 16 只英文性格档案（544 行）
+- i18n.ts: 统一导出层，server + hooks 语言感知
+- build-reactions.ts: 双语池构建（zh=638 + en=638）
+- DeepSeek 独立审查通过
 
 ### P6: 说话系统 v2 — hint 架构
 - Hook 只写 event hint，模型做唯一说话者
@@ -124,6 +128,11 @@
 - DeepSeek：代码审查，5 真问题修复
 - README 审查：情感核心优先功能清单
 
+### 2026-04-14 P5 多语言
+- 自动检测不增加用户负担
+- 总理写英文内容，DeepSeek 审查
+- 语言切换零配置，读 LANG 环境变量
+
 ---
 
-*PRD v3.3 — 2026-04-14 Phase 1 完结*
+*PRD v3.4 — 2026-04-14 P5 多语言完成*
