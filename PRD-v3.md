@@ -1,87 +1,59 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
+> npm: petsonality@0.3.3 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
-### 1. 宠物形象设计 ✅
-- 16/16 只全部完成，116 animation frames
-- 每只 3 idle 帧 + 3-10 action 帧，独立动画系统
-
-### 2. 通用化 ✅
-- 品牌统一 typet→petsonality（125处）
-- art build 自动生成（art.ts → statusline shell）
-- 多宿主显示（Claude Code statusLine + OpenClaw patch/PR）
-- 302 tests / 2645 assertions
-
-### 3. OpenClaw reaction 适配 ✅（P0）
-- Model-driven: OpenClaw 调 pet_react，Claude Code 走 `<!-- pet: -->`
-- Host 检测 + cooldown + 参谋长复查 4 修
-
-### 4. 三态检测 + Doctor ✅（P1.5）
-- diagnosePatch() 五态决策 + autoUpgrade + doctor CLI
-
-### 5. 说话系统重设计 ✅
-- 从 error notifier → 陪伴节奏
-- 日常/里程碑/streak 保底 + 动物专属池 638 反应
-- react.js + pet-comment.js（去 jq/python）
-- 参谋长两次复议
-
-### 6. npx 安装流 ✅（P2）
-- dist/server.js (1.1MB) + dist/cli/*.js
-- hooks JS 化，node-only
-- npm published: petsonality@0.2.0
-
-### 7. README + GIF ✅（P3）
-- 情感开头 + 4x4 动画网格 + 渐进展开
-- 16 只 GIF（accent colors） + 全英文
-- 内阁总理审查通过
-
-### 8. 反应池扩充 ✅
-- 420 → 638 reactions，16×7 全覆盖零空白
-- 6 只动物补全专属反应（golden/beaver/elephant/cheetah/bear/lion）
-- labrador pet 反应修正（ESFJ→ENFJ）
-- 内阁总理逐只审查
-
-### 9. 代码清理 ✅
-- 删除 popup/（死代码 1317 行）
-- 删除 hooks/legacy/
-- 去掉未使用导入
-- pet_rename/pet_adopt 加特殊字符校验
-- DeepSeek + 子 agent 独立审查
+### 1. 宠物形象 ✅ — 16/16 只，116 帧
+### 2. 通用化 ✅ — 品牌统一 + art build + 多宿主 + 302 tests
+### 3. OpenClaw reaction ✅ (P0) — model-driven pet_react
+### 4. 三态检测 + Doctor ✅ (P1.5) — diagnosePatch 五态 + autoUpgrade
+### 5. 说话系统重设计 ✅ — 陪伴节奏（日常/里程碑/streak 保底 + 638 反应）
+### 6. npx 安装流 ✅ (P2) — dist/ 编译 + node-only + npm published
+### 7. README + GIF ✅ (P3) — 情感开头 + 4x4 动画网格 + 全英文
+### 8. 反应池扩充 ✅ — 420→638，16×7 零空白
+### 9. 代码清理 ✅ — popup/ 删除 + 独立审查 + 输入校验
+### 10. statusline action 通用化 ✅ (P4) — read_action/tick_action 共享函数，-260 行
+### 11. 多语言支持 ✅ (P5) — 自动 LANG 检测，zh=638 + en=638
+### 12. hint 架构 ✅ (P6) — hook 写事件，模型说话，固定池兜底
+### 13. npx 路径修复 ✅ — 运行时文件复制到 ~/.petsonality/，不依赖 npx 临时目录
+### 14. OpenClaw 独立安装 ✅ — installer 不再要求 ~/.claude/
 
 ---
 
-## 待办
+## 当前优先 — 系统优化 + 维护 + PR 推进
 
-### P1: OpenClaw PR 跟进 `[blocked — 等维护者]`
-- openclaw/openclaw#65886
-- Greptile 3 问全修，CI 绿
-- 合并后 installer 自动切 native config
+### M1: npx 安装体验完善
+- [ ] build:reactions 在 npx 环境下失败（scripts/ 不在包里）— 改为安装时从 dist 内部构建或预打包 pool
+- [ ] OpenClaw 安装全链路验证（纯 OpenClaw 环境跑通）
+- [ ] 安装后自动验证（doctor 检查一遍）
 
-### P4: statusline action 通用化
-- 提取通用 action runner（减少 statusline 重复代码）
-- 每只动物的 elif action 块结构完全一样，可以合并
+### M2: OpenClaw PR #65886 推进
+- [ ] 在 PR 上 ping 维护者（礼貌催一下）
+- [ ] 检查是否有新的 CI 要求或代码规范变更
+- [ ] 准备好 rebase（如果 main 有新提交）
+- [ ] PR 合并后：installer 自动切 native config，停用 patch
 
-### P5: 多语言支持 ✅（2026-04-14）
-- 自动检测 LANG 环境变量（zh*→中文，其他→英文）
-- reactions-en.ts: 638 英文反应（总理+DeepSeek 写）
-- pets-en.ts: 16 只英文性格档案（544 行）
-- i18n.ts: 统一导出层，server + hooks 语言感知
-- build-reactions.ts: 双语池构建（zh=638 + en=638）
-- DeepSeek 独立审查通过
+### M3: 说话系统验证
+- [ ] 真实使用 2-3 天，观察说话频率是否合适
+- [ ] hint 架构的 fallback 是否正常工作
+- [ ] 英文环境验证（LANG=en 时反应是否自然）
+- [ ] cooldown 参数是否需要微调
 
-### P6: 说话系统 v2 — hint 架构 ✅（2026-04-14）
-- Hook 写 hint.json（reason/priority/summary），不再直接写 reaction
-- 模型读上下文说话（<!-- pet: --> 或 pet_react）→ 消费 hint
-- 3s TTL：hint 未消费 → 下次 hook 从固定池 fallback
-- pet-comment.js + pet_react 都消费 hint
-- 固定池从主力降级为兜底
-- DeepSeek 审查："架构合理，核心机制可靠"
+### M4: 发版流程规范化
+- [ ] 写一个 `scripts/release.sh`：build → test → version bump → publish
+- [ ] npm publish 的 OTP 自动化（或改用 automation token）
+- [ ] CHANGELOG.md 自动生成
+
+### M5: 测试补全
+- [ ] 集成测试：模拟完整安装 → 领养 → hook 触发 → reaction 显示
+- [ ] hint 架构的单元测试（写 hint → 消费 → fallback）
+- [ ] 英文 pets-en.ts 的性格验证测试（和中文版同结构）
 
 ---
 
-## Phase 2 — 体验深化
+## Phase 2 — 体验深化（后续）
 
 ### 成长系统
 - 互动次数 → 等级/状态变化
@@ -91,8 +63,7 @@
 - 稀有帽子通过互动解锁
 
 ### 多宠物切换
-- 收集多只，/pet switch 切换
-- 宠物图鉴
+- 收集多只，/pet switch 切换 + 宠物图鉴
 
 ### vibe-pick
 - 不知道 MBTI 的用户，问几个问题推测性格
@@ -101,41 +72,33 @@
 
 ## 维护检查流程
 
-### art 变更
-1. 只改 `server/art.ts` → `bun run build:art` → `bun test`
-
 ### 发版前
-- `bun test` + `bun run build` + `git diff` 为零
-- `bash -n hooks/react.js` 不需要（是 JS）
-- npm version patch → npm publish
+```bash
+bun test                    # 302 tests
+bun run build               # server + cli + art + reactions
+bash -n statusline/pet-status.sh  # shell 语法
+npm version patch           # 升版本
+npm publish --access public # 发布
+git push && git push --tags # 同步
+```
 
 ### 教训
-- art.ts/shell 双份维护导致覆盖（已修：art.ts 唯一真源）
-- OpenClaw patch 放错位置（已修：editor 下方）
-- 说话当风险控制不当陪伴（已修：日常触发 + streak 保底）
-- 海豚 art.ts 从未更新（已修：同步 statusline 真实设计）
+- art.ts/shell 双份维护导致覆盖 → art.ts 唯一真源
+- OpenClaw patch 放错位置 → editor 下方
+- 说话当风险控制 → 陪伴节奏
+- 海豚 art 从未更新 → 同步 statusline 设计
+- npx 临时目录路径不稳定 → 复制到 ~/.petsonality/
+- installer 硬依赖 Claude Code → 检测宿主独立安装
 
 ---
 
 ## 决策记录
 
-### 2026-04-13 五次国会
-1. 品牌统一一刀切
-2. 多宿主三线并行（Claude + OpenClaw PR + capability 检测）
-3. 优先级排序：P0→P1→P1.5→P2→P3→P4
-4. 说话系统：陪伴节奏不是风险控制
-5. npx：开发用 bun，发布给 node
-
-### 2026-04-14 内阁审查
-- 内阁总理：反应池审查 6.5/10 → 补全后通过
-- DeepSeek：代码审查，5 真问题修复
-- README 审查：情感核心优先功能清单
-
-### 2026-04-14 P5 多语言
-- 自动检测不增加用户负担
-- 总理写英文内容，DeepSeek 审查
-- 语言切换零配置，读 LANG 环境变量
+### 2026-04-13 五次国会 + 2026-04-14 内阁审查
+- 品牌统一一刀切 / 多宿主三线并行 / 陪伴不是风险控制
+- 开发用 bun，发布给 node / 反应池全覆盖 / 情感核心优先
+- hint 架构：hook 只写事件，模型才说话 / 多语言零配置
 
 ---
 
-*PRD v3.4 — 2026-04-14 P5 多语言完成*
+*PRD v3.6 — 2026-04-14 系统优化规划*
