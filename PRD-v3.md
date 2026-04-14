@@ -71,10 +71,13 @@
 - build-reactions.ts: 双语池构建（zh=638 + en=638）
 - DeepSeek 独立审查通过
 
-### P6: 说话系统 v2 — hint 架构
-- Hook 只写 event hint，模型做唯一说话者
-- 固定池降级为兜底
-- 风格锚点 + validateVoice 升级
+### P6: 说话系统 v2 — hint 架构 ✅（2026-04-14）
+- Hook 写 hint.json（reason/priority/summary），不再直接写 reaction
+- 模型读上下文说话（<!-- pet: --> 或 pet_react）→ 消费 hint
+- 3s TTL：hint 未消费 → 下次 hook 从固定池 fallback
+- pet-comment.js + pet_react 都消费 hint
+- 固定池从主力降级为兜底
+- DeepSeek 审查："架构合理，核心机制可靠"
 
 ---
 
