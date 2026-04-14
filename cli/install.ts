@@ -111,7 +111,7 @@ function saveSettings(settings: Record<string, any>) {
 
 function installMcp() {
   const nodePath = execSync("which node", { encoding: "utf8" }).trim();
-  const serverPath = join(PROJECT_ROOT, "dist", "server.js");
+  const serverPath = join(RUNTIME_DIR, "dist", "server.js");
   const claudeJsonPath = join(homedir(), ".claude.json");
 
   let claudeJson: Record<string, any> = {};
@@ -155,18 +155,42 @@ function installStatusLine(settings: Record<string, any>) {
   }
   settings.statusLine = {
     type: "command",
-    command: join(PROJECT_ROOT, "statusline", "pet-status.sh"),
+    command: join(RUNTIME_DIR, "statusline", "pet-status.sh"),
     padding: 1,
     refreshInterval: 1,
   };
   ok("Status line configured");
 }
 
+// ─── Step 3b: Copy runtime files to ~/.petsonality/ (stable paths) ─────────
+
+function installRuntimeFiles() {
+  const runtimeDir = join(homedir(), ".petsonality");
+  mkdirSync(join(runtimeDir, "hooks"), { recursive: true });
+  mkdirSync(join(runtimeDir, "statusline"), { recursive: true });
+
+  // Copy hooks
+  cpSync(join(PROJECT_ROOT, "hooks", "react.js"), join(runtimeDir, "hooks", "react.js"), { force: true });
+  cpSync(join(PROJECT_ROOT, "hooks", "pet-comment.js"), join(runtimeDir, "hooks", "pet-comment.js"), { force: true });
+
+  // Copy statusline
+  cpSync(join(PROJECT_ROOT, "statusline", "pet-status.sh"), join(runtimeDir, "statusline", "pet-status.sh"), { force: true });
+  try { execSync(`chmod +x "${join(runtimeDir, "statusline", "pet-status.sh")}"`); } catch {}
+
+  // Copy server
+  mkdirSync(join(runtimeDir, "dist"), { recursive: true });
+  cpSync(join(PROJECT_ROOT, "dist", "server.js"), join(runtimeDir, "dist", "server.js"), { force: true });
+
+  ok("Runtime files copied to ~/.petsonality/");
+}
+
+const RUNTIME_DIR = join(homedir(), ".petsonality");
+
 // ─── Step 4: Hooks ─────────────────────────────────────────────────────────
 
 function installHooks(settings: Record<string, any>) {
-  const reactHook = join(PROJECT_ROOT, "hooks", "react.js");
-  const commentHook = join(PROJECT_ROOT, "hooks", "pet-comment.js");
+  const reactHook = join(RUNTIME_DIR, "hooks", "react.js");
+  const commentHook = join(RUNTIME_DIR, "hooks", "pet-comment.js");
 
   if (!settings.hooks) settings.hooks = {};
 
@@ -230,7 +254,7 @@ async function installOpenClaw() {
 
   // Register MCP server in OpenClaw config
   const ocNodePath = execSync("which node", { encoding: "utf8" }).trim();
-  const ocServerPath = join(PROJECT_ROOT, "dist", "server.js");
+  const ocServerPath = join(RUNTIME_DIR, "dist", "server.js");
   if (!ocConfig.mcp) ocConfig.mcp = {};
   if (!ocConfig.mcp.servers) ocConfig.mcp.servers = {};
   ocConfig.mcp.servers["petsonality"] = {
@@ -243,7 +267,7 @@ async function installOpenClaw() {
   ok("MCP server registered in OpenClaw config (with host env)");
 
   // StatusLine: decide based on three-state detection
-  const scriptPath = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+  const scriptPath = join(RUNTIME_DIR, "statusline", "pet-status.sh");
 
   switch (diag.status) {
     case "native": {
@@ -304,6 +328,9 @@ console.log("");
 info("Installing petsonality...\n");
 
 const hosts = detectHosts();
+
+// ─── Copy runtime files to stable paths ────────────────────────────────────
+installRuntimeFiles();
 
 // ─── Claude Code installation ──────────────────────────────────────────────
 if (hosts.claude) {
