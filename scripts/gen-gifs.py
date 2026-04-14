@@ -23,9 +23,8 @@ with open("/tmp/pet-frames-color.json") as f:
 
 font = ImageFont.truetype(FONT_PATH, FONT_SIZE)
 
-# Measure character dimensions
-bbox = font.getbbox("W")
-char_w = bbox[2] - bbox[0]
+# Measure character dimensions — use advance width, not bbox
+char_w = int(font.getlength("W"))
 char_h = int(FONT_SIZE * 1.5)  # line height
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -65,12 +64,18 @@ def render_frame(lines, color, width_chars=12, height_lines=5, accents=None):
             break
         y = PADDING + row * char_h
 
-        # Build per-character color array
-        char_colors = [body_color] * len(line)
+        # Check if this line has any accent colors
+        has_accents = row in accent_map and any(
+            line.find(pat) != -1 for pat, _ in accent_map.get(row, [])
+        )
 
-        if row in accent_map:
+        if not has_accents:
+            # Fast path: draw entire line in body color
+            draw.text((PADDING, y), line, font=font, fill=body_color)
+        else:
+            # Slow path: per-character coloring for accents
+            char_colors = [body_color] * len(line)
             for pattern, rgb in accent_map[row]:
-                # Find all occurrences of pattern in line
                 start = 0
                 while True:
                     idx = line.find(pattern, start)
@@ -80,12 +85,11 @@ def render_frame(lines, color, width_chars=12, height_lines=5, accents=None):
                         char_colors[i] = rgb
                     start = idx + 1
 
-        # Draw character by character
-        x = PADDING
-        for i, ch in enumerate(line):
-            if ch != " ":
-                draw.text((x, y), ch, font=font, fill=char_colors[i])
-            x += char_w
+            x = PADDING
+            for i, ch in enumerate(line):
+                if ch != " ":
+                    draw.text((x, y), ch, font=font, fill=char_colors[i])
+                x += char_w
 
     return img
 
