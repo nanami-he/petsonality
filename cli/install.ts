@@ -49,6 +49,19 @@ function err(msg: string) { console.log(`${RED}✗${NC}  ${msg}`); }
 
 // ─── Preflight checks ──────────────────────────────────────────────────────
 
+function detectHosts(): { claude: boolean; openclaw: boolean } {
+  const claude = existsSync(CLAUDE_DIR) && existsSync(join(homedir(), ".claude.json"));
+  let openclaw = false;
+  try {
+    const { findOpenClawTuiFile } = require("./openclaw-patch.ts");
+    openclaw = !!findOpenClawTuiFile();
+  } catch {
+    // Try simpler detection
+    try { execSync("which openclaw", { stdio: "ignore" }); openclaw = true; } catch {}
+  }
+  return { claude, openclaw };
+}
+
 function preflight(): boolean {
   let pass = true;
 
@@ -69,18 +82,14 @@ function preflight(): boolean {
     info("Install: brew install jq (optional)");
   }
 
-  if (!existsSync(CLAUDE_DIR)) {
-    err("~/.claude/ not found. Start Claude Code once first.");
-    pass = false;
-  } else {
-    ok("~/.claude/ found");
-  }
+  const hosts = detectHosts();
+  if (hosts.claude) ok("Claude Code detected");
+  if (hosts.openclaw) ok("OpenClaw detected");
 
-  if (!existsSync(join(homedir(), ".claude.json"))) {
-    err("~/.claude.json not found. Start Claude Code once first.");
+  if (!hosts.claude && !hosts.openclaw) {
+    err("No supported host found.");
+    info("Install Claude Code (https://claude.ai/code) or OpenClaw (https://github.com/openclaw/openclaw)");
     pass = false;
-  } else {
-    ok("~/.claude.json found");
   }
 
   return pass;
@@ -294,27 +303,39 @@ if (!preflight()) {
 console.log("");
 info("Installing petsonality...\n");
 
-const settings = loadSettings();
-installMcp();
-installSkill();
-installStatusLine(settings);
-installHooks(settings);
-ensurePermissions(settings);
-saveSettings(settings);
+const hosts = detectHosts();
 
-// Build reactions pool for shell hooks
+// ─── Claude Code installation ──────────────────────────────────────────────
+if (hosts.claude) {
+  info("Installing for Claude Code...\n");
+  const settings = loadSettings();
+  installMcp();
+  installSkill();
+  installStatusLine(settings);
+  installHooks(settings);
+  ensurePermissions(settings);
+  saveSettings(settings);
+} else {
+  info("Claude Code not detected — skipping Claude-specific setup");
+}
+
+// ─── Build reactions pool (needed by both hosts) ───────────────────────────
 try {
   execSync("bun run build:reactions", { cwd: PROJECT_ROOT, stdio: "inherit" });
 } catch {
   warn("Could not build reactions pool — hooks will use fallback reactions");
 }
 
-// OpenClaw support (separate from Claude Code)
+// ─── OpenClaw installation ─────────────────────────────────────────────────
 await installOpenClaw();
+
+const hostNames = [];
+if (hosts.claude) hostNames.push("Claude Code");
+if (hosts.openclaw) hostNames.push("OpenClaw");
 
 console.log(`
 ${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
-${GREEN}  Done! Restart Claude Code and type /pet${NC}
+${GREEN}  Done! Restart ${hostNames.join(" / ")} and type /pet${NC}
 ${GREEN}  Your pet will guide you through adoption.${NC}
 ${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
 
