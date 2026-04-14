@@ -19,11 +19,10 @@ import {
   loadPet, savePet,
   loadReaction, saveReaction, writeStatusState,
   loadConfig, saveConfig,
-  checkCooldown, recordSpeak,
+  checkCooldown, recordSpeak, consumeHint,
 } from "./state.ts";
-import { getReaction } from "./reactions.ts";
+import { getReaction, getPetById } from "./i18n.ts";
 import { renderPetCard, ANIMAL_ART, getArtFrame } from "./art.ts";
-import { getPetById } from "./pets.ts";
 import { buildPersonalityPrompt, maybeSignatureLine, validateVoice, fallbackLine } from "./voice.ts";
 import { stringWidth, padDisplay } from "./utils.ts";
 
@@ -392,6 +391,7 @@ server.tool(
     saveReaction(finalText, reason ?? "turn");
     writeStatusState(pet, finalText);
     recordSpeak(pet.cooldownRange as [number, number] | undefined);
+    consumeHint();
 
     return {
       content: [{ type: "text", text: `${pet.petName}: ${finalText}` }],

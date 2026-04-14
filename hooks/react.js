@@ -20,6 +20,8 @@ const PET_FILE = join(STATE_DIR, "pet.json");
 const COOLDOWN_FILE = join(STATE_DIR, `.last_speak.${SID}`);
 const STREAK_FILE = join(STATE_DIR, `.silent_streak.${SID}`);
 const POOL_FILE = join(STATE_DIR, "reactions-pool.json");
+const HINT_FILE = join(STATE_DIR, `hint.${SID}.json`);
+const HINT_TTL_MS = 3000; // 3s window for model to consume hint before fallback
 
 // ─── CJK display width ─────────────────────────────────────────────────────
 
@@ -96,6 +98,50 @@ const FREQ = {
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
+function writeHint(reason, priority, summary) {
+  mkdirSync(STATE_DIR, { recursive: true });
+  writeFileSync(HINT_FILE, JSON.stringify({
+    reason, priority, summary, ts: Date.now(), consumed: false,
+  }), { mode: 0o600 });
+}
+
+function fallbackFromHint(pool, petId) {
+  // Check if there's a stale unconsumed hint → fallback to fixed pool
+  const hint = readJSON(HINT_FILE);
+  if (!hint || hint.consumed) return;
+  if (Date.now() - hint.ts < HINT_TTL_MS) return; // still fresh, give model time
+
+  // Stale hint — model didn't speak. Fallback from pool.
+  const reason = hint.reason || "turn";
+  const animalPool = pool.pool[petId]?.[reason] || pool.pool.labrador?.[reason] || [];
+  let reaction = animalPool.length > 0
+    ? animalPool[Math.floor(Math.random() * animalPool.length)]
+    : "*looks at you*";
+
+  // Write reaction + mark hint consumed
+  mkdirSync(STATE_DIR, { recursive: true });
+  const cols = getTermCols();
+  let wrapW = Math.min(Math.max(cols - 26, 20), 60);
+  const wrap = wrapText(reaction, wrapW, 4);
+  writeFileSync(REACTION_FILE, JSON.stringify({
+    reaction, wrapped: wrap.lines, widths: wrap.widths,
+    maxWidth: wrap.maxWidth, timestamp: Date.now(), reason,
+  }), { mode: 0o600 });
+
+  // Update status.json
+  const status = readJSON(join(STATE_DIR, "status.json"));
+  if (status) {
+    status.reaction = reaction;
+    writeFileSync(join(STATE_DIR, "status.json"), JSON.stringify(status, null, 2), { mode: 0o600 });
+  }
+
+  // Mark consumed + record speak
+  hint.consumed = true;
+  writeFileSync(HINT_FILE, JSON.stringify(hint), { mode: 0o600 });
+  writeFileSync(COOLDOWN_FILE, String(Math.floor(Date.now() / 1000)), { mode: 0o600 });
+  writeFileSync(STREAK_FILE, "0", { mode: 0o600 });
+}
+
 function main() {
   // Read stdin (hook input)
   let input = "";
@@ -112,6 +158,9 @@ function main() {
   const lang = (process.env.LANG || "").startsWith("zh") ? "zh" : "en";
   const pool = rawPool[lang] || rawPool.zh || rawPool;
   if (!pool?.pool) process.exit(0);
+
+  // Check for stale hint from previous call → fallback if model didn't speak
+  fallbackFromHint(pool, pet.petId);
 
   const petId = pet.petId;
   const talkLevel = pool.meta?.[petId]?.talkLevel || "moderate";
@@ -191,47 +240,14 @@ function main() {
     process.exit(0);
   }
 
-  // ─── Pick reaction from pool ──────────────────────────────────────────
-  const animalPool = pool.pool[petId]?.[reason] || pool.pool.labrador?.[reason] || [];
-  let reaction = "";
-  if (animalPool.length > 0) {
-    reaction = animalPool[Math.floor(Math.random() * animalPool.length)];
-  }
-  if (!reaction) reaction = "*看了看你*";
+  // ─── Write hint (not reaction) — let model speak first ─────────────
+  const summary = result.slice(0, 100).replace(/\n/g, " ");
+  writeHint(reason, priority, summary);
 
-  // ─── Write reaction ───────────────────────────────────────────────────
+  // Reset streak + cooldown (hint counts as "spoke")
   mkdirSync(STATE_DIR, { recursive: true });
   writeFileSync(COOLDOWN_FILE, String(Math.floor(Date.now() / 1000)), { mode: 0o600 });
   writeFileSync(STREAK_FILE, "0", { mode: 0o600 });
-
-  // Wrap text for bubble
-  const cols = getTermCols();
-  let wrapW = cols - 26;
-  if (wrapW < 20) wrapW = 20;
-  if (wrapW > 60) wrapW = 60;
-
-  const wrap = wrapText(reaction, wrapW, 4);
-
-  const state = {
-    reaction,
-    wrapped: wrap.lines,
-    widths: wrap.widths,
-    maxWidth: wrap.maxWidth,
-    timestamp: Date.now(),
-    reason,
-  };
-
-  writeFileSync(REACTION_FILE, JSON.stringify(state), { mode: 0o600 });
-
-  // Update status.json
-  const statusPath = join(STATE_DIR, "status.json");
-  try {
-    const status = readJSON(statusPath);
-    if (status) {
-      status.reaction = reaction;
-      writeFileSync(statusPath, JSON.stringify(status, null, 2), { mode: 0o600 });
-    }
-  } catch { /* skip */ }
 }
 
 main();

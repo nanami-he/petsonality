@@ -128,6 +128,22 @@ export function recordSpeak(cooldownRange: [number, number] = [5, 12]): void {
   writeFileSync(cooldownFile(), String(nextAt), { mode: 0o600 });
 }
 
+// ─── Hint consumption (P6: model spoke, prevent hook fallback) ─────────────
+
+function hintFile(): string {
+  return join(STATE_DIR, `hint.${sessionId()}.json`);
+}
+
+export function consumeHint(): void {
+  try {
+    const data = JSON.parse(readFileSync(hintFile(), "utf8"));
+    if (data && !data.consumed) {
+      data.consumed = true;
+      writeFileSync(hintFile(), JSON.stringify(data), { mode: 0o600 });
+    }
+  } catch { /* no hint file */ }
+}
+
 export function saveReaction(reaction: string, reason: string): void {
   ensureDir();
   // Match hooks: WRAP_W = COLS - 26, clamped [20,60]. Server can't read COLS; use 40 as safe default.

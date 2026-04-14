@@ -18,6 +18,7 @@ const STATUS_FILE = join(STATE_DIR, "status.json");
 const PET_FILE = join(STATE_DIR, "pet.json");
 const COOLDOWN_FILE = join(STATE_DIR, `.last_speak.${SID}`);
 const REACTION_FILE = join(STATE_DIR, `reaction.${SID}.json`);
+const HINT_FILE = join(STATE_DIR, `hint.${SID}.json`);
 
 // ─── CJK display width (same as react.js) ───────────────────────────────────
 
@@ -147,6 +148,15 @@ function main() {
   };
 
   writeFileSync(REACTION_FILE, JSON.stringify(state), { mode: 0o600 });
+
+  // Consume hint if exists (model spoke via <!-- pet: -->, no fallback needed)
+  try {
+    const hint = readJSON(HINT_FILE);
+    if (hint && !hint.consumed) {
+      hint.consumed = true;
+      writeFileSync(HINT_FILE, JSON.stringify(hint), { mode: 0o600 });
+    }
+  } catch { /* no hint */ }
 }
 
 main();
