@@ -14,7 +14,7 @@
 
 A tiny ASCII pet that lives in the corner of your terminal while you code. It watches what you do, reacts to your errors, celebrates when tests pass, and speaks with a personality shaped by MBTI — all in 5 lines of art.
 
-It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and says something like "*看了你一眼* ……这段逻辑有点怪" — and somehow you feel less alone.
+It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and glances at your screen like "...that logic looks off" — and somehow you feel less alone.
 
 ## 16 Animals, 16 Personalities
 
@@ -25,7 +25,7 @@ It's not a notification system. It's a companion. The kind that's still there at
 | **E_ _J** | <img src="assets/gifs/bear.gif" width="90"><br><sub>Bear·ENTJ</sub> | <img src="assets/gifs/labrador.gif" width="90"><br><sub>Labrador·ENFJ</sub> | <img src="assets/gifs/lion.gif" width="90"><br><sub>Lion·ESTJ</sub> | <img src="assets/gifs/cheetah.gif" width="90"><br><sub>Cheetah·ESTP</sub> |
 | **E_ _P** | <img src="assets/gifs/fox.gif" width="90"><br><sub>Fox·ENTP</sub> | <img src="assets/gifs/dolphin.gif" width="90"><br><sub>Dolphin·ENFP</sub> | <img src="assets/gifs/golden.gif" width="90"><br><sub>Golden·ESFJ</sub> | <img src="assets/gifs/parrot.gif" width="90"><br><sub>Parrot·ESFP</sub> |
 
-Every animal speaks differently. The Fox asks "你确定？" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "改。" and waits.
+Every animal speaks differently. The Fox asks "Are you sure?" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "Fix it." and waits.
 
 <details>
 <summary><strong>All 16 animals</strong></summary>
