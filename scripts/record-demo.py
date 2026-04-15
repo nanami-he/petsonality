@@ -1,118 +1,149 @@
 #!/usr/bin/env python3
 """
-Generate a clean asciinema .cast demo for petsonality.
-Simple sequential layout — no side-by-side, no cursor movement.
+Generate demo GIF using PIL — no asciinema/agg dependency.
+Each scene is a frame rendered with Menlo font on dark background.
 """
 
-import json, os, time
+from PIL import Image, ImageDraw, ImageFont
+import os
 
-OUTPUT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "demo.cast")
+FONT_PATH = "/System/Library/Fonts/Menlo.ttc"
+FONT_SIZE = 18
+BG = (30, 30, 30)
+FG = (204, 204, 204)
+GREEN = (80, 200, 80)
+RED = (220, 80, 80)
+GOLD = (210, 175, 80)
+PINK = (240, 140, 150)
+CYAN = (100, 200, 220)
+DIM = (120, 120, 120)
+BOLD_W = (255, 255, 255)
+
+OUTPUT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "demo.gif")
 os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
 
-COLS, ROWS = 60, 18
-R = "\033[0m"
-DIM = "\033[2m"
-BOLD = "\033[1m"
-GREEN = "\033[32m"
-RED = "\033[31m"
-CYAN = "\033[36m"
-GOLD = "\033[38;2;210;175;80m"
+font = ImageFont.truetype(FONT_PATH, FONT_SIZE)
+bold_font = ImageFont.truetype(FONT_PATH, FONT_SIZE)
+char_w = int(font.getlength("W"))
+char_h = int(FONT_SIZE * 1.6)
 
-events = []
-t = 0.0
+W = char_w * 50 + 40  # 50 cols
+H = char_h * 16 + 40  # 16 rows
+PAD = 20
 
-def out(text, delay=0.0):
-    global t; t += delay
-    events.append([round(t, 3), "o", text])
 
-def clear():
-    out("\033[2J\033[H")
+def render_scene(lines_with_color):
+    """Render a list of (text, color) tuples per line."""
+    img = Image.new("RGB", (W, H), BG)
+    draw = ImageDraw.Draw(img)
+    for row, segments in enumerate(lines_with_color):
+        x = PAD
+        y = PAD + row * char_h
+        if isinstance(segments, str):
+            draw.text((x, y), segments, font=font, fill=FG)
+        else:
+            for text, color in segments:
+                draw.text((x, y), text, font=font, fill=color)
+                x += int(font.getlength(text))
+    return img
 
-def typed(text, cps=20):
-    for ch in text:
-        out(ch, 1.0/cps)
 
-def nl():
-    out("\r\n")
+# ── Scene 1: Install ──────────────────────
+scene1 = [
+    [("$ ", DIM), ("npx petsonality", FG)],
+    [],
+    [("  petsonality", BOLD_W), (" — MBTI terminal pet companion", FG)],
+    [],
+    [("  ✓", GREEN), (" node found", FG)],
+    [("  ✓", GREEN), (" Claude Code detected", FG)],
+    [("  ✓", GREEN), (" MCP server registered", FG)],
+    [("  ✓", GREEN), (" Hooks + status line configured", FG)],
+    [],
+    [("  Done! Type /pet to adopt.", GREEN)],
+]
 
-# ── Scene 1: Install ────────────────────────────────────
-clear()
-out(f"{DIM}${R} ", 0.3)
-typed("npx petsonality")
-nl(); out("", 0.4)
-nl()
-out(f"  {BOLD}petsonality{R} — MBTI terminal pet companion\r\n", 0.2)
-nl()
-out(f"  {GREEN}✓{R} node found\r\n", 0.3)
-out(f"  {GREEN}✓{R} Claude Code detected\r\n", 0.2)
-out(f"  {GREEN}✓{R} MCP server registered\r\n", 0.2)
-out(f"  {GREEN}✓{R} Hooks + status line configured\r\n", 0.2)
-nl()
-out(f"  {GREEN}Done! Type /pet to adopt your companion.{R}\r\n", 0.4)
+# ── Scene 2: Adopt ────────────────────────
+scene2 = [
+    [("$ ", DIM), ("/pet", FG)],
+    [],
+    [("  Your MBTI? ", FG), ("ENFJ", BOLD_W)],
+    [("  Recommended: ", FG), ("Labrador", GOLD), (" — Warm Coach", FG)],
+    [],
+    [("        __/\\", GOLD)],
+    [("      __/@ )", GOLD)],
+    [("     O     \\", GOLD)],
+    [("      ", GOLD), ("U", PINK), (" \\___\\-", GOLD)],
+    [],
+    [("  ✓", GREEN), (" Meet ", FG), ("ENFJ", BOLD_W), (" the Labrador!", FG)],
+]
 
-# ── Scene 2: Adopt ──────────────────────────────────────
-out("", 2.0)
-clear()
-out(f"{DIM}${R} ", 0.3)
-typed("/pet")
-nl(); out("", 0.5)
-nl()
-out(f"  Your MBTI? {BOLD}ENFJ{R}\r\n", 0.5)
-out(f"  Recommended: {GOLD}Labrador{R} — Warm Coach\r\n", 0.4)
-nl()
-out(f"  {GOLD}      __/\\{R}\r\n", 0.1)
-out(f"  {GOLD}    __/@ ){R}\r\n", 0.1)
-out(f"  {GOLD}   O     \\{R}\r\n", 0.1)
-out(f"  {GOLD}    U \\___\\-{R}\r\n", 0.1)
-nl()
-out(f"  {GREEN}✓{R} Meet {BOLD}ENFJ{R} the Labrador!\r\n", 0.5)
+# ── Scene 3: Error + reaction ─────────────
+scene3 = [
+    [("You code. Your pet watches.", DIM)],
+    [],
+    [("        __/\\", GOLD)],
+    [("      __/@ )", GOLD)],
+    [("     O     \\", GOLD)],
+    [("      ", GOLD), ("U", PINK), (" \\___\\-", GOLD)],
+    [],
+    [("$ ", DIM), ("bun test", FG)],
+    [("  ✗ 2 tests failed", RED)],
+    [],
+    [("  ", FG), ("ENFJ: ", GOLD), ("*sighs* ...you okay?", FG)],
+]
 
-# ── Scene 3: Coding + error ─────────────────────────────
-out("", 2.0)
-clear()
-out(f"{DIM}You code. Your pet watches.{R}\r\n", 0.5)
-nl()
-out(f"{DIM}${R} ", 0.6)
-typed("bun test")
-nl(); out("", 0.4)
-out(f"  {RED}✗ 2 tests failed{R}\r\n", 0.5)
-nl()
-out(f"  {GOLD}ENFJ:{R} *sighs* ...you okay?\r\n", 0.6)
+# ── Scene 4: Success ──────────────────────
+scene4 = [
+    [("$ ", DIM), ("bun test", FG)],
+    [("  ✓ 302 tests passed", GREEN)],
+    [],
+    [("        __/\\", GOLD)],
+    [("      __/@ )", GOLD)],
+    [("     O     \\", GOLD)],
+    [("      ", GOLD), ("U", PINK), (" \\___\\~", GOLD)],
+    [],
+    [("  ", FG), ("ENFJ: ", GOLD), ("*tail wags* ...hm.", FG)],
+    [],
+    [],
+    [("  ", FG), ("ENFJ: ", GOLD), ("have you had water?", FG)],
+]
 
-# ── Scene 4: Fix + success ──────────────────────────────
-out("", 2.0)
-nl()
-out(f"{DIM}${R} ", 0.4)
-typed("bun test")
-nl(); out("", 0.4)
-out(f"  {GREEN}✓ 302 tests passed{R}\r\n", 0.5)
-nl()
-out(f"  {GOLD}ENFJ:{R} *tail wags* ...hm.\r\n", 0.6)
+# ── Scene 5: Tagline ─────────────────────
+scene5 = [
+    [],
+    [],
+    [],
+    [],
+    [("     petsonality", BOLD_W)],
+    [("     Your type, your pet.", FG)],
+    [],
+    [("     npx petsonality", DIM)],
+    [],
+    [("     16 animals · 1276 reactions", DIM)],
+    [("     2 languages · open source", DIM)],
+]
 
-# ── Scene 5: Daily moment ───────────────────────────────
-out("", 2.0)
-nl()
-out(f"  {GOLD}ENFJ:{R} have you had water?\r\n", 0.8)
+frames = []
+durations = []
 
-# ── Scene 6: Tagline ────────────────────────────────────
-out("", 2.5)
-clear()
-out("\r\n\r\n\r\n", 0.2)
-out(f"     {BOLD}petsonality{R}\r\n", 0.4)
-out(f"     Your type, your pet.\r\n", 0.3)
-nl()
-out(f"     {DIM}npx petsonality{R}\r\n", 0.6)
-out(f"     {DIM}16 animals · 1276 reactions · 2 languages{R}\r\n", 0.4)
+for scene, dur in [
+    (scene1, 3000),
+    (scene2, 3500),
+    (scene3, 4000),
+    (scene4, 4000),
+    (scene5, 3000),
+]:
+    frames.append(render_scene(scene))
+    durations.append(dur)
 
-# Write
-with open(OUTPUT, "w") as f:
-    f.write(json.dumps({
-        "version": 2, "width": COLS, "height": ROWS,
-        "timestamp": int(time.time()),
-        "env": {"SHELL": "/bin/zsh", "TERM": "xterm-256color"},
-        "title": "petsonality demo",
-    }) + "\n")
-    for ev in events:
-        f.write(json.dumps(ev) + "\n")
+frames[0].save(
+    OUTPUT,
+    save_all=True,
+    append_images=frames[1:],
+    duration=durations,
+    loop=0,
+    optimize=True,
+)
 
-print(f"✓ {OUTPUT} — {len(events)} events, {t:.1f}s")
+size_kb = os.path.getsize(OUTPUT) / 1024
+print(f"✓ demo.gif — {len(frames)} scenes, {size_kb:.0f}KB")
