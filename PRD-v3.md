@@ -22,34 +22,38 @@
 
 ---
 
-## 当前优先 — 系统优化 + 维护 + PR 推进
+## 当前优先 — 宣传 + 推广
 
-### M1: npx 安装体验完善
-- [ ] build:reactions 在 npx 环境下失败（scripts/ 不在包里）— 改为安装时从 dist 内部构建或预打包 pool
-- [ ] OpenClaw 安装全链路验证（纯 OpenClaw 环境跑通）
-- [ ] 安装后自动验证（doctor 检查一遍）
+### G1: 社区推广
+- [ ] Reddit r/ClaudeAI 发帖（附 GIF + 安装命令）
+- [ ] Hacker News Show HN 帖
+- [ ] Twitter/X 发帖（短视频或 GIF + 一句话）
+- [ ] Claude Code Discord / community 频道分享
+- [ ] OpenClaw Discord 分享（关联 PR #65886）
 
-### M2: OpenClaw PR #65886 推进
-- [ ] 在 PR 上 ping 维护者（礼貌催一下）
-- [ ] 检查是否有新的 CI 要求或代码规范变更
-- [ ] 准备好 rebase（如果 main 有新提交）
-- [ ] PR 合并后：installer 自动切 native config，停用 patch
+### G2: 终端录屏
+- [ ] 录制 30s 终端演示（领养→说话→动画→错误反应）
+- [ ] 转成 GIF 或上传 YouTube/Twitter
+- [ ] 嵌入 README 顶部替代静态描述
 
-### M3: 说话系统验证
-- [ ] 真实使用 2-3 天，观察说话频率是否合适
-- [ ] hint 架构的 fallback 是否正常工作
-- [ ] 英文环境验证（LANG=en 时反应是否自然）
-- [ ] cooldown 参数是否需要微调
+### G3: 产品页面
+- [ ] GitHub repo description 更新（一句话 + 标签）
+- [ ] npm 页面描述优化
+- [ ] 考虑做一个简单 landing page？
 
-### M4: 发版流程规范化
-- [ ] 写一个 `scripts/release.sh`：build → test → version bump → publish
-- [ ] npm publish 的 OTP 自动化（或改用 automation token）
-- [ ] CHANGELOG.md 自动生成
+---
 
-### M5: 测试补全
-- [ ] 集成测试：模拟完整安装 → 领养 → hook 触发 → reaction 显示
-- [ ] hint 架构的单元测试（写 hint → 消费 → fallback）
-- [ ] 英文 pets-en.ts 的性格验证测试（和中文版同结构）
+## 维护（持续）
+
+### M1: OpenClaw PR #65886
+- [x] PR 描述重写 + ping 维护者（2026-04-14）
+- [ ] 等维护者回复，按需 rebase
+- [ ] 合并后 installer 切 native config
+
+### M2: 体验微调
+- [ ] 真实使用观察说话频率
+- [ ] build:reactions 在 npx 环境的 fix
+- [ ] 发版流程脚本化
 
 ---
 
