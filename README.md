@@ -14,6 +14,10 @@
 
 A tiny ASCII pet that lives in the corner of your terminal while you code. It watches what you do, reacts to your errors, celebrates when tests pass, and speaks with a personality shaped by MBTI — all in 5 lines of art.
 
+<p align="center">
+  <img src="assets/demo.gif" alt="petsonality demo" width="640">
+</p>
+
 It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and glances at your screen like "...that logic looks off" — and somehow you feel less alone.
 
 ## 16 Animals, 16 Personalities
