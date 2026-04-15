@@ -86,7 +86,7 @@ scene3 = [
     [("     O     \\", GOLD)],
     [("      ", GOLD), ("U", PINK), (" \\___\\-", GOLD)],
     [],
-    [("$ ", DIM), ("bun test", FG)],
+    [("$ ", DIM), ("npm test", FG)],
     [("  ✗ 2 tests failed", RED)],
     [],
     [("  ", FG), ("ENFJ: ", GOLD), ("*sighs* ...you okay?", FG)],
@@ -94,7 +94,7 @@ scene3 = [
 
 # ── Scene 4: Success ──────────────────────
 scene4 = [
-    [("$ ", DIM), ("bun test", FG)],
+    [("$ ", DIM), ("npm test", FG)],
     [("  ✓ 302 tests passed", GREEN)],
     [],
     [("        __/\\", GOLD)],
