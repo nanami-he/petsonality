@@ -22,12 +22,12 @@ It's not a notification system. It's a companion. The kind that's still there at
 
 ## 16 Animals, 16 Personalities
 
-| | NT Analysts | NF Diplomats | SJ Sentinels | SP Explorers |
+| | ST | SF | NF | NT |
 |:---:|:---:|:---:|:---:|:---:|
-| **I_ _J** | <img src="assets/gifs/raven.gif" width="90"><br><sub>Raven·INTJ</sub> | <img src="assets/gifs/wolf.gif" width="90"><br><sub>Wolf·INFJ</sub> | <img src="assets/gifs/beaver.gif" width="90"><br><sub>Beaver·ISTJ</sub> | <img src="assets/gifs/cat.gif" width="90"><br><sub>Cat·ISTP</sub> |
-| **I_ _P** | <img src="assets/gifs/owl.gif" width="90"><br><sub>Owl·INTP</sub> | <img src="assets/gifs/deer.gif" width="90"><br><sub>Deer·INFP</sub> | <img src="assets/gifs/elephant.gif" width="90"><br><sub>Elephant·ISFJ</sub> | <img src="assets/gifs/panda.gif" width="90"><br><sub>Panda·ISFP</sub> |
-| **E_ _J** | <img src="assets/gifs/bear.gif" width="90"><br><sub>Bear·ENTJ</sub> | <img src="assets/gifs/labrador.gif" width="90"><br><sub>Labrador·ENFJ</sub> | <img src="assets/gifs/lion.gif" width="90"><br><sub>Lion·ESTJ</sub> | <img src="assets/gifs/cheetah.gif" width="90"><br><sub>Cheetah·ESTP</sub> |
-| **E_ _P** | <img src="assets/gifs/fox.gif" width="90"><br><sub>Fox·ENTP</sub> | <img src="assets/gifs/dolphin.gif" width="90"><br><sub>Dolphin·ENFP</sub> | <img src="assets/gifs/golden.gif" width="90"><br><sub>Golden·ESFJ</sub> | <img src="assets/gifs/parrot.gif" width="90"><br><sub>Parrot·ESFP</sub> |
+| **I_ _J** | <img src="assets/gifs/beaver.gif" width="90"><br><sub>Beaver·ISTJ</sub> | <img src="assets/gifs/elephant.gif" width="90"><br><sub>Elephant·ISFJ</sub> | <img src="assets/gifs/wolf.gif" width="90"><br><sub>Wolf·INFJ</sub> | <img src="assets/gifs/raven.gif" width="90"><br><sub>Raven·INTJ</sub> |
+| **I_ _P** | <img src="assets/gifs/cat.gif" width="90"><br><sub>Cat·ISTP</sub> | <img src="assets/gifs/panda.gif" width="90"><br><sub>Panda·ISFP</sub> | <img src="assets/gifs/deer.gif" width="90"><br><sub>Deer·INFP</sub> | <img src="assets/gifs/owl.gif" width="90"><br><sub>Owl·INTP</sub> |
+| **E_ _J** | <img src="assets/gifs/lion.gif" width="90"><br><sub>Lion·ESTJ</sub> | <img src="assets/gifs/golden.gif" width="90"><br><sub>Golden·ESFJ</sub> | <img src="assets/gifs/labrador.gif" width="90"><br><sub>Labrador·ENFJ</sub> | <img src="assets/gifs/bear.gif" width="90"><br><sub>Bear·ENTJ</sub> |
+| **E_ _P** | <img src="assets/gifs/cheetah.gif" width="90"><br><sub>Cheetah·ESTP</sub> | <img src="assets/gifs/parrot.gif" width="90"><br><sub>Parrot·ESFP</sub> | <img src="assets/gifs/dolphin.gif" width="90"><br><sub>Dolphin·ENFP</sub> | <img src="assets/gifs/fox.gif" width="90"><br><sub>Fox·ENTP</sub> |
 
 Every animal speaks differently. The Fox asks "Are you sure?" with a smirk. The Cat just closes its eyes. The Parrot repeats what you said but louder. The Bear says "Fix it." and waits.
 
