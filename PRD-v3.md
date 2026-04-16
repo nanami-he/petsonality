@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.3.4 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.3.5 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -61,6 +61,8 @@
 
 ### 成长系统
 - 互动次数 → 等级/状态变化
+- **心情系统接逻辑**（v0.3.5 暂时撤掉显示，字段保留在 state 里）：错误时变 worried、连续 commit 成功变 proud、长时间无互动变 sleepy
+- **互动次数显示**回归（v0.3.5 暂时撤掉）：达到里程碑（10/50/100）触发特殊反应或解锁稀有帽子
 
 ### 帽子/换肤 DLC
 - 帽子系统（第一行预留位）

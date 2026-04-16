@@ -43,6 +43,7 @@ function row(label: string, value: string) {
 function ok(msg: string) { console.log(`  ${GREEN}✓${NC} ${msg}`); }
 function warn(msg: string) { console.log(`  ${YELLOW}⚠${NC} ${msg}`); }
 function err(msg: string) { console.log(`  ${RED}✗${NC} ${msg}`); }
+function info(msg: string) { console.log(`  ${CYAN}→${NC} ${msg}`); }
 
 function tryExec(cmd: string, fallback = "(failed)"): string {
   try {

@@ -122,7 +122,7 @@ export function checkCooldown(): boolean {
 export function recordSpeak(cooldownRange: [number, number] = [5, 12]): void {
   ensureDir();
   const [cdMin, cdMax] = cooldownRange;
-  const cdRange = Math.max((cdMax - cdMin) * 60, 60);
+  const cdRange = Math.max((cdMax - cdMin) * 60, 0);
   const cooldownSec = cdMin * 60 + Math.floor(Math.random() * cdRange);
   const nextAt = Math.floor(Date.now() / 1000) + cooldownSec;
   writeFileSync(cooldownFile(), String(nextAt), { mode: 0o600 });

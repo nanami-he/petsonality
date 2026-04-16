@@ -291,19 +291,11 @@ server.tool(
     const reaction = loadReaction();
     const reactionText = reaction?.reaction ?? `*${pet.petName} 安静地看着你*`;
 
-    const moodEmoji: Record<string, string> = {
-      happy: "😊", calm: "😌", sleepy: "😴", worried: "😟", proud: "😤",
-    };
-
     const card = renderPetCard(
       pet.petId,
       pet.petName,
       `${display?.cn} · ${pet.personality}`,
       reactionText,
-      [
-        `心情: ${moodEmoji[pet.mood] || "?"} ${pet.mood}`,
-        `互动: ${pet.interactionCount} 次`,
-      ],
     );
 
     writeStatusState(pet, reaction?.reaction);

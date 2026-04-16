@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/petsonality"><img src="https://img.shields.io/badge/npm-0.3.4-blue" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/petsonality"><img src="https://img.shields.io/badge/npm-0.3.5-blue" alt="npm"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
   <a href="https://github.com/nanami-he/petsonality/stargazers"><img src="https://img.shields.io/github/stars/nanami-he/petsonality?style=flat" alt="stars"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-powered-orange" alt="MCP"></a>

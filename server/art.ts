@@ -190,6 +190,13 @@ export function getArtFrame(animalId: AnimalId, frame: number = 0): string[] {
 // ─── Word wrap (CJK-aware) ─────────────────────────────────────────────────
 
 function wordWrap(text: string, maxWidth: number): string[] {
+  // Pre-split on embedded newlines so each \n becomes a hard line break.
+  // Personality strings in pets.ts use multi-line template literals, which
+  // would otherwise produce raw \n inside box-drawn cards.
+  if (text.includes("\n")) {
+    return text.split("\n").flatMap((line) => wordWrap(line, maxWidth));
+  }
+
   const result: string[] = [];
   let current = "";
   let currentW = 0;
