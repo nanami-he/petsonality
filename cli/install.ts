@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "fs";
 import { execSync } from "child_process";
 import { join, resolve, dirname } from "path";
 import { homedir } from "os";
+import { findOpenClawTuiFile } from "./openclaw-patch.ts";
 
 const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
@@ -53,10 +54,9 @@ function detectHosts(): { claude: boolean; openclaw: boolean } {
   const claude = existsSync(CLAUDE_DIR) && existsSync(join(homedir(), ".claude.json"));
   let openclaw = false;
   try {
-    const { findOpenClawTuiFile } = require("./openclaw-patch.ts");
     openclaw = !!findOpenClawTuiFile();
   } catch {
-    // Try simpler detection
+    // Fallback if openclaw-patch helper throws — check PATH
     try { execSync("which openclaw", { stdio: "ignore" }); openclaw = true; } catch {}
   }
   return { claude, openclaw };

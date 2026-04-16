@@ -110,7 +110,7 @@ Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 m
 - [x] Multi-host support (Claude Code + OpenClaw)
 - [x] Node.js powered (no python/jq dependency)
 - [x] Published on npm
-- [ ] Multi-language support
+- [x] Multi-language support (auto zh / en via `LANG`, 638 reactions per language)
 - [ ] Growth system (level up through interaction)
 - [ ] Hat / skin DLC
 - [ ] Multi-pet collection

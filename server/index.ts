@@ -116,7 +116,7 @@ function getInstructions(): string {
 
 const server = new McpServer({
   name: "petsonality",
-  version: "0.2.0",
+  version: "0.3.5",
 }, {
   instructions: getInstructions(),
 });

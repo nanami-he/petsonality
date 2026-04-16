@@ -34,9 +34,11 @@ jobs:
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           PLUGIN_VERSION=$(node -p "require('./.claude-plugin/plugin.json').version")
-          echo "package.json:   $PKG_VERSION"
-          echo "plugin.json:    $PLUGIN_VERSION"
-          if [ "$PKG_VERSION" != "$PLUGIN_VERSION" ]; then
-            echo "::error::Version mismatch between package.json ($PKG_VERSION) and .claude-plugin/plugin.json ($PLUGIN_VERSION)"
+          SERVER_VERSION=$(grep -oE 'version: "[0-9]+\.[0-9]+\.[0-9]+"' server/index.ts | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          echo "package.json:    $PKG_VERSION"
+          echo "plugin.json:     $PLUGIN_VERSION"
+          echo "server/index.ts: $SERVER_VERSION"
+          if [ "$PKG_VERSION" != "$PLUGIN_VERSION" ] || [ "$PKG_VERSION" != "$SERVER_VERSION" ]; then
+            echo "::error::Version mismatch — package.json=$PKG_VERSION plugin.json=$PLUGIN_VERSION server/index.ts=$SERVER_VERSION"
             exit 1
           fi

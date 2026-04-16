@@ -55,6 +55,21 @@
 - [ ] build:reactions 在 npx 环境的 fix
 - [ ] 发版流程脚本化
 
+### M3: i18n 完整覆盖（高优先 — 推广前最好做）
+现状：`server/i18n.ts` 已按 `LANG` 自动切 zh/en，但只覆盖 reactions。
+- [ ] `server/index.ts` 的 tool 响应文本（`你还没有宠物` / `领养你的宠物搭档` / 系统 prompt instructions）目前**全部硬编码中文**，英语用户看到中英分裂体验
+- [ ] `skills/pet/SKILL.md` 流程提示也是中文
+- [ ] 抽 `server/messages.ts` message catalog，所有 user-facing 字符串走 `t(key)` 函数
+- [ ] SKILL.md 双语版本或全英化
+- 影响：决定了 petsonality 是真国际开源还是"中文作者用 npm 分发"
+
+### M4: 安装侵入性透明化
+现状：`installStatusLine` 自动替换已有 statusLine（虽有 `.bak`），`installHooks` 重写既有 hook 条目。
+- [ ] 检测到现有非空 statusLine 时，prompt 用户确认 + 显示即将被覆盖的内容
+- [ ] hook 重写也走同样的"先 diff 再写"流程
+- [ ] 长期等 OpenClaw merge PR #65886 后，TUI patch 路径完全废弃
+- 决策记录：短期接受侵入式安装 + 自动 backup 兜底是 conscious choice，优先开发速度，但推广开始后用户初见信任成本会上升
+
 ---
 
 ## Phase 2 — 体验深化（后续）
