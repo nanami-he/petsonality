@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>petsonality social preview</title>
+<style>
+  /* 1280x640 — GitHub social preview / Twitter card */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  html, body { margin: 0; padding: 0; background: #000; }
+
+  .card {
+    width: 1280px;
+    height: 640px;
+    /* Mac Terminal "Pro" feel — warm near-black with subtle vertical depth */
+    background: #1c1c1c;        /* flat — gradient was creating perceived bottom band */
+    color: #f5f5f7;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 56px 72px;
+    font-family: -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif;
+  }
+
+  /* —— top-left: minimal context tag —— */
+  .tag {
+    color: #6e6e73;             /* Apple gray */
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* —— hero: Apple-style typography —— */
+  .hero {
+    margin-top: 60px;
+  }
+  .brand {
+    font-family: -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif;
+    font-size: 132px;
+    font-weight: 800;           /* SF Pro Black-ish */
+    line-height: 0.95;
+    letter-spacing: -0.045em;   /* Apple-tight */
+    color: #f5f5f7;
+    margin: 0;
+    /* subtle gradient for depth, like Apple marketing */
+    background: linear-gradient(180deg, #ffffff 0%, #c7c7cc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .tagline {
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 32px;
+    font-weight: 400;
+    color: #5eff7a;             /* terminal phosphor green */
+    letter-spacing: -0.005em;
+    margin: 24px 0 0 0;
+    /* faint glow like a CRT */
+    text-shadow: 0 0 12px rgba(94, 255, 122, 0.35);
+  }
+  .tagline::before {
+    content: "> ";
+    opacity: 0.7;
+  }
+
+  /* —— bottom-left: install command —— */
+  .install {
+    position: absolute;
+    left: 72px;
+    bottom: 36px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 22px;
+    line-height: 1;
+  }
+  .install .prompt { color: #30d158; font-weight: 700; }   /* Apple green */
+  .install .cmd { color: #f5f5f7; font-weight: 500; }
+  .install .url {
+    display: block;
+    color: #6e6e73;
+    font-size: 17px;
+    font-weight: 400;
+    margin-top: 14px;
+    line-height: 1;
+  }
+
+  /* —— bottom-right: single row of 4 pets —— */
+  .pets {
+    position: absolute;
+    right: 72px;
+    bottom: 36px;
+    display: flex;
+    gap: 32px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 14px;
+    line-height: 1.15;
+  }
+  .pet {
+    text-align: center;
+    white-space: pre;
+  }
+  .pet .art {
+    display: block;
+    text-align: left;            /* keep ASCII alignment intact */
+  }
+  .pet .label {
+    display: block;
+    margin-top: 6px;
+    font-family: -apple-system, "SF Pro Text", "Inter", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6e6e73;
+    letter-spacing: 0.12em;
+  }
+  /* per-pet colors — match server/art.ts + pet-status.sh palette */
+  .pet.raven  .art { color: #8c64b4; }
+  .pet.beaver .art { color: #b27340; }
+  .pet.golden .art { color: #dcb95a; }
+  .pet.bear   .art { color: #b07848; }
+  /* per-character accents (from pet-status.sh) */
+  .teeth  { color: #c8c3b9; }   /* beaver TH */
+  .tongue { color: #f08c96; }   /* golden TG */
+
+  .more {
+    align-self: flex-end;       /* sit at label baseline, not center */
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 13px;
+    color: #6e6e73;
+    letter-spacing: 0.2em;
+    padding-bottom: 2px;        /* tiny nudge so dots align with label text */
+    font-weight: 400;
+    margin-left: -8px;          /* tighter to last pet */
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="tag">Claude Code / OpenClaw · MCP-Powered</div>
+
+  <div class="hero">
+    <h1 class="brand">petsonality</h1>
+    <p class="tagline">Your type, your pet.</p>
+  </div>
+
+  <div class="install">
+    <span class="prompt">$ </span><span class="cmd">npx petsonality</span>
+    <span class="url">github.com/nanami-he/petsonality</span>
+  </div>
+
+  <div class="pets">
+    <div class="pet raven"><span class="art">  &lt;(✦)
+   (\ \_
+    \\//
+  --" "---  </span><span class="label">RAVEN · INTJ</span></div>
+
+    <div class="pet beaver"><span class="art">  n____n
+ (·    ·)
+ ( &gt;<span class="teeth">TT</span>&lt; )
+  `----'    </span><span class="label">BEAVER · ISTJ</span></div>
+
+    <div class="pet golden"><span class="art">  _/~\~~
+ ( •  \~~
+  <span class="tongue">U</span>    |
+  \__(__)~  </span><span class="label">GOLDEN · ESFJ</span></div>
+
+    <div class="pet bear"><span class="art"> c  .-.  C
+( ʘ  .  ʘ )
+(   ww    )
+  d|   |b   </span><span class="label">BEAR · ENTJ</span></div>
+
+    <div class="more">···</div>
+  </div>
+
+</div>
+</body>
+</html>
