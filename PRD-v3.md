@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.3.3 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.3.4 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 

@@ -35,10 +35,7 @@ switch (command) {
     runDist("doctor");
     break;
   case "uninstall":
-    console.log("Uninstall not yet implemented. Remove manually:");
-    console.log("  - Delete petsonality from ~/.claude.json mcpServers");
-    console.log("  - Delete petsonality hooks from ~/.claude/settings.json");
-    console.log("  - Delete ~/.petsonality/");
+    runDist("uninstall");
     break;
   case "--help":
   case "-h":

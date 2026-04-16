@@ -1,6 +1,6 @@
 {
   "name": "petsonality",
-  "version": "0.2.0",
+  "version": "0.3.4",
   "description": "MBTI-based terminal pet companion for Claude Code — MCP server with ASCII art, personality, and reactions.",
   "skills": ["pet"],
   "mcpServers": {

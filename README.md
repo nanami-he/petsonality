@@ -64,12 +64,12 @@ Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.c
 npx petsonality
 ```
 
-Or manually:
+Or build from source (requires [bun](https://bun.sh)):
 
 ```bash
 git clone https://github.com/nanami-he/petsonality.git
-cd petsonality && npm install && npm run build
-npm run install-petsonality
+cd petsonality && bun install && bun run build
+bun run install-petsonality
 ```
 
 Restart your AI coding assistant, then type **`/pet`** in the chat.
