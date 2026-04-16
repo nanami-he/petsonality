@@ -1,6 +1,6 @@
 {
   "name": "petsonality",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Your type, your pet.",
   "type": "module",
   "bin": {
