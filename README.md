@@ -8,6 +8,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
   <a href="https://github.com/nanami-he/petsonality/stargazers"><img src="https://img.shields.io/github/stars/nanami-he/petsonality?style=flat" alt="stars"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-powered-orange" alt="MCP"></a>
+  <a href="https://github.com/nanami-he/petsonality/actions/workflows/ci.yml"><img src="https://github.com/nanami-he/petsonality/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
 </p>
 
 ---
@@ -58,6 +59,8 @@ Every animal speaks differently. The Fox asks "Are you sure?" with a smirk. The 
 ## Quick Start
 
 Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.com/openclaw/openclaw).
+
+> **Terminal CLI only.** The pet renders in the terminal status line, which is a CLI feature. The Claude Code desktop app and web client (claude.ai/code) don't expose a status line, so the animated pet won't appear there. MCP tool output (e.g. `/pet show`) still works in any client.
 
 ```bash
 # Install
