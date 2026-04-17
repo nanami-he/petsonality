@@ -4,6 +4,7 @@
  */
 
 import type { PetProfile } from "./pets.ts";
+import { voicePromptTemplate, forbiddenWordsJoiner } from "./messages.ts";
 
 /**
  * Pick a line: 20% from signature pool, 80% returns null (AI should generate)
@@ -52,28 +53,35 @@ export function fallbackLine(pet: PetProfile): string {
 }
 
 /**
- * Build the system prompt personality block for this pet
+ * Build the system prompt personality block for this pet (lang-aware via messages.ts).
  */
 export function buildPersonalityPrompt(pet: PetProfile, petName: string): string {
+  const tpl = voicePromptTemplate();
+  const fill = (s: string, params: Record<string, string | number>): string => {
+    let out = s;
+    for (const [k, v] of Object.entries(params)) out = out.split(`{${k}}`).join(String(v));
+    return out;
+  };
+
   return [
-    `你有一只${pet.animal}宠物，名叫「${petName}」。`,
-    `角色设定：${pet.archetype}`,
+    fill(tpl.intro, { animal: pet.animal, name: petName }),
+    fill(tpl.archetypeLine, { archetype: pet.archetype }),
     "",
     pet.personality,
     "",
-    "说话硬约束：",
-    `- 最多 ${pet.voiceConstraints.maxLength} 个字`,
-    `- 最少 ${pet.voiceConstraints.minLength} 个字`,
-    `- 绝对禁止说：${pet.voiceConstraints.forbiddenWords.join("、")}`,
+    tpl.hardConstraints,
+    fill(tpl.maxLine, { n: pet.voiceConstraints.maxLength }),
+    fill(tpl.minLine, { n: pet.voiceConstraints.minLength }),
+    fill(tpl.forbiddenLine, { words: pet.voiceConstraints.forbiddenWords.join(forbiddenWordsJoiner()) }),
     ...pet.voiceConstraints.sentencePattern.map(p => `- ${p}`),
     "",
-    `安慰风格：${pet.comfortStyle}`,
-    `吐槽风格：${pet.teaseStyle}`,
-    `鼓励风格：${pet.encouragementStyle}`,
+    fill(tpl.comfortLine, { style: pet.comfortStyle }),
+    fill(tpl.teaseLine, { style: pet.teaseStyle }),
+    fill(tpl.encourageLine, { style: pet.encouragementStyle }),
     "",
-    `偶尔（${Math.round(pet.voiceConstraints.quirkFrequency * 100)}% 概率）会突然说一句很长的胡思乱想：`,
+    fill(tpl.quirkLine, { pct: Math.round(pet.voiceConstraints.quirkFrequency * 100) }),
     pet.voiceConstraints.longThoughtExample,
     "",
-    `用 *星号* 表示动作。只写一句，不要解释。`,
+    tpl.actionRule,
   ].join("\n");
 }

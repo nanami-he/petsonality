@@ -1,7 +1,7 @@
 ---
 name: pet
 description: "Your MBTI pet companion. Use when the user types /pet or mentions their pet by name."
-argument-hint: "[show|pet|off|on|setup|rename <name>]"
+argument-hint: "[show|pet|off|on|setup|browse|rename <name>]"
 allowed-tools: mcp__petsonality__*
 ---
 
@@ -15,7 +15,7 @@ Based on `$ARGUMENTS`:
 
 | Input | Action |
 |-------|--------|
-| *(empty)* or `show` | Call `pet_show`. **If the result contains "还没有宠物", immediately call `pet_setup` without asking.** |
+| *(empty)* or `show` | Call `pet_show`. **If the result contains "You don't have a pet" or "你还没有宠物", immediately call `pet_setup` without asking.** |
 | `pet` | Call `pet_pet` |
 | `setup` | Call `pet_setup` |
 | `browse` | Call `pet_browse` |
@@ -25,17 +25,18 @@ Based on `$ARGUMENTS`:
 
 ## Adoption Flow
 
-When `pet_show` result contains "还没有宠物" or user calls `pet_setup`:
+When `pet_show` indicates no pet ("You don't have a pet" / "你还没有宠物"), or the user calls `pet_setup`:
 
-1. Call `pet_setup` — shows MBTI selection menu
-2. User picks a number or types their MBTI
-3. Call `pet_recommend` with their MBTI — shows 2 recommendations + free choice
-4. User picks 1, 2, or 3
-5. If 3: call `pet_browse` — shows all 16 pets
-6. Once user picks an animal, ask: "给你的新宠物起个名字吧（输入名字，或说「默认」用默认名）"
-7. If user says "默认"、"default"、"ok"、"好" or similar, call `pet_adopt` WITHOUT the name parameter (server will use default)
-8. Otherwise call `pet_adopt` with the user's chosen name
-9. Display the adoption card
+1. Call `pet_setup` — shows the MBTI selection menu.
+2. The user picks a number or types their MBTI.
+3. Call `pet_recommend` with that MBTI — shows 2 recommendations + free choice.
+4. The user picks 1, 2, or 3.
+5. If they picked 3: call `pet_browse` — shows all 16 pets.
+6. Once they pick an animal, ask: **"What would you like to name your new pet? (type a name, or say 'default' to use the default name)"**
+   - If the user is writing in Chinese, ask in Chinese: **「给你的新宠物起个名字吧（输入名字，或说『默认』用默认名）」**
+7. If the user says "default" / "ok" / "默认" / "好" or anything similar, call `pet_adopt` WITHOUT the `name` parameter (the server will use the default).
+8. Otherwise call `pet_adopt` with the user's chosen name.
+9. Display the adoption card.
 
 ## CRITICAL OUTPUT RULES
 
@@ -49,4 +50,4 @@ The MCP tools return pre-formatted ASCII art with box-drawing characters. This i
 
 **Just output the raw text content from the tool result. Nothing else.** The ASCII art IS the response.
 
-When the user mentions the pet by name, respond briefly in character using the personality from `pet://prompt`. Do NOT call `pet_react` — use `<!-- pet: ... -->` HTML comments instead (the Stop hook handles display).
+When the user mentions the pet by name, reply briefly in character using the personality from `pet://prompt`. Do NOT call `pet_react`. Use `<!-- pet: ... -->` comments instead — the Stop hook will display them.

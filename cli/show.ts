@@ -2,9 +2,9 @@
  * petsonality show — display current pet in terminal
  */
 
-import { ANIMAL_DISPLAY, ANIMAL_DESC } from "../server/engine.ts";
 import { loadPet, loadReaction } from "../server/state.ts";
 import { renderPetCard } from "../server/art.ts";
+import { animalName } from "../server/messages.ts";
 
 const pet = loadPet();
 
@@ -13,19 +13,14 @@ if (!pet?.adopted) {
   process.exit(1);
 }
 
-const display = ANIMAL_DISPLAY[pet.petId];
 const reaction = loadReaction();
 const reactionText = reaction?.reaction;
 
 const card = renderPetCard(
   pet.petId,
   pet.petName,
-  `${display?.cn} · ${pet.personality}`,
+  `${animalName(pet.petId)} · ${pet.personality}`,
   reactionText,
-  [
-    `mood: ${pet.mood}`,
-    `interactions: ${pet.interactionCount}`,
-  ],
 );
 
 console.log("");

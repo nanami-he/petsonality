@@ -12,7 +12,7 @@ import { z } from "zod";
 
 import {
   MBTI_TYPES, ANIMALS,
-  RECOMMENDATION_MAP, ANIMAL_DISPLAY, ANIMAL_DESC,
+  RECOMMENDATION_MAP,
   type MbtiType, type AnimalId, type Pet,
 } from "./engine.ts";
 import {
@@ -25,6 +25,7 @@ import { getReaction, getPetById } from "./i18n.ts";
 import { renderPetCard, ANIMAL_ART, getArtFrame } from "./art.ts";
 import { buildPersonalityPrompt, maybeSignatureLine, validateVoice, fallbackLine } from "./voice.ts";
 import { stringWidth, padDisplay } from "./utils.ts";
+import { t, animalName, animalDesc, complementReason, talkLevelShort, talkLevelLong } from "./messages.ts";
 
 const BOX_INNER = 47;
 function boxLine(content: string = ""): string {
@@ -75,48 +76,41 @@ function getInstructions(): string {
   const pet = loadPet();
   if (!pet?.adopted) return "No pet adopted yet. Use pet_setup to start the adoption process.";
 
-  const display = ANIMAL_DISPLAY[pet.petId];
   const profile = getPetById(pet.petId);
   const talkLevel = profile?.talkLevel || "moderate";
-  const talkDesc: Record<string, string> = {
-    chatty: "话多型，大约每 2-4 条回复说一句，正常工作时也会插嘴",
-    moderate: "适中，大约每 3-6 条回复说一句，顺利工作时偶尔冒泡",
-    quiet: "偏沉默，大约每 6-10 条回复说一句，但关键时刻一定开口",
-    silent: "寡言型，大约每 10-15 条回复才说一句，大部分时间用动作",
-  };
 
   const common = [
-    `你有一只${display?.cn || pet.petId}宠物，名叫「${pet.petName}」。`,
-    `性格：${pet.personality}`,
-    `话量：${talkDesc[talkLevel] || talkDesc.moderate}。`,
+    t("petPromptIntro", { animal: animalName(pet.petId), name: pet.petName }),
+    t("personalityLine", { personality: pet.personality }),
+    t("talkAmountLine", { talkDesc: talkLevelShort(talkLevel) }),
     "",
-    `宠物是陪伴型的，不只在出错时才说话。正常工作时也会偶尔冒泡（一句轻评、一个动作），让用户感觉"它在这儿"。`,
-    `遇到 error、测试失败、大改动时更积极地说话。测试通过、commit 成功等好事也值得反应。`,
+    t("companionRhythm"),
+    t("activeOnImportant"),
     "",
-    `短句为主，保持性格。说话长短由性格决定，不要写超过 45 字的长段。`,
-    `动作描述（*星号*）不算字数，不是每次都加，大约 30% 概率。`,
+    t("voiceShortAndOnBrand"),
+    t("actionDescriptionRule"),
   ];
 
   if (IS_OPENCLAW) {
     return [
       ...common,
-      `按照上述频率，偶尔调用 pet_react 工具让宠物说话。`,
-      `遇到 error 传 reason:"error"，测试失败传 reason:"test-fail"，大改动传 reason:"large-diff"，日常传 reason:"turn"。`,
-      `如果 pet_react 返回 "suppressed: cooldown"，不要重试，不要向用户解释。`,
-      `不要用 <!-- pet: ... --> 注释。`,
+      t("openclawCallReact"),
+      t("openclawReasonRules"),
+      t("openclawCooldown"),
+      t("openclawNoComments"),
     ].join(" ");
   }
 
   return [
     ...common,
-    `按照上述频率，偶尔在回复末尾附加宠物反应：<!-- pet: 一句话 -->`,
-    `不要用 pet_react 工具。不要解释注释。`,
+    t("claudeAppendComment"),
+    t("claudeNoTool"),
   ].join(" ");
 }
 
 const server = new McpServer({
   name: "petsonality",
-  version: "0.3.5",
+  version: "0.4.0",
 }, {
   instructions: getInstructions(),
 });
@@ -133,17 +127,17 @@ server.tool(
       return {
         content: [{
           type: "text",
-          text: `你已经领养了「${existing.petName}」。如果想重新领养，请先使用 pet_setup（会覆盖当前宠物）。`,
+          text: t("alreadyAdopted", { name: existing.petName }),
         }],
       };
     }
 
     const text = [
       boxTop(),
-      boxLine(" 领养你的宠物搭档"),
+      boxLine(t("adoptHeader")),
       boxMid(),
       boxLine(),
-      boxLine(" 先告诉我，你是哪种人格？"),
+      boxLine(t("adoptPrompt")),
       boxLine(),
       boxLine("  1. INTJ    2. INTP    3. ENTJ    4. ENTP"),
       boxLine(),
@@ -155,7 +149,7 @@ server.tool(
       boxLine(),
       boxBot(),
       "",
-      "选一个数字（1-16），或者直接说你的 MBTI。",
+      t("adoptHint"),
     ].join("\n");
 
     return { content: [{ type: "text", text: codeFence(text) }] };
@@ -173,28 +167,26 @@ server.tool(
   async ({ mbti }) => {
     const rec = RECOMMENDATION_MAP[mbti];
     if (!rec) {
-      return { content: [{ type: "text", text: "无效的 MBTI 类型。" }] };
+      return { content: [{ type: "text", text: t("invalidMbti") }] };
     }
 
-    const mirrorInfo = ANIMAL_DISPLAY[rec.mirror];
-    const compInfo = ANIMAL_DISPLAY[rec.complement];
-    const mirrorDesc = ANIMAL_DESC[rec.mirror];
-    const compDesc = ANIMAL_DESC[rec.complement];
+    const mirrorDesc = animalDesc(rec.mirror);
+    const compDesc = animalDesc(rec.complement);
 
     // Get ASCII art for both animals (frame 0, skip empty first line)
     const mirrorArt = getArtFrame(rec.mirror, 0).filter(l => l.trim());
     const compArt = getArtFrame(rec.complement, 0).filter(l => l.trim());
 
     const lines: string[] = [
-      "为你推荐两位搭档：",
+      t("recommendHeader"),
       "",
-      ...animalCard(`1. ${mirrorInfo.cn}`, mirrorArt, mirrorDesc),
+      ...animalCard(`1. ${animalName(rec.mirror)}`, mirrorArt, mirrorDesc),
       "",
-      ...animalCard(`2. ${compInfo.cn}`, compArt, compDesc),
+      ...animalCard(`2. ${animalName(rec.complement)}`, compArt, compDesc),
       "",
-      "3. 自己选 — 浏览全部 16 只",
+      t("recommendThird"),
       "",
-      "选 1、2，或 3。",
+      t("recommendPrompt"),
     ];
 
     return { content: [{ type: "text", text: codeFence(lines.join("\n")) }] };
@@ -209,22 +201,20 @@ server.tool(
   {},
   async () => {
     const lines: string[] = [
-      "全部 16 只宠物",
+      t("browseHeader"),
       "",
     ];
 
     for (let i = 0; i < ANIMALS.length; i++) {
       const animalId = ANIMALS[i];
-      const d = ANIMAL_DISPLAY[animalId];
-      const desc = ANIMAL_DESC[animalId];
       const num = String(i + 1).padStart(2);
       const art = getArtFrame(animalId, 0).filter(l => l.trim());
 
-      lines.push(...animalCard(`${num}. ${d.cn}`, art, desc));
+      lines.push(...animalCard(`${num}. ${animalName(animalId)}`, art, animalDesc(animalId)));
       lines.push("");
     }
 
-    lines.push("选一个数字，或说动物名字。");
+    lines.push(t("browsePrompt"));
 
     return { content: [{ type: "text", text: codeFence(lines.join("\n")) }] };
   },
@@ -241,9 +231,8 @@ server.tool(
     name: z.string().min(1).max(14).regex(/^[^"\\\/\n\r\t{}]+$/, "No special characters").optional().describe("Custom name for your pet"),
   },
   async ({ mbti, animal, name }) => {
-    const display = ANIMAL_DISPLAY[animal];
     const profile = getPetById(animal);
-    const petName = name || profile?.defaultName || display.cn;
+    const petName = name || profile?.defaultName || animalName(animal);
 
     const pet: Pet = {
       adopted: true,
@@ -251,7 +240,7 @@ server.tool(
       petId: animal,
       petName,
       mood: "happy",
-      personality: profile?.personality || ANIMAL_DESC[animal],
+      personality: profile?.personality || animalDesc(animal),
       memory: [],
       interactionCount: 0,
       cooldownRange: profile?.cooldownRange || [5, 12],
@@ -267,7 +256,7 @@ server.tool(
     const card = renderPetCard(
       animal,
       petName,
-      `${display.cn} · ${profile?.archetype || ANIMAL_DESC[animal]}`,
+      `${animalName(animal)} · ${profile?.archetype || animalDesc(animal)}`,
       greeting,
     );
 
@@ -284,17 +273,16 @@ server.tool(
   async () => {
     const pet = loadPet();
     if (!pet?.adopted) {
-      return { content: [{ type: "text", text: "你还没有宠物。使用 pet_setup 开始领养。" }] };
+      return { content: [{ type: "text", text: t("noPetSetup") }] };
     }
 
-    const display = ANIMAL_DISPLAY[pet.petId];
     const reaction = loadReaction();
-    const reactionText = reaction?.reaction ?? `*${pet.petName} 安静地看着你*`;
+    const reactionText = reaction?.reaction ?? t("quietObservation", { name: pet.petName });
 
     const card = renderPetCard(
       pet.petId,
       pet.petName,
-      `${display?.cn} · ${pet.personality}`,
+      `${animalName(pet.petId)} · ${pet.personality}`,
       reactionText,
     );
 
@@ -313,7 +301,7 @@ server.tool(
   async () => {
     const pet = loadPet();
     if (!pet?.adopted) {
-      return { content: [{ type: "text", text: "你还没有宠物。" }] };
+      return { content: [{ type: "text", text: t("noPet") }] };
     }
 
     pet.interactionCount++;
@@ -402,7 +390,7 @@ server.tool(
   async ({ name }) => {
     const pet = loadPet();
     if (!pet?.adopted) {
-      return { content: [{ type: "text", text: "你还没有宠物。" }] };
+      return { content: [{ type: "text", text: t("noPet") }] };
     }
 
     const oldName = pet.petName;
@@ -411,7 +399,7 @@ server.tool(
     writeStatusState(pet);
 
     return {
-      content: [{ type: "text", text: `改名: ${oldName} → ${name}` }],
+      content: [{ type: "text", text: t("renamed", { oldName, newName: name }) }],
     };
   },
 );
@@ -424,9 +412,9 @@ server.tool(
   {},
   async () => {
     const pet = loadPet();
-    if (!pet?.adopted) return { content: [{ type: "text", text: "你还没有宠物。" }] };
+    if (!pet?.adopted) return { content: [{ type: "text", text: t("noPet") }] };
     writeStatusState(pet, "", true);
-    return { content: [{ type: "text", text: `${pet.petName} 安静了。用 /pet on 恢复。` }] };
+    return { content: [{ type: "text", text: t("muted", { name: pet.petName }) }] };
   },
 );
 
@@ -436,11 +424,11 @@ server.tool(
   {},
   async () => {
     const pet = loadPet();
-    if (!pet?.adopted) return { content: [{ type: "text", text: "你还没有宠物。" }] };
-    const reaction = "*伸了个懒腰* 我回来了！";
+    if (!pet?.adopted) return { content: [{ type: "text", text: t("noPet") }] };
+    const reaction = t("unmuteReaction");
     writeStatusState(pet, reaction, false);
     saveReaction(reaction, "pet");
-    return { content: [{ type: "text", text: `${pet.petName} 回来了！` }] };
+    return { content: [{ type: "text", text: t("unmuted", { name: pet.petName }) }] };
   },
 );
 
@@ -475,12 +463,11 @@ server.resource(
         contents: [{
           uri: "pet://prompt",
           mimeType: "text/plain",
-          text: "No pet adopted. Use pet_setup to begin.",
+          text: t("noPetResource"),
         }],
       };
     }
 
-    const display = ANIMAL_DISPLAY[pet.petId];
     const profile = getPetById(pet.petId);
 
     // Use full personality prompt if profile exists, otherwise generic
@@ -489,58 +476,52 @@ server.resource(
       personalityBlock = buildPersonalityPrompt(profile, pet.petName);
     } else {
       personalityBlock = [
-        `你有一只${display?.cn || pet.petId}宠物，名叫「${pet.petName}」。`,
-        `性格：${pet.personality}`,
+        t("petPromptIntro", { animal: animalName(pet.petId), name: pet.petName }),
+        t("personalityLine", { personality: pet.personality }),
       ].join("\n");
     }
 
     const talkLevel = profile?.talkLevel || "moderate";
-    const talkGuide: Record<string, string> = {
-      chatty: "话多型 — 大约每 2-4 条回复说一句，正常工作也插嘴",
-      moderate: "适中 — 大约每 3-6 条回复说一句，顺利时偶尔冒泡",
-      quiet: "偏沉默 — 大约每 6-10 条回复说一句，关键时刻一定开口",
-      silent: "寡言型 — 大约每 10-15 条回复才说一句，大部分时间用动作",
-    };
 
     const commonRules = [
-      "规则：",
-      "- 宠物是陪伴型的，正常工作时也偶尔说一句，不只在出错时说",
-      "- 错误、测试失败、大改动时更积极说话",
-      "- 测试通过、commit 成功等好事也值得一句反应",
-      `- 用「${pet.petName}」的语气，引用具体内容`,
-      "- 短句为主，保持性格。说话长短由性格决定，不超过 45 字",
-      "- 动作描述（*星号*）不算字数，不是每次都加（约 30% 概率）",
+      t("rulesHeader"),
+      t("rulePresence"),
+      t("ruleActiveTriggers"),
+      t("ruleSuccessTriggers"),
+      t("ruleTone", { name: pet.petName }),
+      t("ruleLength"),
+      t("ruleAction"),
     ];
 
     const hostRules = IS_OPENCLAW
       ? [
-          "偶尔调用 `pet_react` 工具让宠物说话，显示在 status line 的气泡里。",
-          "遇到 error 传 reason:\"error\"，测试失败传 reason:\"test-fail\"，大改动传 reason:\"large-diff\"，日常传 reason:\"turn\"。",
+          t("promptOpenclawCall"),
+          t("promptOpenclawReasons"),
           "",
           ...commonRules,
-          "- 如果 `pet_react` 返回 `suppressed: cooldown`，不要重试，不要向用户解释",
-          "- 不要用 `<!-- pet: ... -->` 注释（没有 Stop hook 来提取）",
+          t("ruleNoRetry"),
+          t("ruleNoComments"),
         ]
       : [
-          "偶尔在回复末尾附加宠物反应：`<!-- pet: 一句话 -->`",
-          "Stop hook 会提取这句话，显示在 status line 的气泡里。用户看不到注释本身。",
+          t("promptClaudeAppend"),
+          t("promptClaudeStopHook"),
           "",
           ...commonRules,
-          "- 不要用 pet_react 工具。不要解释注释",
+          t("ruleNoTool"),
         ];
 
     const prompt = [
-      "# 宠物伴侣",
+      t("promptCompanionHeader"),
       "",
       personalityBlock,
       "",
-      `## 宠物话量：${talkGuide[talkLevel] || talkGuide.moderate}`,
+      t("promptTalkLevel", { desc: talkLevelLong(talkLevel) }),
       "",
       ...hostRules,
       "",
       IS_OPENCLAW
-        ? `当用户直接叫「${pet.petName}」时，简短回应，必要时调用 pet_react。`
-        : `当用户直接叫「${pet.petName}」时，简短回应并附带注释。`,
+        ? t("promptDirectMentionOpenclaw", { name: pet.petName })
+        : t("promptDirectMentionClaude", { name: pet.petName }),
     ].join("\n");
 
     return {

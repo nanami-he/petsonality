@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.3.5 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.4.0 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -55,13 +55,13 @@
 - [ ] build:reactions 在 npx 环境的 fix
 - [ ] 发版流程脚本化
 
-### M3: i18n 完整覆盖（高优先 — 推广前最好做）
-现状：`server/i18n.ts` 已按 `LANG` 自动切 zh/en，但只覆盖 reactions。
-- [ ] `server/index.ts` 的 tool 响应文本（`你还没有宠物` / `领养你的宠物搭档` / 系统 prompt instructions）目前**全部硬编码中文**，英语用户看到中英分裂体验
-- [ ] `skills/pet/SKILL.md` 流程提示也是中文
-- [ ] 抽 `server/messages.ts` message catalog，所有 user-facing 字符串走 `t(key)` 函数
-- [ ] SKILL.md 双语版本或全英化
-- 影响：决定了 petsonality 是真国际开源还是"中文作者用 npm 分发"
+### M3: i18n 完整覆盖 ✅ (v0.4.0 完成)
+- [x] `server/messages.ts` 集中 message catalog，`t(key, params)` 按 LANG 自动切
+- [x] `server/index.ts` 所有 tool 响应文本通过 `t()` 走 i18n
+- [x] `server/voice.ts` `buildPersonalityPrompt` 接 messages.ts 的 `voicePromptTemplate()`
+- [x] `engine.ts` 的 `ANIMAL_DISPLAY` / `ANIMAL_DESC` / `RECOMMENDATION_MAP` 通过 `messages.ts` 的 `animalName / animalDesc / complementReason` 包装按 LANG 选
+- [x] `skills/pet/SKILL.md` 全英化 + 双语 no-pet 字符串检测
+- [x] 全套首次体验路径（adopt / setup / show / pet / mute / unmute / rename / browse）英语用户上手不出戏
 
 ### M4: 安装侵入性透明化
 现状：`installStatusLine` 自动替换已有 statusLine（虽有 `.bak`），`installHooks` 重写既有 hook 条目。
