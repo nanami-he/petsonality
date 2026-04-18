@@ -101,6 +101,21 @@ Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 m
 | `/pet off` / `/pet on` | Mute / unmute reactions |
 | `/pet rename <name>` | Rename your pet |
 
+## What petsonality modifies
+
+`npx petsonality` is an installer — it touches a few files on your system. Honest list, with backups noted:
+
+- **`~/.claude.json`** — adds a `petsonality` entry under `mcpServers`. Other entries left alone.
+- **`~/.claude/settings.json`** — adds a `statusLine` and two hooks (`PostToolUse`, `Stop`). If you already had a `statusLine`, the original is backed up to `~/.petsonality/statusline.bak` first.
+- **`~/.claude/skills/pet/SKILL.md`** — copies the `/pet` command skill.
+- **`~/.petsonality/`** — runtime directory (pet state, reactions cache, server, hooks, status-line script).
+
+If OpenClaw is detected, also touches `~/.openclaw/openclaw.json` and (until [PR #65886](https://github.com/openclaw/openclaw/pull/65886) merges) applies a small reversible patch to OpenClaw's TUI source. Both backed up.
+
+To remove everything: `npx petsonality uninstall`. To audit current state: `npx petsonality doctor`.
+
+Full breakdown + other common questions in the [FAQ](docs/FAQ.md).
+
 ## Roadmap
 
 - [x] 16 MBTI animals with full personality profiles
