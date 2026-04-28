@@ -91,6 +91,31 @@
 ### vibe-pick
 - 不知道 MBTI 的用户，问几个问题推测性格
 
+### Personality-driven session opener（受 kotofetch 启发，2026-04-26）
+**问题**：当前每只宠物有 `firstGreeting`（领养时一次性使用）+ `signatureLines`（fallback 池）。session 启动时没有"开场白"机制——用户开终端看到的是上次留下的 reaction，缺少"它在等你"的仪式感。
+
+**方案**：每个 session 第一次活动前，pet 按自己 personality 说一句话（不是统一日语谚语类的universal 智慧——那会扁平化 16 个性格）。每只用自己的"开场风格"：
+- Raven (INTJ) — 一句冷峻预言："今天的代码会出现你最不想看到的循环"
+- Owl (INTP) — 一个奇怪小问题："你想过为什么 array index 从 0 开始吗"
+- Fox (ENTP) — 一句反讽："希望这次你能想清楚再写"
+- Bear (ENTJ) — 一句指令："动手"
+- Lion (ESTJ) — 一句宣告："今天我们会按计划完成"
+- Panda (ISFP) — 一句懒散："反正会写完的"
+- ...（每只 4-6 条 opener，复用现有 `signatureLines` 池或加 `openerLines` 字段）
+
+**实现**：
+- pets.ts 加 `openerLines: string[]`（或复用 signatureLines）
+- state.ts 加 `lastSessionOpenerAt` 时间戳，>4h 间隔才触发
+- voice.ts 在 first-of-session reaction 时优先抽 openerLines
+- statusline 启动时主动写一条而不是等事件
+
+**为啥不简单照搬 kotofetch 的"启动一句日语谚语"**：
+- kotofetch 核心 = 谚语本身，universal 是 feature
+- petsonality 核心 = personality 差异化，universal 是 anti-feature
+- 直接加"统一开场谚语"会让 16 个性格瞬间扁平化，违反"Your type, your pet"的 tagline
+
+**优先级**：推广完成（W4 之后）再做，避免推广期改 product。约 2-3 小时工作量。
+
 ---
 
 ## 维护检查流程
