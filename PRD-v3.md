@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.4.0 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.4.1 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -19,17 +19,22 @@
 ### 12. hint 架构 ✅ (P6) — hook 写事件，模型说话，固定池兜底
 ### 13. npx 路径修复 ✅ — 运行时文件复制到 ~/.petsonality/，不依赖 npx 临时目录
 ### 14. OpenClaw 独立安装 ✅ — installer 不再要求 ~/.claude/
+### 15. 跨平台安装器 ✅ (v0.4.1, 2026-04-28) — 第一个 Windows 用户 bug (#2 by @Lwhieldon) → 替换 5 处 `which` + 2 处 `readlink`/`ls` shellout 为纯 Node 实现 + Windows 跳过 statusline + `cli/which.ts` helper
+### 16. CI 版本三同步 ✅ (2026-04-28) — `scripts/sync-version.mjs` + `npm version` lifecycle hook，未来 `npm version patch` 自动同步 `package.json` / `plugin.json` / `server/index.ts`
+### 17. OSS 协作脚手架 ✅ (2026-04-28) — `CONTRIBUTORS.md` + `CONTRIBUTING.md` 重写 + 2 个 `good first issue` (#3 hook quoting, #4 native Windows statusline)
 
 ---
 
 ## 当前优先 — 宣传 + 推广
 
 ### G1: 社区推广
-- [ ] Reddit r/ClaudeAI 发帖（附 GIF + 安装命令）
-- [ ] Hacker News Show HN 帖
-- [ ] Twitter/X 发帖（短视频或 GIF + 一句话）
+- [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
+- [x] Reddit r/ClaudeCode 互动（"Mobile→PC→Claude" thread reply, cabinet 角度切入）
+- [ ] Reddit r/ClaudeAI 主动发帖（附 GIF + 安装命令）
+- [ ] Hacker News Show HN 帖（建议等 0.4.2 ship + Lwhieldon 反馈再发，避免 Windows hooks 不 fire 被抓现场）
 - [ ] Claude Code Discord / community 频道分享
 - [ ] OpenClaw Discord 分享（关联 PR #65886）
+- [ ] 中文社区推广（**等产品再完善一点**——主动 defer，先做英文世界）
 
 ### G2: 终端录屏 ✅
 - [x] PIL 生成 6 场景 demo GIF（install→adopt→react→pass→tagline）
@@ -39,9 +44,10 @@
 ### G3: 产品页面
 - [x] demo GIF 更新（6 场景，Fox 主角）
 - [x] 4x4 grid 重排（ST/SF/NF/NT 直觉查找）
-- [ ] GitHub repo description + topics
+- [x] GitHub repo description + topics（已有 12 个 topics + `pet-companion` 新加）
 - [ ] npm 页面描述优化
 - [ ] 考虑做一个简单 landing page？
+- [ ] **README.zh.md** —— 中文版本（推迟到产品再完善后做，跟中文社区推广一起 ship）
 
 ---
 
@@ -49,13 +55,15 @@
 
 ### M1: OpenClaw PR #65886
 - [x] PR 描述重写 + ping 维护者（2026-04-14）
-- [ ] 等维护者回复，按需 rebase
+- [x] gentle bump (2026-04-28)
+- [x] **Codex bot review follow-up commit** (2026-04-28, e542875c21)：SIGKILL fallback + schema 真正 regenerate + 安全文档 + 4 个 lifecycle test
+- [ ] 等维护者人工回复，按需 rebase
 - [ ] 合并后 installer 切 native config
 
 ### M2: 体验微调
-- [ ] 真实使用观察说话频率
+- [ ] 真实使用观察说话频率（当前 npm downloads 极低，等用户基数起来再观察）
 - [ ] build:reactions 在 npx 环境的 fix
-- [ ] 发版流程脚本化
+- [x] 发版流程脚本化（v0.4.1 后加 `scripts/sync-version.mjs`，`npm version` 自动同步三个版本号文件）
 
 ### M3: i18n 完整覆盖 ✅ (v0.4.0 完成)
 - [x] `server/messages.ts` 集中 message catalog，`t(key, params)` 按 LANG 自动切
@@ -71,6 +79,20 @@
 - [ ] hook 重写也走同样的"先 diff 再写"流程
 - [ ] 长期等 OpenClaw merge PR #65886 后，TUI patch 路径完全废弃
 - 决策记录：短期接受侵入式安装 + 自动 backup 兜底是 conscious choice，优先开发速度，但推广开始后用户初见信任成本会上升
+
+### M5: Windows 完整支持（**新增 2026-04-28，因 #2 触发**）
+- [x] v0.4.1 修了 `which` 报错 + install 跑完不挂
+- [ ] **#3** hook command path quoting（已开 good first issue，等贡献者）
+- [ ] **#4** native Windows status line（PowerShell / cmd 替代 pet-status.sh）
+- [ ] doctor.ts 的 Windows fallback（当前 7 个 `tryExec` 在 Windows 都会输出 "(failed)"）
+- 触发：Issue #2 by @Lwhieldon (2026-04-28)，第一个真用户
+
+### M6: OSS 协作脚手架（**新增 2026-04-28**）
+- [x] `CONTRIBUTORS.md` —— 第一位 contributor @Lwhieldon
+- [x] `CONTRIBUTING.md` —— dev setup + commit conv + PR flow + project layout
+- [x] 2 个 `good first issue`（#3 hook quoting, #4 Windows statusline）
+- [ ] Issue / PR template review（已有 bug-report.yml；考虑加 feature_request.yml）
+- [ ] 等首个外部 PR 来 → 看 CONTRIBUTING.md 是否真清晰
 
 ---
 
@@ -137,6 +159,9 @@ git push && git push --tags # 同步
 - 海豚 art 从未更新 → 同步 statusline 设计
 - npx 临时目录路径不稳定 → 复制到 ~/.petsonality/
 - installer 硬依赖 Claude Code → 检测宿主独立安装
+- 跨平台不能 shell-out 到 Unix 工具 → 纯 Node 实现 (v0.4.1 #2)
+- `npm version` 只动 package.json 但 CI 检查三个 → version lifecycle hook 自动同步 (v0.4.1)
+- commit message 写 `closes #N` 在 fix 还没被用户验证时就自动关 issue → 改用 `references #N`
 
 ---
 
@@ -149,4 +174,4 @@ git push && git push --tags # 同步
 
 ---
 
-*PRD v3.6 — 2026-04-14 系统优化规划*
+*PRD v3.7 — 2026-04-28 第一位真用户 + Windows 跨平台 + OSS 协作脚手架*
