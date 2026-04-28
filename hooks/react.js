@@ -181,7 +181,10 @@ function main() {
   // ─── Parse tool output ────────────────────────────────────────────────
   let hookData;
   try { hookData = JSON.parse(input); } catch { process.exit(0); }
-  const result = hookData?.tool_response || "";
+  const rawResult = hookData?.tool_response;
+  const result = typeof rawResult === "string"
+    ? rawResult
+    : (rawResult == null ? "" : JSON.stringify(rawResult));
   if (!result) process.exit(0);
 
   // ─── Silent streak ────────────────────────────────────────────────────
