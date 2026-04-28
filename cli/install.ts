@@ -11,6 +11,7 @@ import { join, resolve, dirname } from "path";
 import { homedir, platform } from "os";
 import { findOpenClawTuiFile } from "./openclaw-patch.ts";
 import { whichSync } from "./which.ts";
+import { formatHookCommand } from "./hook-command.ts";
 
 const IS_WIN = platform() === "win32";
 
@@ -215,7 +216,7 @@ function installHooks(settings: Record<string, any>) {
     (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.PostToolUse.push({
-    hooks: [{ type: "command", command: `${nodePath} ${reactHook}` }],
+    hooks: [{ type: "command", command: formatHookCommand(nodePath, reactHook) }],
   });
 
   // Stop — same cleanup
@@ -224,7 +225,7 @@ function installHooks(settings: Record<string, any>) {
     (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
   );
   settings.hooks.Stop.push({
-    hooks: [{ type: "command", command: `${nodePath} ${commentHook}` }],
+    hooks: [{ type: "command", command: formatHookCommand(nodePath, commentHook) }],
   });
 
   ok("Hooks registered: PostToolUse + Stop");
