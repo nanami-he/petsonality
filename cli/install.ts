@@ -8,8 +8,11 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "fs";
 import { execSync } from "child_process";
 import { join, resolve, dirname } from "path";
-import { homedir } from "os";
+import { homedir, platform } from "os";
 import { findOpenClawTuiFile } from "./openclaw-patch.ts";
+import { whichSync } from "./which.ts";
+
+const IS_WIN = platform() === "win32";
 
 const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
@@ -56,8 +59,8 @@ function detectHosts(): { claude: boolean; openclaw: boolean } {
   try {
     openclaw = !!findOpenClawTuiFile();
   } catch {
-    // Fallback if openclaw-patch helper throws — check PATH
-    try { execSync("which openclaw", { stdio: "ignore" }); openclaw = true; } catch {}
+    // Fallback if openclaw-patch helper throws — check PATH cross-platform
+    openclaw = !!whichSync("openclaw");
   }
   return { claude, openclaw };
 }
@@ -110,7 +113,9 @@ function saveSettings(settings: Record<string, any>) {
 // ─── Step 1: Register MCP server ───────────────────────────────────────────
 
 function installMcp() {
-  const nodePath = execSync("which node", { encoding: "utf8" }).trim();
+  // process.execPath is the absolute path of the node binary running this script —
+  // always correct, no shell-out needed (works on Windows too).
+  const nodePath = process.execPath;
   const serverPath = join(RUNTIME_DIR, "dist", "server.js");
   const claudeJsonPath = join(homedir(), ".claude.json");
 
@@ -146,6 +151,13 @@ function installSkill() {
 // ─── Step 3: Status line ───────────────────────────────────────────────────
 
 function installStatusLine(settings: Record<string, any>) {
+  if (IS_WIN) {
+    // pet-status.sh requires bash + jq; skip statusline registration on Windows.
+    // MCP + hooks + skill still work — pet just won't bubble in the status bar.
+    warn("Skipping status line on Windows (requires bash + jq).");
+    info("Pet still reacts via MCP + hooks. Statusline support tracked in https://github.com/nanami-he/petsonality/issues");
+    return;
+  }
   if (settings.statusLine?.command && !settings.statusLine.command.includes("petsonality") && !settings.statusLine.command.includes("typet")) {
     warn(`Existing statusLine found: ${settings.statusLine.command}`);
     warn("Replacing with petsonality status line. Old config backed up in ~/.petsonality/statusline.bak");
@@ -194,8 +206,8 @@ function installHooks(settings: Record<string, any>) {
 
   if (!settings.hooks) settings.hooks = {};
 
-  // Resolve node path for hooks
-  const nodePath = execSync("which node", { encoding: "utf8" }).trim();
+  // Resolve node path for hooks (cross-platform; same node that's running this installer).
+  const nodePath = process.execPath;
 
   // PostToolUse — clean up both old (typet) and new (petsonality) entries
   if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
@@ -252,8 +264,8 @@ async function installOpenClaw() {
   let ocConfig: Record<string, any> = {};
   try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
 
-  // Register MCP server in OpenClaw config
-  const ocNodePath = execSync("which node", { encoding: "utf8" }).trim();
+  // Register MCP server in OpenClaw config (cross-platform node lookup).
+  const ocNodePath = process.execPath;
   const ocServerPath = join(RUNTIME_DIR, "dist", "server.js");
   if (!ocConfig.mcp) ocConfig.mcp = {};
   if (!ocConfig.mcp.servers) ocConfig.mcp.servers = {};

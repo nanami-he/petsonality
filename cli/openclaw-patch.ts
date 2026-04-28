@@ -9,10 +9,12 @@
  * - Safe: validates injection points before writing
  */
 
-import { readFileSync, writeFileSync, existsSync, copyFileSync, unlinkSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, copyFileSync, unlinkSync, readdirSync } from "fs";
 import { join, dirname } from "path";
-import { execSync } from "child_process";
-import { homedir } from "os";
+import { homedir, platform } from "os";
+import { realPathOf } from "./which.ts";
+
+const IS_WIN = platform() === "win32";
 
 const PATCH_BEGIN = "// PETSONALITY_STATUSLINE_PATCH_BEGIN";
 const PATCH_END = "// PETSONALITY_STATUSLINE_PATCH_END";
@@ -31,35 +33,41 @@ function err(msg: string) { console.log(`${RED}✗${NC}  ${msg}`); }
 
 // ─── Find OpenClaw installation ────────────────────────────────────────────
 
-export function findOpenClawTuiFile(): string | null {
-  // Try: resolve from openclaw binary symlink
+/** Glob-equivalent: list tui-*.js files in a dist dir, excluding the CLI entry. */
+function findTuiFiles(distDir: string): string[] {
   try {
-    const bin = execSync("which openclaw", { encoding: "utf8" }).trim();
-    if (bin) {
-      const resolved = execSync(`readlink "${bin}"`, { encoding: "utf8" }).trim();
-      if (resolved) {
-        const distDir = join(dirname(resolved), "dist");
-        const candidates = execSync(`ls "${distDir}"/tui-*.js 2>/dev/null`, { encoding: "utf8" })
-          .trim().split("\n")
-          .filter(f => !f.includes("cli") && f.endsWith(".js"));
-        if (candidates.length === 1) return candidates[0];
-      }
-    }
-  } catch { /* not found via which */ }
+    return readdirSync(distDir)
+      .filter((f) => f.startsWith("tui-") && f.endsWith(".js") && !f.includes("cli"))
+      .map((f) => join(distDir, f));
+  } catch {
+    return [];
+  }
+}
 
-  // Try: common install paths
-  const paths = [
-    "/opt/homebrew/lib/node_modules/openclaw/dist",
-    join(homedir(), ".npm-global/lib/node_modules/openclaw/dist"),
-    "/usr/local/lib/node_modules/openclaw/dist",
-  ];
+export function findOpenClawTuiFile(): string | null {
+  // Try: resolve from openclaw binary on PATH (cross-platform; follows symlinks).
+  const resolved = realPathOf("openclaw");
+  if (resolved) {
+    const distDir = join(dirname(resolved), "dist");
+    const candidates = findTuiFiles(distDir);
+    if (candidates.length === 1) return candidates[0];
+  }
+
+  // Try: common install paths (Unix + Windows).
+  const paths = IS_WIN
+    ? [
+        join(process.env.APPDATA || "", "npm", "node_modules", "openclaw", "dist"),
+        join(process.env.LOCALAPPDATA || "", "pnpm", "global", "5", "node_modules", "openclaw", "dist"),
+      ]
+    : [
+        "/opt/homebrew/lib/node_modules/openclaw/dist",
+        join(homedir(), ".npm-global/lib/node_modules/openclaw/dist"),
+        "/usr/local/lib/node_modules/openclaw/dist",
+      ];
   for (const dir of paths) {
-    try {
-      const files = execSync(`ls "${dir}"/tui-*.js 2>/dev/null`, { encoding: "utf8" })
-        .trim().split("\n")
-        .filter(f => !f.includes("cli") && f.endsWith(".js"));
-      if (files.length === 1) return files[0];
-    } catch { /* not here */ }
+    if (!dir) continue;
+    const files = findTuiFiles(dir);
+    if (files.length === 1) return files[0];
   }
 
   return null;
