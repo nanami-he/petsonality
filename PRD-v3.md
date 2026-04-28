@@ -31,13 +31,15 @@
 - [ ] Claude Code Discord / community 频道分享
 - [ ] OpenClaw Discord 分享（关联 PR #65886）
 
-### G2: 终端录屏
-- [ ] 录制 30s 终端演示（领养→说话→动画→错误反应）
-- [ ] 转成 GIF 或上传 YouTube/Twitter
-- [ ] 嵌入 README 顶部替代静态描述
+### G2: 终端录屏 ✅
+- [x] PIL 生成 6 场景 demo GIF（install→adopt→react→pass→tagline）
+- [x] 嵌入 README 顶部
+- [ ] 真实终端录屏（回到电脑后用 Cmd+Shift+5）— 可选升级
 
 ### G3: 产品页面
-- [ ] GitHub repo description 更新（一句话 + 标签）
+- [x] demo GIF 更新（6 场景，Fox 主角）
+- [x] 4x4 grid 重排（ST/SF/NF/NT 直觉查找）
+- [ ] GitHub repo description + topics
 - [ ] npm 页面描述优化
 - [ ] 考虑做一个简单 landing page？
 
