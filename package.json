@@ -17,7 +17,8 @@
     "build:cli": "bun build cli/install.ts --target node --outfile dist/cli/install.js && bun build cli/doctor.ts --target node --outfile dist/cli/doctor.js && bun build cli/uninstall.ts --target node --outfile dist/cli/uninstall.js",
     "test": "bun test",
     "build": "bun run build:server && bun run build:cli && bun run build:art && bun run build:reactions",
-    "version": "node scripts/sync-version.mjs"
+    "version": "node scripts/sync-version.mjs",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "files": [
     "dist/",

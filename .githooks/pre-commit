@@ -1,0 +1,24 @@
+#!/bin/sh
+# pre-commit: rebuild dist/ if any source-side files are staged.
+#
+# Without this hook it's easy to forget `bun run build` after editing source
+# code, which means main ends up with dist/ artifacts that don't match the
+# source they were supposedly built from. Plugin / GitHub-clone users would
+# then run stale binaries while the source on disk shows the latest changes.
+#
+# We only rebuild when staged files actually touch the build inputs — pure
+# doc/test/CONTRIBUTING commits skip this and stay fast.
+
+set -e
+
+CHANGED=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# Build inputs: anything that ends up in dist/server.js, dist/cli/*.js,
+# statusline/*, or dist/reactions-pool.json.
+if echo "$CHANGED" | grep -qE '^(server/|cli/|scripts/|statusline/|hooks/|skills/|package\.json$|bun\.lock$|\.claude-plugin/)'; then
+  echo "[pre-commit] source files changed — rebuilding dist/ + statusline/"
+  bun run build
+  git add dist/ statusline/pet-status.sh statusline/pet-art.json
+fi
+
+exit 0

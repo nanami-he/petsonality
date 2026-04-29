@@ -19,8 +19,6 @@ A tiny ASCII pet that lives in the corner of your terminal while you code. It wa
   <img src="assets/hero.gif" alt="petsonality — Claude Code describes the product while the ESFJ golden retriever exclaims &quot;That's ME!! Hi everyone!!&quot;" width="720">
 </p>
 
-Petsonality is not just terminal decoration. It is a lightweight companion layer for developers who want their coding environment to feel present, responsive, and alive.
-
 It's not a notification system. It's a companion. The kind that's still there at 2am when you're stuck on a bug, and glances at your screen like "...that logic looks off" — and somehow you feel less alone.
 
 ## 16 Animals, 16 Personalities
