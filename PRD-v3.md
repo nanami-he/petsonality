@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.4.4 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.4.5 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -27,6 +27,15 @@
 ### 20. GitHub Releases 页补建 ✅ (2026-04-29) — v0.4.1 / v0.4.2 / v0.4.3 三个 release pages，每个写完整故事 + 贡献者 credit + 三版本 Windows 修复对照表
 ### 21. 第二个外部 PR + Lwhieldon 升级为 contributor ✅ (v0.4.4, 2026-04-29) — **Mateus 第二个 PR (#11, 1500 行 PowerShell statusline)** 闭 #4，**Lwhieldon 第一个 PR (#12)** 闭 #10（重画金毛 ASCII 形象 + `pet_pet` 内联渲染 + Windows path fix），加上 PR #9 (你的 CJK charWidth fix)。现 CONTRIBUTORS.md 有 2 位外部 contributor + 你
 ### 22. Issue #8 packaging fix ✅ (v0.4.4, 2026-04-29) — `bun run build:reactions` 在 npx user 端永远失败（`scripts/` + `server/` 没在 tarball），所有用户都拿 fallback reactions。改为 prepublish 把 `dist/reactions-pool.json` (58 KB) 打进 tarball，installer 改为 copy artifact 而不是 build。npm install **彻底去掉 bun 运行时依赖**
+### 23. G0 Multi-channel 分发架构 ✅ (v0.4.5, 2026-04-29) — npm outage 触发的架构升级，**第一次有不止一条独立 install 路径**：
+- `.claude-plugin/plugin.json` 切到 `node + dist/server.js`（不再要求 bun + 源码）
+- `dist/` 提交进 git（plugin / git-clone 路径不再需要 build step）
+- `.githooks/pre-commit` 自动 rebuild + git add（防 dist 跟 source 不同步）
+- `package.json` `prepare` script 让 `bun install` 自动设置 hooksPath（contributor 也享受到）
+- `cli/plugin-manifest.test.ts` 永久 pin 住 manifest，未来 drift CI 抓
+- `cli/doctor.ts` 加 Windows native 探测（7 个 tryExec 替换为 cmd.exe / PowerShell / WT_SESSION 等）
+- `scripts/build-reactions.ts` hermetic by default（只写 dist/，dev 用 `bun run sync:reactions` 显式同步）
+- 金毛 statusline 帧映射 off-by-one fix（PR #12 art redesign 后 lick/spin 帧错位，bash + ps1 双修复）
 
 ---
 
@@ -71,15 +80,19 @@
 
 **任务清单（按优先序）**：
 - [x] 改 `.claude-plugin/plugin.json` —— `command` 改成 `node`，`args` 指向 `dist/server.js`
-- [x] 把 `dist/` 从 `.gitignore` 移除（保留 `dist/reactions-pool.json` 等已有内容）
-- [ ] 加 pre-commit hook 自动 `bun run build`（避免忘了 build 直接 commit）
-- [ ] 把 dist/ 第一次 commit 进去（本次变更已生成 dist/，提交时纳入）
-- [ ] 测 `claude plugin install github:nanami-he/petsonality` 是否真能 work（需要新装 Claude Code 测）
+- [x] 把 `dist/` 从 `.gitignore` 移除
+- [x] 加 pre-commit hook 自动 `bun run build`（`.githooks/pre-commit`，按 staged 文件触发）
+- [x] 把 dist/ 第一次 commit 进去（PR #13 → v0.4.5）
+- [ ] **真 Windows host 上 smoke test 0.4.5**（`npx petsonality@latest` + `/pet`）
+- [ ] **测 `claude plugin install github:nanami-he/petsonality`**（需要新装 Claude Code 测）
 - [ ] 提交 petsonality 到 [MCP Server Registry](https://modelcontextprotocol.io) 的 server directory
 - [ ] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）
+- [ ] **dist/reactions-pool.json 改为确定性输出**（当前每次 build 都 reorder ~700 行，commit noise；改为对 array 排序后再 stringify）
 - [ ] （长期）写 Homebrew formula
 
 **优先级理由**：npm outage 已经发生过一次，下次会再发生。在更多用户进来前把 multi-channel 架构跑通，等 0.4.5 / 0.5.0 时已经稳了。
+
+**进度（2026-04-29）**：核心架构 4/4 done（v0.4.5 已 ship），剩下都是验证 + 推广 + 优化。multi-channel 已经从「想法」变成「真有这条路径」。
 
 ### G1: 社区推广
 - [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
@@ -230,8 +243,11 @@ gh release create vX.Y.Z --latest --notes "..."  # 建 GitHub Release page，写
 - 单一 issue 报告可能引出多层 bug → 每个 fix 独立小版本 ship，比堆一个大 release 信息密度更高 + user 反馈循环更短
 - GitHub `git push --tags` 只推 tag 不建 Release page → 主页 "Releases" 区会一直挂老版本，需要 `gh release create` 手动建
 - Install 时 shell-out 到 build 脚本 + 源码不在 tarball → 每个 npx 用户都失败 silent fallback（Issue #8，整个 launch 周期都中招）。**安装路径不应该依赖任何 build 工具**——build 在 publish 时做，install 时只复制
-- npm registry 是单点故障（v0.4.4 publish 时撞 outage 30+ min）→ MCP 服务器应该走 multi-channel：npm + Claude Code Plugin + MCP Server Registry，至少 3 条独立路径（见 G0）
+- npm registry 是单点故障（v0.4.4 publish 时撞 outage 30+ min）→ MCP 服务器应该走 multi-channel：npm + Claude Code Plugin + MCP Server Registry，至少 3 条独立路径（v0.4.5 落地了前两条）
 - PR merge 后 main 上的 generated file 可能跟最新源码不一致（PR #11 的 `pet-art.json` 是 Mateus 基线时生成的，merge 后没自动重 build；PR #12 的金毛 art 在 server/art.ts 改了但 pet-art.json 没同步）→ **每次 merge 后 dogfood 之前先跑一遍 `bun run build` 确认所有 generated 文件都是最新**
+- dist/ 入 git 后，**rebuild 必须靠 hook 自动化**——靠人工记得 `bun run build` 一定会忘。`.githooks/pre-commit` 检测 staged 是不是 build input，是就 rebuild + git add（v0.4.5）
+- `prepare` script 是分发 git hook 给 contributor 最简单的方式（不需要 husky）——`bun install` 自动跑 `git config core.hooksPath .githooks`，用 `|| true` 避免 npm tarball install 时报错
+- build 输出最好是 deterministic 的，否则每次 commit 都有 noise。`build-reactions.ts` 用 random sample 进 Set，每次输出 reorder 700 行（v0.4.5 标了 follow-up）
 
 ---
 
@@ -256,6 +272,14 @@ gh release create vX.Y.Z --latest --notes "..."  # 建 GitHub Release page，写
 - **决策方向**：dist/ 入 git 换取 multi-channel 干净体验。1.1MB git 增长 vs 任意一条渠道挂了不影响其他用户。详见 G0
 - **packaging bug 是隐性 critical**：Issue #8 整个 launch 周期都在 silent fallback——README 上「638 反应」的承诺对所有 npx 用户都没兑现。0.4.4 才真正修好
 
+### 2026-04-29 G0 multi-channel 落地（v0.4.5）
+- **第 6 个 patch 版本同一天 ship**（0.4.0 → 0.4.5）—— 这次是把架构升级 ship 出去，不是补 bug
+- **G0 核心 4/4 done**：plugin manifest 切 `node + dist/server.js` / dist/ 入 git / pre-commit hook / manifest 测试 pin
+- **doctor.ts Windows 探测一并修了**——之前 7 个 tryExec 全 `(failed)`，现在用 cmd.exe + PowerShell + WT_SESSION
+- **架构验证靠 test 而不是评论**：`cli/plugin-manifest.test.ts` 永久 pin 住 manifest 必须 `node + dist/server.js`，未来谁不小心改回 bun 立刻挂 CI
+- **`prepare` script 自动分发 hook 给 contributor**——不需要 husky，git config 一行搞定
+- **下一步真验证**：自己 Win11 + Lwhieldon Win11 都装一遍 0.4.5，看 statusline / hooks / pet_pet 全套是否真 work；`claude plugin install github:nanami-he/petsonality` 是否真能用
+
 ---
 
-*PRD v3.9 — 2026-04-29 第二个外部 PR + multi-channel 分发架构觉醒*
+*PRD v3.10 — 2026-04-29 G0 multi-channel 架构落地（6 patch 版本同一天 ship 史）*
