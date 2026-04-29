@@ -156,13 +156,13 @@ petsonality/
 │   ├── which.ts        ← cross-platform binary lookup
 │   └── openclaw-patch.ts ← OpenClaw TUI patch (transitional)
 ├── hooks/              ← Claude Code hook scripts (PostToolUse, Stop)
-├── statusline/         ← bash status line (pet-status.sh, generated from art.ts)
+├── statusline/         ← bash + PowerShell status lines
 ├── skills/             ← Claude Code skill definition (pet/SKILL.md)
 ├── scripts/            ← build-time tools
-└── dist/               ← bundled output (gitignored)
+└── dist/               ← bundled output (tracked for plugin installs)
 ```
 
-The `dist/` directory is the only thing shipped to npm beyond the source — see
+The `dist/` directory is the bundled runtime used by npm and plugin installs — see
 `package.json` `"files"` for the actual ship list.
 
 ---

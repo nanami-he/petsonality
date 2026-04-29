@@ -36,3 +36,29 @@ describe("PowerShell statusline", () => {
     }
   });
 });
+
+describe("golden retriever statusline actions", () => {
+  test("bash renderer maps lick and spin to the redesigned golden frames", () => {
+    const script = readFileSync(join(STATUSLINE_DIR, "pet-status.sh"), "utf8");
+
+    expect(script).toContain("lick) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=6; fi ;;");
+    expect(script).toContain("spin) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=7; else FRAME=0; fi ;;");
+    expect(script).toContain('FRAME=7; echo "ACT_TYPE=spin;');
+  });
+
+  test("PowerShell renderer maps lick and spin to the redesigned golden frames", () => {
+    const script = readFileSync(join(STATUSLINE_DIR, "pet-status.ps1"), "utf8");
+
+    expect(script).toContain('"lick" { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 5 } else { $frame = 6 } }');
+    expect(script).toContain('default { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 7 } else { $frame = 0 } }');
+    expect(script).toContain('Start-Action ".gold_act" "spin" (Get-Random -Minimum 80 -Maximum 100) 0; return 7');
+  });
+
+  test("golden uses its explicit blink frame instead of generic eye replacement", () => {
+    const shell = readFileSync(join(STATUSLINE_DIR, "pet-status.sh"), "utf8");
+    const ps = readFileSync(join(STATUSLINE_DIR, "pet-status.ps1"), "utf8");
+
+    expect(shell).toContain("raven|owl|bear|golden) FRAME=2; BLINK=0 ;;");
+    expect(ps).toContain('$PetId -eq "golden"');
+  });
+});

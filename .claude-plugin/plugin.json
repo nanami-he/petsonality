@@ -8,9 +8,9 @@
   "mcpServers": {
     "petsonality": {
       "type": "stdio",
-      "command": "bun",
+      "command": "node",
       "args": [
-        "server/index.ts"
+        "dist/server.js"
       ]
     }
   }
