@@ -7,11 +7,12 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "fs";
 import { execSync } from "child_process";
-import { join, resolve, dirname } from "path";
+import { join } from "path";
 import { homedir, platform } from "os";
 import { findOpenClawTuiFile } from "./openclaw-patch.ts";
 import { whichSync } from "./which.ts";
 import { formatHookCommand } from "./hook-command.ts";
+import { findPackageRoot } from "./find-package-root.ts";
 
 const IS_WIN = platform() === "win32";
 
@@ -26,17 +27,7 @@ const NC = "\x1b[0m";
 const CLAUDE_DIR = join(homedir(), ".claude");
 const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
 const SKILL_DIR = join(CLAUDE_DIR, "skills", "pet");
-// Walk up from script location to find the package root (where package.json lives).
-// In dev: cli/install.ts → dirname gives project root directly.
-// In dist: dist/cli/install.js → dirname gives dist/, need to go up one more.
-function findPackageRoot(): string {
-  let dir = resolve(dirname(new URL(".", import.meta.url).pathname));
-  while (dir !== "/" && !existsSync(join(dir, "package.json"))) {
-    dir = dirname(dir);
-  }
-  return dir;
-}
-const PROJECT_ROOT = findPackageRoot();
+const PROJECT_ROOT = findPackageRoot(import.meta.url);
 
 function banner() {
   console.log(`

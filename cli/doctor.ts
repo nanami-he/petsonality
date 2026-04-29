@@ -10,17 +10,11 @@
 
 import { readFileSync, existsSync, statSync } from "fs";
 import { execSync } from "child_process";
-import { join, resolve, dirname } from "path";
+import { join } from "path";
 import { homedir } from "os";
+import { findPackageRoot } from "./find-package-root.ts";
 
-function findPackageRoot(): string {
-  let dir = resolve(dirname(new URL(".", import.meta.url).pathname));
-  while (dir !== "/" && !existsSync(join(dir, "package.json"))) {
-    dir = dirname(dir);
-  }
-  return dir;
-}
-const PROJECT_ROOT = findPackageRoot();
+const PROJECT_ROOT = findPackageRoot(import.meta.url);
 const HOME = homedir();
 const STATUS_SCRIPT = join(PROJECT_ROOT, "statusline", "pet-status.sh");
 
