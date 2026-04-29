@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.4.3 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.4.4 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -25,10 +25,61 @@
 ### 18. Windows hook command quoting ✅ (v0.4.2, 2026-04-29) — **第一个外部 PR (#5 by @MestreY0d4-Uninter)** 在 #3 开出 2 小时内交付：双引号包裹 `nodePath` + `reactHook`，修 `C:\Program Files\nodejs\node.exe` 空格被切坏问题。抽出 `cli/hook-command.ts` + 加 unit test guarding canonical case
 ### 19. findPackageRoot Windows 死循环 ✅ (v0.4.3, 2026-04-29) — 自己 dogfooding Win 时发现：`while (dir !== "/")` 在 Windows 永不终止（`path.dirname("C:\\")` 返回自己），`npx petsonality doctor` hang 100% CPU + 进程泄漏。改为 "dirname stopped changing" 平台无关检测，DRY 抽 `cli/find-package-root.ts`，加 regression test
 ### 20. GitHub Releases 页补建 ✅ (2026-04-29) — v0.4.1 / v0.4.2 / v0.4.3 三个 release pages，每个写完整故事 + 贡献者 credit + 三版本 Windows 修复对照表
+### 21. 第二个外部 PR + Lwhieldon 升级为 contributor ✅ (v0.4.4, 2026-04-29) — **Mateus 第二个 PR (#11, 1500 行 PowerShell statusline)** 闭 #4，**Lwhieldon 第一个 PR (#12)** 闭 #10（重画金毛 ASCII 形象 + `pet_pet` 内联渲染 + Windows path fix），加上 PR #9 (你的 CJK charWidth fix)。现 CONTRIBUTORS.md 有 2 位外部 contributor + 你
+### 22. Issue #8 packaging fix ✅ (v0.4.4, 2026-04-29) — `bun run build:reactions` 在 npx user 端永远失败（`scripts/` + `server/` 没在 tarball），所有用户都拿 fallback reactions。改为 prepublish 把 `dist/reactions-pool.json` (58 KB) 打进 tarball，installer 改为 copy artifact 而不是 build。npm install **彻底去掉 bun 运行时依赖**
 
 ---
 
 ## 当前优先 — 宣传 + 推广
+
+### G0: 多渠道分发架构（**新增 2026-04-29，🔴 高优先级，因 npm outage 触发**）
+
+**触发**：v0.4.4 publish 时撞上 npm registry 服务挂了 30+ min。整个 ship 流程被 npm 单点故障阻塞。
+
+**问题**：当前唯一分发渠道是 `npm + npx`，npm 抽风时所有新用户拉不到包。MCP 服务器对应的更原生渠道（Claude Code Plugin、MCP Server Registry）都没启用。
+
+**目标**：让 petsonality 至少 3 条独立分发路径可用，任意一条挂了不影响其他。
+
+**渠道矩阵（理想态）**：
+
+| 渠道 | 用户类型 | 当前状态 | 需要做什么 |
+|------|---------|---------|-----------|
+| `npm + npx petsonality` | 看到推文 / Reddit / HN 来 | ✅ 主流 | 维护即可 |
+| `claude plugin install github:nanami-he/petsonality` | Claude Code 内 browse 插件的人 | 🟡 manifest 已写但指向 `bun + server/index.ts`（需要 bun + 源码） | 改 plugin.json 指向 `node + dist/server.js` + 让 git 仓库带 dist/ |
+| MCP Server Registry ([modelcontextprotocol.io](https://modelcontextprotocol.io)) | 在 MCP 官方目录浏览的人 | ❌ 未列 | 提交注册 PR / 表单 |
+| `git clone + bun install + bun run build` | 开发者 / 想看源码 | ✅ 已能用 | CONTRIBUTING.md 已写 |
+| Homebrew formula | macOS 原生开发者 | ❌ 未做 | 写 formula + 提交（长期项） |
+
+**核心架构决策：dist/ 入不入 git？**
+
+```
+现状：dist/ 在 .gitignore 里
+  → npm 路径：tarball 包含预编译 dist/，用户 npx 不需要 bun ✅
+  → plugin/clone 路径：必须 bun build 才能跑 ⚠️
+```
+
+**方案 A**：把 dist/ 提交到 git
+- 优点：Plugin / GitHub clone 路径**完全不需要 bun**，所有用户路径统一只要 node
+- 缺点：git 仓库每次 commit 多 1.1 MB diff，commit 流程多一步 `bun run build`
+- 缓解：写 pre-commit hook 自动跑 build（不用手动）
+
+**方案 B**：保持 dist/ gitignored，每条路径文档化各自要求
+- 优点：git 历史干净
+- 缺点：plugin / clone 路径门槛 = bun 安装
+
+**决策方向**：倾向**方案 A** —— 1.1 MB git 增长可接受，换来 multi-channel 干净体验。
+
+**任务清单（按优先序）**：
+- [ ] 改 `.claude-plugin/plugin.json` —— `command` 改成 `node`，`args` 指向 `dist/server.js`
+- [ ] 把 `dist/` 从 `.gitignore` 移除（保留 `dist/reactions-pool.json` 等已有内容）
+- [ ] 加 pre-commit hook 自动 `bun run build`（避免忘了 build 直接 commit）
+- [ ] 把 dist/ 第一次 commit 进去（一次性增加 ~1.1 MB git 历史）
+- [ ] 测 `claude plugin install github:nanami-he/petsonality` 是否真能 work（需要新装 Claude Code 测）
+- [ ] 提交 petsonality 到 [MCP Server Registry](https://modelcontextprotocol.io) 的 server directory
+- [ ] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）
+- [ ] （长期）写 Homebrew formula
+
+**优先级理由**：npm outage 已经发生过一次，下次会再发生。在更多用户进来前把 multi-channel 架构跑通，等 0.4.5 / 0.5.0 时已经稳了。
 
 ### G1: 社区推广
 - [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
@@ -178,6 +229,9 @@ gh release create vX.Y.Z --latest --notes "..."  # 建 GitHub Release page，写
 - 写跨平台代码后**必须自己在 Windows 上 dogfood**——CI test 跑 macOS/Linux 抓不到 Windows-only bug（findPackageRoot 死循环就是 305 tests 全绿但 Windows hang）
 - 单一 issue 报告可能引出多层 bug → 每个 fix 独立小版本 ship，比堆一个大 release 信息密度更高 + user 反馈循环更短
 - GitHub `git push --tags` 只推 tag 不建 Release page → 主页 "Releases" 区会一直挂老版本，需要 `gh release create` 手动建
+- Install 时 shell-out 到 build 脚本 + 源码不在 tarball → 每个 npx 用户都失败 silent fallback（Issue #8，整个 launch 周期都中招）。**安装路径不应该依赖任何 build 工具**——build 在 publish 时做，install 时只复制
+- npm registry 是单点故障（v0.4.4 publish 时撞 outage 30+ min）→ MCP 服务器应该走 multi-channel：npm + Claude Code Plugin + MCP Server Registry，至少 3 条独立路径（见 G0）
+- PR merge 后 main 上的 generated file 可能跟最新源码不一致（PR #11 的 `pet-art.json` 是 Mateus 基线时生成的，merge 后没自动重 build；PR #12 的金毛 art 在 server/art.ts 改了但 pet-art.json 没同步）→ **每次 merge 后 dogfood 之前先跑一遍 `bun run build` 确认所有 generated 文件都是最新**
 
 ---
 
@@ -195,6 +249,13 @@ gh release create vX.Y.Z --latest --notes "..."  # 建 GitHub Release page，写
 - **commit `references #N` vs `closes #N`**：前者保留 issue open 等用户验证，后者自动关。critical bug 用 `references` 更安全
 - **每个 patch 配 GitHub Release page**：把 14 小时叙事写下来，三版本对照表让外人 1 分钟理解发生了啥
 
+### 2026-04-29 第二个外部 PR + multi-channel 觉醒
+- **第二个外部 PR 来了**（Mateus #11, PowerShell statusline 1500 行）+ **bug reporter 升级为 contributor**（Lwhieldon #12 重画金毛 + pet_pet inline）
+- **24 小时内 5 个 patch 版本**（0.4.0 → 0.4.4）—— 但**npm publish 0.4.4 时撞上 npm registry 30+ min outage**，整个 ship 流被卡
+- **悟到 npm 是单点故障**：MCP 服务器其实可以走多条原生渠道（Claude Code Plugin、MCP Server Registry），不应该绑死 npm
+- **决策方向**：dist/ 入 git 换取 multi-channel 干净体验。1.1MB git 增长 vs 任意一条渠道挂了不影响其他用户。详见 G0
+- **packaging bug 是隐性 critical**：Issue #8 整个 launch 周期都在 silent fallback——README 上「638 反应」的承诺对所有 npx 用户都没兑现。0.4.4 才真正修好
+
 ---
 
-*PRD v3.8 — 2026-04-29 Windows 三连击 + 第一个外部 PR + 完整 OSS 协作循环验证*
+*PRD v3.9 — 2026-04-29 第二个外部 PR + multi-channel 分发架构觉醒*
