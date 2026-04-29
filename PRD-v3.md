@@ -45,7 +45,7 @@
 | 渠道 | 用户类型 | 当前状态 | 需要做什么 |
 |------|---------|---------|-----------|
 | `npm + npx petsonality` | 看到推文 / Reddit / HN 来 | ✅ 主流 | 维护即可 |
-| `claude plugin install github:nanami-he/petsonality` | Claude Code 内 browse 插件的人 | 🟡 manifest 已写但指向 `bun + server/index.ts`（需要 bun + 源码） | 改 plugin.json 指向 `node + dist/server.js` + 让 git 仓库带 dist/ |
+| `claude plugin install github:nanami-he/petsonality` | Claude Code 内 browse 插件的人 | 🟢 manifest 已改为 `node + dist/server.js`，dist/ 已准备入 git | 真实 Claude Code plugin install smoke test |
 | MCP Server Registry ([modelcontextprotocol.io](https://modelcontextprotocol.io)) | 在 MCP 官方目录浏览的人 | ❌ 未列 | 提交注册 PR / 表单 |
 | `git clone + bun install + bun run build` | 开发者 / 想看源码 | ✅ 已能用 | CONTRIBUTING.md 已写 |
 | Homebrew formula | macOS 原生开发者 | ❌ 未做 | 写 formula + 提交（长期项） |
@@ -53,7 +53,7 @@
 **核心架构决策：dist/ 入不入 git？**
 
 ```
-现状：dist/ 在 .gitignore 里
+旧现状：dist/ 在 .gitignore 里
   → npm 路径：tarball 包含预编译 dist/，用户 npx 不需要 bun ✅
   → plugin/clone 路径：必须 bun build 才能跑 ⚠️
 ```
@@ -70,10 +70,10 @@
 **决策方向**：倾向**方案 A** —— 1.1 MB git 增长可接受，换来 multi-channel 干净体验。
 
 **任务清单（按优先序）**：
-- [ ] 改 `.claude-plugin/plugin.json` —— `command` 改成 `node`，`args` 指向 `dist/server.js`
-- [ ] 把 `dist/` 从 `.gitignore` 移除（保留 `dist/reactions-pool.json` 等已有内容）
+- [x] 改 `.claude-plugin/plugin.json` —— `command` 改成 `node`，`args` 指向 `dist/server.js`
+- [x] 把 `dist/` 从 `.gitignore` 移除（保留 `dist/reactions-pool.json` 等已有内容）
 - [ ] 加 pre-commit hook 自动 `bun run build`（避免忘了 build 直接 commit）
-- [ ] 把 dist/ 第一次 commit 进去（一次性增加 ~1.1 MB git 历史）
+- [ ] 把 dist/ 第一次 commit 进去（本次变更已生成 dist/，提交时纳入）
 - [ ] 测 `claude plugin install github:nanami-he/petsonality` 是否真能 work（需要新装 Claude Code 测）
 - [ ] 提交 petsonality 到 [MCP Server Registry](https://modelcontextprotocol.io) 的 server directory
 - [ ] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）

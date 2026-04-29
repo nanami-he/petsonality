@@ -8,15 +8,16 @@
  * Copy the entire output and paste it in a GitHub issue.
  */
 
-import { readFileSync, existsSync, statSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { execSync } from "child_process";
 import { join } from "path";
-import { homedir } from "os";
+import { homedir, platform } from "os";
 import { findPackageRoot } from "./find-package-root.ts";
 
 const PROJECT_ROOT = findPackageRoot(import.meta.url);
 const HOME = homedir();
-const STATUS_SCRIPT = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+const IS_WIN = platform() === "win32";
+const STATUS_SCRIPT = join(PROJECT_ROOT, "statusline", IS_WIN ? "pet-status.ps1" : "pet-status.sh");
 
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
@@ -71,13 +72,24 @@ console.log(`\n${DIM}Copy this entire output into your GitHub issue.${NC}`);
 // ─── Environment ────────────────────────────────────────────────────────────
 
 section("Environment");
-row("OS", tryExec("uname -srm"));
-row("Hostname", tryExec("uname -n"));
-row("User shell", process.env.SHELL ?? "(unset)");
-row("Bash version", tryExec("bash --version | head -1"));
+if (IS_WIN) {
+  row("OS", tryExec("cmd.exe /c ver", process.platform));
+  row("Hostname", process.env.COMPUTERNAME ?? "(unset)");
+  row("User shell", process.env.ComSpec ?? process.env.COMSPEC ?? "(unset)");
+  row("PowerShell version", tryExec('powershell.exe -NoProfile -Command "$PSVersionTable.PSVersion.ToString()"', "(not in PATH)"));
+} else {
+  row("OS", tryExec("uname -srm"));
+  row("Hostname", tryExec("uname -n"));
+  row("User shell", process.env.SHELL ?? "(unset)");
+  row("Bash version", tryExec("bash --version | head -1"));
+}
 row("Bun version", tryExec("bun --version"));
 row("Node version", tryExec("node --version", "(not installed)"));
-row("jq version", tryExec("jq --version", "(not installed)"));
+if (IS_WIN) {
+  row("JSON parser", "PowerShell ConvertFrom-Json");
+} else {
+  row("jq version", tryExec("jq --version", "(not installed)"));
+}
 row("Claude Code version", tryExec("claude --version", "(not in PATH)"));
 
 // ─── Terminal ───────────────────────────────────────────────────────────────
@@ -88,14 +100,23 @@ row("COLORTERM", process.env.COLORTERM ?? "(unset)");
 row("TERM_PROGRAM", process.env.TERM_PROGRAM ?? "(unset)");
 row("LANG", process.env.LANG ?? "(unset)");
 row("COLUMNS env var", process.env.COLUMNS ?? "(unset in subprocess)");
-row("stty size", tryExec("stty size 2>/dev/null", "(no tty)"));
-row("tput cols", tryExec("tput cols 2>/dev/null", "(failed)"));
+if (IS_WIN) {
+  row("WT_SESSION", process.env.WT_SESSION ?? "(unset)");
+  row("ConEmuANSI", process.env.ConEmuANSI ?? "(unset)");
+} else {
+  row("stty size", tryExec("stty size 2>/dev/null", "(no tty)"));
+  row("tput cols", tryExec("tput cols 2>/dev/null", "(failed)"));
+}
 
 // ─── Filesystem checks ──────────────────────────────────────────────────────
 
 section("Filesystem");
 const procExists = existsSync("/proc");
-row("/proc exists", procExists ? `${GREEN}yes${NC} (Linux)` : `${RED}no${NC} (macOS/BSD)`);
+if (IS_WIN) {
+  row("Windows profile", HOME);
+} else {
+  row("/proc exists", procExists ? `${GREEN}yes${NC} (Linux)` : `${RED}no${NC} (macOS/BSD)`);
+}
 row("~/.claude/ exists", existsSync(join(HOME, ".claude")) ? "yes" : "no");
 row("~/.claude.json exists", existsSync(join(HOME, ".claude.json")) ? "yes" : "no");
 row("~/.petsonality/ exists", existsSync(join(HOME, ".petsonality")) ? "yes" : "no");
@@ -189,8 +210,11 @@ try {
 // ─── Live status line test ──────────────────────────────────────────────────
 
 section("Live status line output");
-console.log(`  ${DIM}(running: echo '{}' | ${STATUS_SCRIPT})${NC}\n`);
-const liveOutput = tryExec(`echo '{}' | bash "${STATUS_SCRIPT}" 2>&1`, "(script failed)");
+const liveCommand = IS_WIN
+  ? `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${STATUS_SCRIPT}"`
+  : `echo '{}' | bash "${STATUS_SCRIPT}" 2>&1`;
+console.log(`  ${DIM}(running: ${liveCommand})${NC}\n`);
+const liveOutput = tryExec(liveCommand, "(script failed)");
 const lines = liveOutput.split("\n");
 console.log(lines.map(l => `  │ ${l}`).join("\n"));
 console.log(`  ${DIM}(${lines.length} lines, total ${liveOutput.length} bytes)${NC}`);

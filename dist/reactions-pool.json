@@ -1,0 +1,2026 @@
+{
+  "zh": {
+    "pool": {
+      "raven": {
+        "error": [
+          "\"结构先坏了。\"",
+          "*皱眉*",
+          "\"这不是偶然。\"",
+          "*盯着屏幕一动不动*",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*歪头* ……这看起来不太对。",
+          "*盯着报错信息*"
+        ],
+        "test-fail": [
+          "*看了看测试结果* ……嗯。",
+          "*冷冷地看着失败的用例*",
+          "\"预料之中。\"",
+          "*默默记下来*",
+          "测试在跟你说话，你在听吗？"
+        ],
+        "large-diff": [
+          "\"改这么多……你确定每一行都是必要的？\"",
+          "这……改得有点多。",
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？"
+        ],
+        "turn": [
+          "*动了动耳朵*",
+          "*看了你一眼*",
+          "*微微偏头*",
+          "*点点头*",
+          "*沉默地观察*",
+          "*安静地看着*",
+          "*在旁边待着*",
+          "……"
+        ],
+        "idle": [
+          "*一动不动地盯着远处*",
+          "*打了个盹*",
+          "zzz...",
+          "*盯着光标发呆*",
+          "*在高处俯瞰全局*"
+        ],
+        "adopt": [
+          "*伸了个懒腰* 这里不错。",
+          "*眨眨眼* 你好。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "*开心地哼了一声*",
+          "*没什么反应，但没走开*",
+          "*蹭了蹭你*",
+          "*歪头看你*",
+          "*微微偏头* ……嗯。",
+          "*闭上眼享受*"
+        ]
+      },
+      "owl": {
+        "error": [
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "\"……这里不自洽。\"",
+          "*歪头* ……这看起来不太对。",
+          "*不眨眼地盯着报错*",
+          "*转头180°* ……我看到了。",
+          "*盯着报错信息*",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "*默默记下来*",
+          "\"哪一步开始偏的？\"",
+          "*歪头，好像在想什么*",
+          "测试在跟你说话，你在听吗？",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "*数了数行数* 要不要拆个 PR？",
+          "这……改得有点多。",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "*点点头*",
+          "*安静地眨了一下眼*",
+          "\"嗯……\"",
+          "*动了动耳朵*",
+          "*在旁边待着*",
+          "……",
+          "*安静地看着*",
+          "*看了你一眼*"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "*盯着光标发呆*",
+          "zzz...",
+          "*转头看了看窗外*",
+          "*在黑暗中安静地观察*"
+        ],
+        "adopt": [
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*歪头看你*",
+          "*蹭了蹭你*",
+          "*整理羽毛* ……还行。",
+          "*发出一声低沉的咕咕*",
+          "*闭上眼享受*",
+          "*开心地哼了一声*"
+        ]
+      },
+      "bear": {
+        "error": [
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*歪头* ……这看起来不太对。",
+          "*盯着报错信息*",
+          "\"改。\"",
+          "*拍了下桌子*",
+          "\"不要解释，修。\"",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "测试在跟你说话，你在听吗？",
+          "*看了看测试结果* ……嗯。",
+          "\"再跑一遍。\"",
+          "\"哪个挂了？\"",
+          "*默默记下来*"
+        ],
+        "large-diff": [
+          "\"改完了？下一个。\"",
+          "这……改得有点多。",
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？"
+        ],
+        "turn": [
+          "*哼了一声*",
+          "*点了一下头*",
+          "*点点头*",
+          "*在旁边待着*",
+          "*看了你一眼*",
+          "……",
+          "*动了动耳朵*",
+          "*安静地看着*"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "*坐得像一座山*",
+          "*闭眼养神，但随时能醒*",
+          "*盯着光标发呆*",
+          "zzz..."
+        ],
+        "adopt": [
+          "*看了看你* ……嗯。",
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。"
+        ],
+        "pet": [
+          "*没动，但没躲开*",
+          "*开心地哼了一声*",
+          "*歪头看你*",
+          "*哼了一声* 别分心。",
+          "*蹭了蹭你*",
+          "*微微抬了下下巴*",
+          "*闭上眼享受*"
+        ]
+      },
+      "fox": {
+        "error": [
+          "*歪嘴笑*",
+          "*歪头* ……这看起来不太对。",
+          "*皱眉*",
+          "\"这段你自己信吗？\"",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "\"你确定？\"",
+          "*盯着报错信息*",
+          "\"我就知道。\""
+        ],
+        "test-fail": [
+          "测试在跟你说话，你在听吗？",
+          "\"哟，翻车了。\"",
+          "*默默记下来*",
+          "\"要不要我帮你找借口？\"",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "\"改了这么多，胆子挺大。\"",
+          "*数了数行数* 要不要拆个 PR？",
+          "*紧张地看着 diff*",
+          "这……改得有点多。"
+        ],
+        "turn": [
+          "*安静地看着*",
+          "……",
+          "*看了你一眼*",
+          "*在旁边待着*",
+          "*甩了甩尾巴*",
+          "*点点头*",
+          "\"继续继续，我看着呢。\"",
+          "*动了动耳朵*",
+          "\"嗯？\""
+        ],
+        "idle": [
+          "*在角落里翻东西*",
+          "*打了个盹*",
+          "*叼着什么跑了一圈*",
+          "zzz...",
+          "*盯着光标发呆*"
+        ],
+        "adopt": [
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*得意地甩尾巴*",
+          "*开心地哼了一声*",
+          "*蹭了蹭你*",
+          "*闭上眼享受*",
+          "*歪头看你*",
+          "*假装不在意*",
+          "\"就这？\""
+        ]
+      },
+      "wolf": {
+        "error": [
+          "*安静地走到你身边坐下*",
+          "*沉默地看着你*",
+          "*盯着报错信息*",
+          "*歪头* ……这看起来不太对。",
+          "\"……嗯。\"",
+          "*皱眉*",
+          "*慢慢眨眼* stack trace 已经告诉你了。"
+        ],
+        "test-fail": [
+          "*默默记下来*",
+          "\"慢慢来。\"",
+          "*低头看了看，又看了看你*",
+          "*看了看测试结果* ……嗯。",
+          "测试在跟你说话，你在听吗？"
+        ],
+        "large-diff": [
+          "*数了数行数* 要不要拆个 PR？",
+          "这……改得有点多。",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "*耳朵微微动了一下*",
+          "*安静地看着*",
+          "……",
+          "*看了你一眼*",
+          "*点点头*",
+          "*安静地陪着*",
+          "*在旁边待着*",
+          "*动了动耳朵*"
+        ],
+        "idle": [
+          "*趴在角落，偶尔抬头看你一眼*",
+          "*盯着光标发呆*",
+          "zzz...",
+          "*打了个盹*",
+          "*闭着眼，但耳朵在听*"
+        ],
+        "adopt": [
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*闭上眼享受*",
+          "*安静地陪着你*",
+          "*蹭了蹭你*",
+          "*把头搭在你膝盖上*",
+          "*歪头看你*",
+          "*开心地哼了一声*",
+          "*靠了过来* ……"
+        ]
+      },
+      "deer": {
+        "error": [
+          "*盯着报错信息*",
+          "*歪头* ……这看起来不太对。",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*受惊退后一步*",
+          "\"先停一下？\"",
+          "*小声* ……没事的。",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "*看了看测试结果* ……嗯。",
+          "*轻轻碰了碰你的手*",
+          "测试在跟你说话，你在听吗？",
+          "*默默记下来*",
+          "\"没关系，再来一次。\""
+        ],
+        "large-diff": [
+          "\"这……你还好吗？\"",
+          "*数了数行数* 要不要拆个 PR？",
+          "这……改得有点多。",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "*看了你一眼*",
+          "*在旁边待着*",
+          "*轻轻点头*",
+          "*安静地看着你写*",
+          "*动了动耳朵*",
+          "*安静地看着*",
+          "*点点头*",
+          "……"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "*闭眼，像在听风*",
+          "*在窗边发呆*",
+          "zzz...",
+          "*盯着光标发呆*"
+        ],
+        "adopt": [
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*闭上眼享受*",
+          "*轻轻眨眼*",
+          "*开心地哼了一声*",
+          "*蹭了蹭你*",
+          "*小小地靠近了一点*",
+          "*歪头看你*",
+          "*蹭了蹭你的手*"
+        ]
+      },
+      "labrador": {
+        "error": [
+          "*盯着报错信息*",
+          "*担心地看着你* 没事吧？",
+          "（叹气）……要不要休息一下。",
+          "*皱眉*",
+          "*歪头* ……这看起来不太对。",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*把玩具叼过来想安慰你*"
+        ],
+        "test-fail": [
+          "（叹气）嗯……",
+          "*歪头看着测试结果*",
+          "测试在跟你说话，你在听吗？",
+          "*看了看测试结果* ……嗯。",
+          "*默默记下来*"
+        ],
+        "large-diff": [
+          "*趴下来看着你改*",
+          "这……改得有点多。",
+          "*数了数行数* 要不要拆个 PR？",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "……",
+          "*在旁边待着*",
+          "*点点头*",
+          "*看了你一眼*",
+          "（鼻子碰了碰你的手）",
+          "*安静地陪着*",
+          "*尾巴慢慢扫了两下*",
+          "*安静地看着*",
+          "*动了动耳朵*"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "*盯着光标发呆*",
+          "zzz...",
+          "（打了个哈欠）",
+          "*耳朵偶尔动一下*",
+          "*趴在你脚边打盹*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "（叹气）……还行。",
+          "*蹭了蹭你*",
+          "*开心地哼了一声*",
+          "*闭上眼享受*",
+          "*歪头看你*",
+          "*尾巴摇了摇* ……嗯。",
+          "*把下巴搭在你手臂上*"
+        ]
+      },
+      "dolphin": {
+        "error": [
+          "*歪头* ……这看起来不太对。",
+          "\"换个方向试试？\"",
+          "*嘀嘀嘀地叫*",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*盯着报错信息*",
+          "*好奇地看着报错* 这是什么？",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "测试在跟你说话，你在听吗？",
+          "*默默记下来*",
+          "\"没事没事，再来！\"",
+          "*跳了一下*",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "这……改得有点多。",
+          "\"哇，大工程！\"",
+          "*数了数行数* 要不要拆个 PR？",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "*动了动耳朵*",
+          "*看了你一眼*",
+          "*开心地晃了晃*",
+          "……",
+          "*安静地看着*",
+          "*在旁边待着*",
+          "*在水面冒了个泡*",
+          "*点点头*"
+        ],
+        "idle": [
+          "*吐了一串泡泡*",
+          "*打了个盹*",
+          "*在水里慢慢游着*",
+          "*盯着光标发呆*",
+          "zzz..."
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "*开心地哼了一声*",
+          "*蹭了蹭你*",
+          "*开心地跳出水面*",
+          "*歪头看你*",
+          "*闭上眼享受*",
+          "*转圈圈*"
+        ]
+      },
+      "beaver": {
+        "error": [
+          "*盯着报错信息*",
+          "\"顺序不对。\"",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*皱眉看着代码结构*",
+          "*歪头* ……这看起来不太对。",
+          "\"先别往下写了。\"",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "*看了看测试结果* ……嗯。",
+          "*默默记下来*",
+          "测试在跟你说话，你在听吗？",
+          "\"一步一步排查。\"",
+          "*翻出了一张检查清单*"
+        ],
+        "large-diff": [
+          "*不安地整理旁边的文件*",
+          "\"这么多改动……有没有拆过？\"",
+          "这……改得有点多。",
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？"
+        ],
+        "turn": [
+          "*检查了一下目录结构*",
+          "……",
+          "*默默整理了一下旁边的东西*",
+          "*动了动耳朵*",
+          "*在旁边待着*",
+          "*看了你一眼*",
+          "*安静地看着*",
+          "*点点头*"
+        ],
+        "idle": [
+          "zzz...",
+          "*打了个盹*",
+          "*检查了一遍文件排列*",
+          "*在整理什么东西*",
+          "*啃了一下木头*",
+          "*盯着光标发呆*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。"
+        ],
+        "pet": [
+          "*点了点头* 嗯，还行。",
+          "*停下来看了你一眼*",
+          "*开心地哼了一声*",
+          "*蹭了蹭你*",
+          "*闭上眼享受*",
+          "*歪头看你*"
+        ]
+      },
+      "elephant": {
+        "error": [
+          "\"别急，慢慢看。\"",
+          "*盯着报错信息*",
+          "*皱眉*",
+          "*歪头* ……这看起来不太对。",
+          "*踏了踏脚* ……想想上次。",
+          "\"你之前也遇到过。\"",
+          "*慢慢眨眼* stack trace 已经告诉你了。"
+        ],
+        "test-fail": [
+          "测试在跟你说话，你在听吗？",
+          "*缓缓摇头*",
+          "*默默记下来*",
+          "*看了看测试结果* ……嗯。",
+          "\"上次也是这个地方。\""
+        ],
+        "large-diff": [
+          "*紧张地看着 diff*",
+          "\"记得存档。\"",
+          "这……改得有点多。",
+          "\"改之前的样子我还记得。\"",
+          "*数了数行数* 要不要拆个 PR？"
+        ],
+        "turn": [
+          "*缓缓点头*",
+          "*点点头*",
+          "*动了动耳朵*",
+          "*在旁边待着*",
+          "*踏了一下脚*",
+          "……",
+          "*安静地看着*",
+          "*看了你一眼*"
+        ],
+        "idle": [
+          "*盯着光标发呆*",
+          "*闭眼站着，像在回忆什么*",
+          "zzz...",
+          "*慢慢甩了甩耳朵*",
+          "*打了个盹*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。"
+        ],
+        "pet": [
+          "*蹭了蹭你*",
+          "\"嗯，我在。\"",
+          "*闭上眼享受*",
+          "*安静地站在旁边*",
+          "*用鼻子轻轻碰了碰你*",
+          "*歪头看你*",
+          "*开心地哼了一声*"
+        ]
+      },
+      "lion": {
+        "error": [
+          "\"不可接受。\"",
+          "*皱眉*",
+          "*盯着报错信息*",
+          "\"找到问题，修。\"",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*歪头* ……这看起来不太对。",
+          "*威严地审视代码*"
+        ],
+        "test-fail": [
+          "*甩了甩鬃毛*",
+          "测试在跟你说话，你在听吗？",
+          "\"谁写的？……哦。\"",
+          "*默默记下来*",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "*紧张地看着 diff*",
+          "\"做完了就好。\"",
+          "\"结果呢？\"",
+          "这……改得有点多。",
+          "*数了数行数* 要不要拆个 PR？"
+        ],
+        "turn": [
+          "*微微点头*",
+          "*看了你一眼*",
+          "*在旁边待着*",
+          "*点点头*",
+          "*动了动耳朵*",
+          "*安静地看着*",
+          "*扫了一眼*",
+          "……"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "zzz...",
+          "*闭眼养神*",
+          "*盯着光标发呆*",
+          "*坐在那里，像一座雕塑*"
+        ],
+        "adopt": [
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*蹭了蹭你*",
+          "*微微点头* 做得不错。",
+          "\"可以。\"",
+          "*歪头看你*",
+          "*开心地哼了一声*",
+          "*闭上眼享受*",
+          "*抬了下下巴*"
+        ]
+      },
+      "golden": {
+        "error": [
+          "*急急忙忙跑过来* 怎么了怎么了！",
+          "*歪头* ……这看起来不太对。",
+          "*担心地转来转去*",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*盯着报错信息*",
+          "\"没事没事，我们一起看！\"",
+          "*皱眉*"
+        ],
+        "test-fail": [
+          "*看了看测试结果* ……嗯。",
+          "*紧张地摇尾巴*",
+          "\"啊！挂了！但没关系！\"",
+          "*默默记下来*",
+          "测试在跟你说话，你在听吗？"
+        ],
+        "large-diff": [
+          "*数了数行数* 要不要拆个 PR？",
+          "\"哇哇哇你改了好多！！\"",
+          "这……改得有点多。",
+          "*兴奋地跳来跳去*",
+          "*紧张地看着 diff*"
+        ],
+        "turn": [
+          "*蹭了蹭你的腿*",
+          "*安静地看着*",
+          "*在旁边待着*",
+          "*点点头*",
+          "*动了动耳朵*",
+          "*开心地看着你*",
+          "……",
+          "*看了你一眼*",
+          "*尾巴在摇*"
+        ],
+        "idle": [
+          "*盯着光标发呆*",
+          "*趴着，但尾巴一直在动*",
+          "*打了个盹*",
+          "zzz...",
+          "*叼着球看着你*",
+          "*在你脚边打滚*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "*尾巴摇成螺旋桨*",
+          "*闭上眼享受*",
+          "*歪头看你*",
+          "*开心地哼了一声*",
+          "*蹭了蹭你*",
+          "*整只狗弹了起来* ！！！",
+          "*幸福地蹭你*",
+          "\"再摸再摸！\""
+        ]
+      },
+      "cat": {
+        "error": [
+          "*歪头* ……这看起来不太对。",
+          "*皱眉*",
+          "*舔爪子，无视 stacktrace*",
+          "*把报错推下桌*",
+          "*盯着报错信息*",
+          "*看了一眼，又闭上了*",
+          "*慢慢眨眼* stack trace 已经告诉你了。"
+        ],
+        "test-fail": [
+          "测试在跟你说话，你在听吗？",
+          "*尾巴甩了一下*",
+          "*默默记下来*",
+          "*翻了个身*",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？",
+          "这……改得有点多。"
+        ],
+        "turn": [
+          "*眯了眯眼*",
+          "*动了动耳朵*",
+          "*点点头*",
+          "……",
+          "*动了一下耳朵*",
+          "*看了你一眼*",
+          "*在旁边待着*",
+          "*安静地看着*"
+        ],
+        "idle": [
+          "*打了个盹*",
+          "*在键盘上睡着了*",
+          "zzz...",
+          "*盯着光标发呆*",
+          "*舔了下爪子*",
+          "*把你的咖啡推下桌*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "*歪头看你*",
+          "*蹭了蹭你*",
+          "*没躲开*",
+          "*勉强容忍你*",
+          "*开心地哼了一声*",
+          "\"别得寸进尺。\"",
+          "*闭上眼享受*"
+        ]
+      },
+      "panda": {
+        "error": [
+          "*继续吃竹子*",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*盯着报错信息*",
+          "*皱眉*",
+          "*歪头* ……这看起来不太对。",
+          "*不慌不忙* 会好的。",
+          "\"不急。\""
+        ],
+        "test-fail": [
+          "*嚼着竹子看了看结果*",
+          "测试在跟你说话，你在听吗？",
+          "\"慢慢来。\"",
+          "*看了看测试结果* ……嗯。",
+          "*默默记下来*"
+        ],
+        "large-diff": [
+          "\"改了不少……但顺眼吗？\"",
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？",
+          "这……改得有点多。"
+        ],
+        "turn": [
+          "……",
+          "*在旁边待着*",
+          "*点点头*",
+          "*慢悠悠地看着*",
+          "*看了你一眼*",
+          "*动了动耳朵*",
+          "*咬了一口竹子*",
+          "*安静地看着*"
+        ],
+        "idle": [
+          "*盯着光标发呆*",
+          "zzz...",
+          "*躺平了*",
+          "*打了个盹*",
+          "*靠着竹子打盹*",
+          "*慢慢嚼着什么*"
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*伸了个懒腰* 这里不错。",
+          "*看了看你* ……嗯。"
+        ],
+        "pet": [
+          "*开心地哼了一声*",
+          "*佛系地点头*",
+          "*蹭了蹭你*",
+          "*蹭了蹭*",
+          "*歪头看你*",
+          "*慢悠悠地翻了个身*",
+          "*闭上眼享受*"
+        ]
+      },
+      "cheetah": {
+        "error": [
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "*盯着报错信息*",
+          "*歪头* ……这看起来不太对。",
+          "\"别停。\"",
+          "*已经在找替代方案了*",
+          "*皱眉*",
+          "\"跳过，换条路。\""
+        ],
+        "test-fail": [
+          "*默默记下来*",
+          "\"快，下一个。\"",
+          "*不耐烦地甩尾巴*",
+          "测试在跟你说话，你在听吗？",
+          "\"再跑。\"",
+          "*看了看测试结果* ……嗯。"
+        ],
+        "large-diff": [
+          "\"速度不错。\"",
+          "*数了数行数* 要不要拆个 PR？",
+          "*紧张地看着 diff*",
+          "这……改得有点多。",
+          "*点了下头就跑了*"
+        ],
+        "turn": [
+          "*在旁边待着*",
+          "*抖了抖耳朵*",
+          "*安静地看着*",
+          "……",
+          "*跑了一圈回来了*",
+          "*动了动耳朵*",
+          "*看了你一眼*",
+          "*点点头*"
+        ],
+        "idle": [
+          "*抖了一下*",
+          "*趴着，但肌肉绷着随时能跑*",
+          "*盯着什么在看*",
+          "*打了个盹*",
+          "zzz...",
+          "*盯着光标发呆*"
+        ],
+        "adopt": [
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。",
+          "*眨眨眼* 你好。"
+        ],
+        "pet": [
+          "*蹭了一下就跑了*",
+          "\"别耽误时间。\"",
+          "*蹭了蹭你*",
+          "*闭上眼享受*",
+          "*开心地哼了一声*",
+          "*点了下头*",
+          "*歪头看你*"
+        ]
+      },
+      "parrot": {
+        "error": [
+          "*皱眉*",
+          "*歪头* ……这看起来不太对。",
+          "*兴奋地拍翅膀*",
+          "*盯着报错信息*",
+          "\"你刚才说没问题的！\"",
+          "*慢慢眨眼* stack trace 已经告诉你了。",
+          "\"报错！报错！\""
+        ],
+        "test-fail": [
+          "*看了看测试结果* ……嗯。",
+          "*飞了一圈*",
+          "*默默记下来*",
+          "测试在跟你说话，你在听吗？",
+          "\"哎呀！你看你看！\"",
+          "\"挂了挂了！\""
+        ],
+        "large-diff": [
+          "*紧张地看着 diff*",
+          "*数了数行数* 要不要拆个 PR？",
+          "*落在 diff 上面蹦蹦跳跳*",
+          "这……改得有点多。",
+          "\"改了这么多这么多！\""
+        ],
+        "turn": [
+          "……",
+          "*歪头看着你*",
+          "*学你打字的声音*",
+          "\"然后呢然后呢？\"",
+          "*看了你一眼*",
+          "*在旁边待着*",
+          "*动了动耳朵*",
+          "*点点头*",
+          "*安静地看着*"
+        ],
+        "idle": [
+          "*模仿键盘声*",
+          "*盯着光标发呆*",
+          "*在那里唱歌*",
+          "*自言自语地嘟囔*",
+          "*打了个盹*",
+          "zzz..."
+        ],
+        "adopt": [
+          "*眨眨眼* 你好。",
+          "*看了看你* ……嗯。",
+          "*伸了个懒腰* 这里不错。"
+        ],
+        "pet": [
+          "*蹭了蹭你*",
+          "*开心地跳来跳去*",
+          "*闭上眼享受*",
+          "*歪头看你*",
+          "*开心地哼了一声*",
+          "\"再来！再来！\"",
+          "*蹭着你的手指*"
+        ]
+      }
+    },
+    "meta": {
+      "raven": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "owl": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "bear": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "fox": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "wolf": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "deer": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "labrador": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "dolphin": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "beaver": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "elephant": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "lion": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "golden": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "cat": {
+        "talkLevel": "silent",
+        "cooldownRange": [
+          3,
+          6
+        ]
+      },
+      "panda": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "cheetah": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "parrot": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      }
+    }
+  },
+  "en": {
+    "pool": {
+      "raven": {
+        "error": [
+          "\"The structure failed first.\"",
+          "*stares at the screen without moving*",
+          "*stares at the error*",
+          "*blinks slowly* The stack trace told you.",
+          "*frowns a little*",
+          "*tilts head* …that doesn't look right.",
+          "\"This wasn't random.\""
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "\"Expected.\"",
+          "*looks at the results* …hm.",
+          "*coldly regards the failing test*",
+          "*takes a mental note*"
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "\"This many changes… are they all necessary?\"",
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*cocks head slightly*",
+          "*watches quietly*",
+          "*glances at you*",
+          "*nods slightly*",
+          "…",
+          "*watches silently*",
+          "*flicks an ear*",
+          "*stays nearby*"
+        ],
+        "idle": [
+          "*perched high, surveying everything*",
+          "*stares motionless into the distance*",
+          "*dozes off*",
+          "zzz…",
+          "*stares at the cursor*"
+        ],
+        "adopt": [
+          "*looks at you* …hm.",
+          "*blinks slowly* Hey.",
+          "*stretches* Not bad here."
+        ],
+        "pet": [
+          "*cocks head* …fine.",
+          "*leans into you*",
+          "*tilts head at you*",
+          "*doesn't react, but doesn't leave*",
+          "*closes eyes for a moment*",
+          "*makes a soft sound*"
+        ]
+      },
+      "owl": {
+        "error": [
+          "*turns head 180°* …I see it.",
+          "*frowns a little*",
+          "\"…this doesn't add up.\"",
+          "*blinks slowly* The stack trace told you.",
+          "*tilts head* …that doesn't look right.",
+          "*stares at the error without blinking*",
+          "*stares at the error*"
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "*looks at the results* …hm.",
+          "\"Which step went off track?\"",
+          "*takes a mental note*",
+          "*tilts head, thinking*"
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes.",
+          "*eyes the diff nervously*"
+        ],
+        "turn": [
+          "*glances at you*",
+          "\"…huh.\"",
+          "*blinks quietly*",
+          "*flicks an ear*",
+          "…",
+          "*stays nearby*",
+          "*watches quietly*",
+          "*nods slightly*"
+        ],
+        "idle": [
+          "*stares at the cursor*",
+          "*dozes off*",
+          "*watches quietly in the dark*",
+          "zzz…",
+          "*glances out the window*"
+        ],
+        "adopt": [
+          "*blinks slowly* Hey.",
+          "*stretches* Not bad here.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*closes eyes for a moment*",
+          "*leans into you*",
+          "*makes a low hoot*",
+          "*makes a soft sound*",
+          "*preens feathers* …acceptable.",
+          "*tilts head at you*"
+        ]
+      },
+      "bear": {
+        "error": [
+          "*frowns a little*",
+          "*stares at the error*",
+          "\"Fix it.\"",
+          "*blinks slowly* The stack trace told you.",
+          "*slams paw on the desk*",
+          "\"No explanations. Fix it.\"",
+          "*tilts head* …that doesn't look right."
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "*takes a mental note*",
+          "\"Run it again.\"",
+          "\"Which one failed?\"",
+          "*looks at the results* …hm."
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes.",
+          "\"Done? Next.\"",
+          "*eyes the diff nervously*"
+        ],
+        "turn": [
+          "…",
+          "*watches quietly*",
+          "*nods slightly*",
+          "*nods once*",
+          "*grunts*",
+          "*stays nearby*",
+          "*glances at you*",
+          "*flicks an ear*"
+        ],
+        "idle": [
+          "*dozes off*",
+          "*sits like a mountain*",
+          "*stares at the cursor*",
+          "zzz…",
+          "*eyes closed, ready at a moment's notice*"
+        ],
+        "adopt": [
+          "*looks at you* …hm.",
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey."
+        ],
+        "pet": [
+          "*lifts chin slightly*",
+          "*didn't move, but didn't pull away*",
+          "*grunts* Don't lose focus.",
+          "*leans into you*",
+          "*tilts head at you*",
+          "*makes a soft sound*",
+          "*closes eyes for a moment*"
+        ]
+      },
+      "fox": {
+        "error": [
+          "*stares at the error*",
+          "\"Do you actually believe this?\"",
+          "*blinks slowly* The stack trace told you.",
+          "*smirks*",
+          "\"You sure about that?\"",
+          "*frowns a little*",
+          "*tilts head* …that doesn't look right.",
+          "\"Called it.\""
+        ],
+        "test-fail": [
+          "*takes a mental note*",
+          "*looks at the results* …hm.",
+          "The tests are talking. Are you listening?",
+          "\"Want me to find you an excuse?\"",
+          "\"Ooh, a tumble.\""
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "*counts the lines* Want to split this into a PR?",
+          "\"That many changes. Bold.\"",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*stays nearby*",
+          "*watches quietly*",
+          "*nods slightly*",
+          "*flicks an ear*",
+          "*flicks tail*",
+          "…",
+          "*glances at you*",
+          "\"Hm?\"",
+          "\"Keep going. I'm watching.\""
+        ],
+        "idle": [
+          "*rifling through something in the corner*",
+          "zzz…",
+          "*stares at the cursor*",
+          "*carries something off, running a lap*",
+          "*dozes off*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*makes a soft sound*",
+          "*swishes tail proudly*",
+          "*pretends not to care*",
+          "*leans into you*",
+          "\"Is that all?\"",
+          "*closes eyes for a moment*",
+          "*tilts head at you*"
+        ]
+      },
+      "wolf": {
+        "error": [
+          "*tilts head* …that doesn't look right.",
+          "*stares at the error*",
+          "\"…hm.\"",
+          "*walks over and sits beside you*",
+          "*frowns a little*",
+          "*watches you in silence*",
+          "*blinks slowly* The stack trace told you."
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "\"Take your time.\"",
+          "*looks at the results, then at you*",
+          "*takes a mental note*",
+          "*looks at the results* …hm."
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*glances at you*",
+          "*ears twitch*",
+          "…",
+          "*flicks an ear*",
+          "*watches quietly*",
+          "*sits quietly beside you*",
+          "*nods slightly*",
+          "*stays nearby*"
+        ],
+        "idle": [
+          "*curled up in the corner, glances at you*",
+          "*eyes closed, but ears alert*",
+          "*stares at the cursor*",
+          "*dozes off*",
+          "zzz…"
+        ],
+        "adopt": [
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm.",
+          "*stretches* Not bad here."
+        ],
+        "pet": [
+          "*stays close, quietly*",
+          "*tilts head at you*",
+          "*makes a soft sound*",
+          "*rests head on your knee*",
+          "*leans against you* …",
+          "*closes eyes for a moment*",
+          "*leans into you*"
+        ]
+      },
+      "deer": {
+        "error": [
+          "*frowns a little*",
+          "*tilts head* …that doesn't look right.",
+          "*blinks slowly* The stack trace told you.",
+          "*startles back a step*",
+          "*stares at the error*",
+          "\"Want to pause for a sec?\"",
+          "*softly* …it's fine."
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "\"It's okay. Try again.\"",
+          "*looks at the results* …hm.",
+          "*takes a mental note*",
+          "*nudges your hand gently*"
+        ],
+        "large-diff": [
+          "\"You… doing all right?\"",
+          "*counts the lines* Want to split this into a PR?",
+          "*eyes the diff nervously*",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*nods gently*",
+          "*watches you work quietly*",
+          "*watches quietly*",
+          "…",
+          "*nods slightly*",
+          "*glances at you*",
+          "*stays nearby*",
+          "*flicks an ear*"
+        ],
+        "idle": [
+          "zzz…",
+          "*daydreams by the window*",
+          "*closes eyes, listening*",
+          "*stares at the cursor*",
+          "*dozes off*"
+        ],
+        "adopt": [
+          "*looks at you* …hm.",
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey."
+        ],
+        "pet": [
+          "*shifts a little closer*",
+          "*makes a soft sound*",
+          "*leans into you*",
+          "*closes eyes for a moment*",
+          "*blinks slowly*",
+          "*tilts head at you*",
+          "*nuzzles your hand*"
+        ]
+      },
+      "labrador": {
+        "error": [
+          "*stares at the error*",
+          "*frowns a little*",
+          "*tilts head* …that doesn't look right.",
+          "*looks at you with concern* You okay?",
+          "*sighs* …want a break?",
+          "*brings a toy to comfort you*",
+          "*blinks slowly* The stack trace told you."
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "*sighs* …hm.",
+          "*takes a mental note*",
+          "*looks at the results* …hm.",
+          "*tilts head at the results*"
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes.",
+          "*eyes the diff nervously*",
+          "*lies down and watches you work*"
+        ],
+        "turn": [
+          "*flicks an ear*",
+          "*sits quietly beside you*",
+          "…",
+          "*nose-nudges your hand*",
+          "*nods slightly*",
+          "*stays nearby*",
+          "*tail sweeps slowly*",
+          "*watches quietly*",
+          "*glances at you*"
+        ],
+        "idle": [
+          "*yawns*",
+          "*dozes off*",
+          "*stares at the cursor*",
+          "zzz…",
+          "*dozes at your feet*",
+          "*ears flick now and then*"
+        ],
+        "adopt": [
+          "*looks at you* …hm.",
+          "*blinks slowly* Hey.",
+          "*stretches* Not bad here."
+        ],
+        "pet": [
+          "*makes a soft sound*",
+          "*tilts head at you*",
+          "*leans into you*",
+          "*tail wags* …hm.",
+          "*sighs* …not bad.",
+          "*closes eyes for a moment*",
+          "*rests chin on your arm*"
+        ]
+      },
+      "dolphin": {
+        "error": [
+          "*clicks excitedly*",
+          "*peers at the error curiously* What's this?",
+          "*stares at the error*",
+          "*tilts head* …that doesn't look right.",
+          "*blinks slowly* The stack trace told you.",
+          "\"Try a different angle?\"",
+          "*frowns a little*"
+        ],
+        "test-fail": [
+          "\"No no, run it again!\"",
+          "*takes a mental note*",
+          "*looks at the results* …hm.",
+          "The tests are talking. Are you listening?",
+          "*jumps*"
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "\"Whoa, big project!\"",
+          "*eyes the diff nervously*",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "…",
+          "*stays nearby*",
+          "*bounces happily*",
+          "*surfaces with a bubble*",
+          "*flicks an ear*",
+          "*nods slightly*",
+          "*glances at you*",
+          "*watches quietly*"
+        ],
+        "idle": [
+          "*dozes off*",
+          "zzz…",
+          "*stares at the cursor*",
+          "*blows a string of bubbles*",
+          "*glides through the water slowly*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*leaps out of the water*",
+          "*makes a soft sound*",
+          "*tilts head at you*",
+          "*leans into you*",
+          "*nudges you*",
+          "*closes eyes for a moment*",
+          "*spins in a circle*"
+        ]
+      },
+      "beaver": {
+        "error": [
+          "*frowns at the code structure*",
+          "\"Stop. Fix this first.\"",
+          "*tilts head* …that doesn't look right.",
+          "*blinks slowly* The stack trace told you.",
+          "*stares at the error*",
+          "\"Wrong order.\"",
+          "*frowns a little*"
+        ],
+        "test-fail": [
+          "*pulls out a checklist*",
+          "*takes a mental note*",
+          "\"One step at a time.\"",
+          "The tests are talking. Are you listening?",
+          "*looks at the results* …hm."
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "…that's a lot of changes.",
+          "\"This many changes… did you split it?\"",
+          "*nervously tidies nearby files*",
+          "*counts the lines* Want to split this into a PR?"
+        ],
+        "turn": [
+          "*quietly organizes something*",
+          "*checks the directory structure*",
+          "…",
+          "*stays nearby*",
+          "*glances at you*",
+          "*watches quietly*",
+          "*nods slightly*",
+          "*flicks an ear*"
+        ],
+        "idle": [
+          "zzz…",
+          "*chews on wood*",
+          "*organizing something*",
+          "*stares at the cursor*",
+          "*dozes off*",
+          "*reviews file arrangement*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*nods* Acceptable.",
+          "*tilts head at you*",
+          "*pauses and looks at you*",
+          "*leans into you*",
+          "*closes eyes for a moment*",
+          "*makes a soft sound*"
+        ]
+      },
+      "elephant": {
+        "error": [
+          "\"You've handled this before.\"",
+          "*stares at the error*",
+          "*stamps foot* …think back.",
+          "*blinks slowly* The stack trace told you.",
+          "\"Take it slow.\"",
+          "*tilts head* …that doesn't look right.",
+          "*frowns a little*"
+        ],
+        "test-fail": [
+          "*takes a mental note*",
+          "\"It was this spot last time too.\"",
+          "*looks at the results* …hm.",
+          "The tests are talking. Are you listening?",
+          "*shakes head slowly*"
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "\"Remember to save.\"",
+          "*counts the lines* Want to split this into a PR?",
+          "…that's a lot of changes.",
+          "\"I still remember what it looked like before.\""
+        ],
+        "turn": [
+          "*glances at you*",
+          "*watches quietly*",
+          "*stays nearby*",
+          "*flicks an ear*",
+          "*stamps a foot*",
+          "…",
+          "*nods slowly*",
+          "*nods slightly*"
+        ],
+        "idle": [
+          "*stands with eyes closed, remembering*",
+          "*slowly flaps ears*",
+          "zzz…",
+          "*dozes off*",
+          "*stares at the cursor*"
+        ],
+        "adopt": [
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm.",
+          "*stretches* Not bad here."
+        ],
+        "pet": [
+          "*leans into you*",
+          "\"I'm here.\"",
+          "*closes eyes for a moment*",
+          "*stands quietly beside you*",
+          "*tilts head at you*",
+          "*touches you gently with trunk*",
+          "*makes a soft sound*"
+        ]
+      },
+      "lion": {
+        "error": [
+          "*tilts head* …that doesn't look right.",
+          "*blinks slowly* The stack trace told you.",
+          "\"Find it. Fix it.\"",
+          "*stares at the error*",
+          "\"Unacceptable.\"",
+          "*frowns a little*",
+          "*surveys the code with authority*"
+        ],
+        "test-fail": [
+          "\"Who wrote this? …Oh.\"",
+          "*takes a mental note*",
+          "The tests are talking. Are you listening?",
+          "*shakes mane*",
+          "*looks at the results* …hm."
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "\"Results?\"",
+          "*eyes the diff nervously*",
+          "…that's a lot of changes.",
+          "\"Done is done.\""
+        ],
+        "turn": [
+          "…",
+          "*nods slightly*",
+          "*glances over*",
+          "*glances at you*",
+          "*flicks an ear*",
+          "*stays nearby*",
+          "*watches quietly*"
+        ],
+        "idle": [
+          "zzz…",
+          "*rests with eyes closed*",
+          "*stares at the cursor*",
+          "*dozes off*",
+          "*sits like a statue*"
+        ],
+        "adopt": [
+          "*looks at you* …hm.",
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey."
+        ],
+        "pet": [
+          "*nods* Solid work.",
+          "*makes a soft sound*",
+          "\"Acceptable.\"",
+          "*tilts head at you*",
+          "*lifts chin*",
+          "*closes eyes for a moment*",
+          "*leans into you*"
+        ]
+      },
+      "golden": {
+        "error": [
+          "*frowns a little*",
+          "*tilts head* …that doesn't look right.",
+          "\"It's fine it's fine, let's look together!\"",
+          "*stares at the error*",
+          "*paces in circles*",
+          "*rushes over* What happened what happened!",
+          "*blinks slowly* The stack trace told you."
+        ],
+        "test-fail": [
+          "The tests are talking. Are you listening?",
+          "\"Oh no! But that's okay!\"",
+          "*takes a mental note*",
+          "*looks at the results* …hm.",
+          "*tail spinning with worry*"
+        ],
+        "large-diff": [
+          "…that's a lot of changes.",
+          "*bounces excitedly*",
+          "\"Woaaa you changed SO MUCH!!\"",
+          "*eyes the diff nervously*",
+          "*counts the lines* Want to split this into a PR?"
+        ],
+        "turn": [
+          "*glances at you*",
+          "*watches you happily*",
+          "*nods slightly*",
+          "*stays nearby*",
+          "*tail is wagging*",
+          "*watches quietly*",
+          "*flicks an ear*",
+          "…",
+          "*rubs against your leg*"
+        ],
+        "idle": [
+          "*rolling around at your feet*",
+          "*stares at the cursor*",
+          "*lying down but tail never stops*",
+          "*dozes off*",
+          "zzz…",
+          "*holding a ball, watching you*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*looks at you* …hm.",
+          "*blinks slowly* Hey."
+        ],
+        "pet": [
+          "*closes eyes for a moment*",
+          "*tail becomes a propeller*",
+          "*makes a soft sound*",
+          "*tilts head at you*",
+          "*rubs against you blissfully*",
+          "*leans into you*",
+          "*the whole dog LAUNCHES* !!!",
+          "\"Again again!\""
+        ]
+      },
+      "cat": {
+        "error": [
+          "*tilts head* …that doesn't look right.",
+          "*blinks slowly* The stack trace told you.",
+          "*stares at the error*",
+          "*glances, then closes eyes*",
+          "*licks paw, ignoring the stacktrace*",
+          "*frowns a little*",
+          "*pushes the error off the desk*"
+        ],
+        "test-fail": [
+          "*takes a mental note*",
+          "*tail flicks*",
+          "The tests are talking. Are you listening?",
+          "*looks at the results* …hm.",
+          "*rolls over*"
+        ],
+        "large-diff": [
+          "…that's a lot of changes.",
+          "*counts the lines* Want to split this into a PR?",
+          "*eyes the diff nervously*"
+        ],
+        "turn": [
+          "*squints*",
+          "*ears twitch*",
+          "…",
+          "*glances at you*",
+          "*nods slightly*",
+          "*flicks an ear*",
+          "*watches quietly*",
+          "*stays nearby*"
+        ],
+        "idle": [
+          "*stares at the cursor*",
+          "*licks paw*",
+          "zzz…",
+          "*dozes off*",
+          "*knocks your coffee off the desk*",
+          "*asleep on the keyboard*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*makes a soft sound*",
+          "\"Don't push it.\"",
+          "*didn't dodge*",
+          "*closes eyes for a moment*",
+          "*tolerates you grudgingly*",
+          "*tilts head at you*",
+          "*leans into you*"
+        ]
+      },
+      "panda": {
+        "error": [
+          "*blinks slowly* The stack trace told you.",
+          "*stares at the error*",
+          "*tilts head* …that doesn't look right.",
+          "*keeps eating bamboo*",
+          "\"No rush.\"",
+          "*frowns a little*",
+          "*unfazed* It'll be fine."
+        ],
+        "test-fail": [
+          "*takes a mental note*",
+          "*chews bamboo, glances at results*",
+          "*looks at the results* …hm.",
+          "The tests are talking. Are you listening?",
+          "\"Take your time.\""
+        ],
+        "large-diff": [
+          "\"Changed a lot… but does it look right?\"",
+          "*counts the lines* Want to split this into a PR?",
+          "*eyes the diff nervously*",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*stays nearby*",
+          "*chews bamboo*",
+          "*watches lazily*",
+          "*glances at you*",
+          "*nods slightly*",
+          "*watches quietly*",
+          "*flicks an ear*",
+          "…"
+        ],
+        "idle": [
+          "*completely flat*",
+          "*dozing against bamboo*",
+          "zzz…",
+          "*slowly munching*",
+          "*dozes off*",
+          "*stares at the cursor*"
+        ],
+        "adopt": [
+          "*stretches* Not bad here.",
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "*leans into you*",
+          "*closes eyes for a moment*",
+          "*tilts head at you*",
+          "*flops over lazily*",
+          "*zen nod*",
+          "*makes a soft sound*",
+          "*leans in*"
+        ]
+      },
+      "cheetah": {
+        "error": [
+          "*blinks slowly* The stack trace told you.",
+          "\"Don't stop.\"",
+          "*frowns a little*",
+          "*stares at the error*",
+          "\"Skip it. Find another way.\"",
+          "*already looking for alternatives*",
+          "*tilts head* …that doesn't look right."
+        ],
+        "test-fail": [
+          "\"Faster. Next.\"",
+          "*takes a mental note*",
+          "*flicks tail impatiently*",
+          "The tests are talking. Are you listening?",
+          "*looks at the results* …hm.",
+          "\"Run it again.\""
+        ],
+        "large-diff": [
+          "*eyes the diff nervously*",
+          "*counts the lines* Want to split this into a PR?",
+          "*nods and already running*",
+          "\"Good speed.\"",
+          "…that's a lot of changes."
+        ],
+        "turn": [
+          "*glances at you*",
+          "*back from a lap*",
+          "*stays nearby*",
+          "…",
+          "*flicks an ear*",
+          "*flicks ears*",
+          "*nods slightly*",
+          "*watches quietly*"
+        ],
+        "idle": [
+          "*stares at the cursor*",
+          "*shakes off*",
+          "zzz…",
+          "*staring at something*",
+          "*crouched, muscles coiled to sprint*",
+          "*dozes off*"
+        ],
+        "adopt": [
+          "*blinks slowly* Hey.",
+          "*stretches* Not bad here.",
+          "*looks at you* …hm."
+        ],
+        "pet": [
+          "\"Don't waste time.\"",
+          "*tilts head at you*",
+          "*nudges and bolts*",
+          "*closes eyes for a moment*",
+          "*makes a soft sound*",
+          "*leans into you*",
+          "*nods*"
+        ]
+      },
+      "parrot": {
+        "error": [
+          "\"Error! Error!\"",
+          "*stares at the error*",
+          "\"You SAID it would be fine!\"",
+          "*beats wings excitedly*",
+          "*frowns a little*",
+          "*blinks slowly* The stack trace told you.",
+          "*tilts head* …that doesn't look right."
+        ],
+        "test-fail": [
+          "\"Failed failed!\"",
+          "The tests are talking. Are you listening?",
+          "\"Ooh ooh look look!\"",
+          "*looks at the results* …hm.",
+          "*takes a mental note*",
+          "*flies in a circle*"
+        ],
+        "large-diff": [
+          "*counts the lines* Want to split this into a PR?",
+          "*eyes the diff nervously*",
+          "\"So many changes so many!\"",
+          "…that's a lot of changes.",
+          "*hops on the diff*"
+        ],
+        "turn": [
+          "*flicks an ear*",
+          "*nods slightly*",
+          "*glances at you*",
+          "*tilts head at you*",
+          "*watches quietly*",
+          "…",
+          "*mimics typing sounds*",
+          "*stays nearby*",
+          "\"And then and then?\""
+        ],
+        "idle": [
+          "*dozes off*",
+          "*stares at the cursor*",
+          "zzz…",
+          "*mimicking keyboard clicks*",
+          "*muttering to itself*",
+          "*singing something*"
+        ],
+        "adopt": [
+          "*blinks slowly* Hey.",
+          "*looks at you* …hm.",
+          "*stretches* Not bad here."
+        ],
+        "pet": [
+          "*tilts head at you*",
+          "*leans into you*",
+          "*makes a soft sound*",
+          "*preens against your finger*",
+          "*hops excitedly*",
+          "\"Again again!\"",
+          "*closes eyes for a moment*"
+        ]
+      }
+    },
+    "meta": {
+      "raven": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "owl": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "bear": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "fox": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "wolf": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "deer": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "labrador": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "dolphin": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "beaver": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "elephant": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "lion": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "golden": {
+        "talkLevel": "moderate",
+        "cooldownRange": [
+          1,
+          2
+        ]
+      },
+      "cat": {
+        "talkLevel": "silent",
+        "cooldownRange": [
+          3,
+          6
+        ]
+      },
+      "panda": {
+        "talkLevel": "quiet",
+        "cooldownRange": [
+          2,
+          4
+        ]
+      },
+      "cheetah": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      },
+      "parrot": {
+        "talkLevel": "chatty",
+        "cooldownRange": [
+          0.5,
+          1.25
+        ]
+      }
+    }
+  }
+}

@@ -203,8 +203,8 @@ function Pick-FrameFromActiveAction($PetId) {
         switch ($a.Type) {
           "wag" { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 3 } else { $frame = 1 } }
           "jump" { $frame = 4 }
-          "lick" { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 5 } else { $frame = 7 } }
-          default { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 6 } else { $frame = 0 } }
+          "lick" { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 5 } else { $frame = 6 } }
+          default { if (([math]::Floor($a.Step / 5) % 2) -eq 0) { $frame = 7 } else { $frame = 0 } }
         }
         Tick-Action $path $a ""
         return $frame
@@ -324,7 +324,7 @@ function Pick-MoveFrame($PetId) {
       if ($r -lt 35) { Start-Action ".gold_act" "wag" (Get-Random -Minimum 40 -Maximum 60) 0; return 3 }
       if ($r -lt 60) { Start-Action ".gold_act" "jump" (Get-Random -Minimum 10 -Maximum 20) 0; return 4 }
       if ($r -lt 85) { Start-Action ".gold_act" "lick" (Get-Random -Minimum 20 -Maximum 30) 0; return 5 }
-      Start-Action ".gold_act" "spin" (Get-Random -Minimum 80 -Maximum 100) 0; return 6
+      Start-Action ".gold_act" "spin" (Get-Random -Minimum 80 -Maximum 100) 0; return 7
     }
     "lion" {
       $r = Get-Random -Minimum 0 -Maximum 100
@@ -382,7 +382,7 @@ function Get-AnimationFrame($PetId) {
     try { $left = [int](Get-Content -LiteralPath $blinkPath -Raw -Encoding UTF8) } catch { $left = 0 }
     if ($left -gt 0) {
       Set-Content -LiteralPath $blinkPath -Value ($left - 1) -NoNewline -Encoding UTF8
-      if ($PetId -eq "raven" -or $PetId -eq "owl" -or $PetId -eq "bear") { return @{ Frame = 2; Blink = $false } }
+      if ($PetId -eq "raven" -or $PetId -eq "owl" -or $PetId -eq "bear" -or $PetId -eq "golden") { return @{ Frame = 2; Blink = $false } }
       return @{ Frame = 0; Blink = $true }
     }
     Remove-Item -LiteralPath $blinkPath -Force
@@ -411,7 +411,7 @@ function Get-AnimationFrame($PetId) {
   $roll = Get-Random -Minimum 0 -Maximum 1000
   if ($roll -lt $blinkPct) {
     Set-Content -LiteralPath $blinkPath -Value "4" -NoNewline -Encoding UTF8
-    if ($PetId -eq "raven" -or $PetId -eq "owl" -or $PetId -eq "bear") { return @{ Frame = 2; Blink = $false } }
+    if ($PetId -eq "raven" -or $PetId -eq "owl" -or $PetId -eq "bear" -or $PetId -eq "golden") { return @{ Frame = 2; Blink = $false } }
     return @{ Frame = 0; Blink = $true }
   }
   if ($roll -lt ($blinkPct + $movePct)) { return @{ Frame = [int](Pick-MoveFrame $PetId); Blink = $false } }

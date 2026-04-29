@@ -299,8 +299,8 @@ elif [ "$PET_ID" = "golden" ] && read_action "$ACT_DIR/.gold_act" "wag|jump|lick
     case "$ACT_TYPE" in
       wag) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=3; else FRAME=1; fi ;;
       jump) FRAME=4 ;;
-      lick) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=7; fi ;;
-      spin) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=6; else FRAME=0; fi ;;
+      lick) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=5; else FRAME=6; fi ;;
+      spin) if [ $(( (ACT_STEP / 5) % 2 )) -eq 0 ]; then FRAME=7; else FRAME=0; fi ;;
     esac
     tick_action "$ACT_DIR/.gold_act"
 elif [ "$PET_ID" = "cat" ] && read_action "$ACT_DIR/.cat_act" "stare|lick|stretch"; then
@@ -446,7 +446,7 @@ elif [ $ROLL -lt $(( BLINK_PCT + MOVE_PCT )) ]; then
         elif [ $_GR -lt 85 ]; then
             FRAME=5; echo "ACT_TYPE=lick; ACT_LEFT=$(( RANDOM % 10 + 20 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         else
-            FRAME=6; echo "ACT_TYPE=spin; ACT_LEFT=$(( RANDOM % 20 + 80 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
+            FRAME=7; echo "ACT_TYPE=spin; ACT_LEFT=$(( RANDOM % 20 + 80 )); ACT_STEP=0" > "$ACT_DIR/.gold_act"
         fi
         ;;
       lion)
@@ -543,7 +543,7 @@ BLINK=0
 if [ "${FRAME:-0}" -eq -1 ]; then
     # Animals with custom blink frames use frame 2 directly
     case "$PET_ID" in
-      raven|owl|bear) FRAME=2; BLINK=0 ;;
+      raven|owl|bear|golden) FRAME=2; BLINK=0 ;;
       *) BLINK=1; FRAME=0 ;;
     esac
 fi
