@@ -10,13 +10,14 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import { fileURLToPath } from "url";
 import { ANIMAL_ART } from "../server/art.ts";
 import { ANIMALS, ANIMAL_COLOR } from "../server/engine.ts";
 import { ART_META } from "../server/art-meta.ts";
 import type { AnimalId } from "../server/engine.ts";
 
 // Resolve paths relative to this script's directory
-const SCRIPT_DIR = new URL(".", import.meta.url).pathname;
+const SCRIPT_DIR = fileURLToPath(new URL(".", import.meta.url));
 const PROJECT_ROOT = join(SCRIPT_DIR, "..");
 const SHELL_PATH = join(PROJECT_ROOT, "statusline", "pet-status.sh");
 

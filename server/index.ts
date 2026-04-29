@@ -322,9 +322,13 @@ server.tool(
     saveReaction(reaction, "pet");
     writeStatusState(pet, reaction);
 
-    return {
-      content: [{ type: "text", text: `${pet.petName}: ${reaction}` }],
-    };
+    const card = renderPetCard(
+      pet.petId,
+      pet.petName,
+      `${animalName(pet.petId)} · ${pet.personality}`,
+      reaction,
+    );
+    return { content: [{ type: "text", text: codeFence(card) }] };
   },
 );
 
