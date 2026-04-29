@@ -58,14 +58,37 @@ describe("charWidth", () => {
     expect(charWidth("🐼")).toBe(2);
   });
 
-  test("special ASCII art characters = 1", () => {
-    // Characters used in pet ASCII art
-    expect(charWidth("·")).toBe(1);  // middle dot (beaver eyes)
-    expect(charWidth("◉")).toBe(1);  // bullseye (lion eyes)
-    expect(charWidth("•")).toBe(1);  // bullet (golden/elephant eyes)
-    expect(charWidth("–")).toBe(1);  // en dash
-    expect(charWidth("…")).toBe(1);  // ellipsis
-    expect(charWidth("°")).toBe(1);  // degree (beaver slap)
+  test("special ASCII art characters = 1 on non-CJK locales", () => {
+    // Characters used in pet ASCII art. Pass cjk: false explicitly so the test
+    // is deterministic regardless of where the suite happens to run.
+    expect(charWidth("·", false)).toBe(1);  // middle dot (beaver eyes)
+    expect(charWidth("◉", false)).toBe(1);  // bullseye (lion eyes)
+    expect(charWidth("•", false)).toBe(1);  // bullet (golden/elephant eyes)
+    expect(charWidth("–", false)).toBe(1);  // en dash
+    expect(charWidth("…", false)).toBe(1);  // ellipsis
+    expect(charWidth("°", false)).toBe(1);  // degree (beaver slap)
+  });
+
+  test("Ambiguous-width art characters = 2 on CJK locales", () => {
+    // Same characters render double-wide on Chinese/Japanese/Korean Windows
+    // Terminal, iTerm2 in CJK locale, etc. Without this the right border of
+    // any padded box drifts on those terminals.
+    expect(charWidth("◉", true)).toBe(2);  // bullseye
+    expect(charWidth("—", true)).toBe(2);  // em dash
+    expect(charWidth("✦", true)).toBe(2);  // four-pointed star
+    expect(charWidth("✧", true)).toBe(2);  // four-pointed star outline
+    expect(charWidth("→", true)).toBe(2);  // rightwards arrow
+    expect(charWidth("★", true)).toBe(2);  // black star
+  });
+
+  test("box-drawing stays 1 even on CJK locales", () => {
+    // Every mainstream terminal special-cases box drawings to 1-wide for TUI
+    // sanity, even under a CJK locale. Borders would double otherwise.
+    expect(charWidth("─", true)).toBe(1);
+    expect(charWidth("│", true)).toBe(1);
+    expect(charWidth("╭", true)).toBe(1);
+    expect(charWidth("╮", true)).toBe(1);
+    expect(charWidth("├", true)).toBe(1);
   });
 
   test("braille blank = 1", () => {
