@@ -16,9 +16,16 @@ Want to be on this list? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Code
 
+- [@MestreY0d4-Uninter](https://github.com/MestreY0d4-Uninter) — first external
+  PR ([#5](https://github.com/nanami-he/petsonality/pull/5)), shipped the
+  Windows hook-command quoting fix that closed [#3](https://github.com/nanami-he/petsonality/issues/3).
+  Bonus: refactored the change into a testable `formatHookCommand()` helper
+  and added a unit test guarding the canonical Windows-paths-with-spaces case.
+
 GitHub auto-tracks code commit authors in the repository's
 [Contributors tab](https://github.com/nanami-he/petsonality/graphs/contributors).
-Anyone who lands a merged PR shows up there automatically.
+Anyone who lands a merged PR shows up there automatically — this section adds
+a sentence on what was actually contributed.
 
 ## Reactions, personalities, art, docs
 
