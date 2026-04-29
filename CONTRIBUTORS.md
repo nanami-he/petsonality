@@ -21,6 +21,13 @@ Want to be on this list? See [CONTRIBUTING.md](./CONTRIBUTING.md).
   Windows hook-command quoting fix that closed [#3](https://github.com/nanami-he/petsonality/issues/3).
   Bonus: refactored the change into a testable `formatHookCommand()` helper
   and added a unit test guarding the canonical Windows-paths-with-spaces case.
+- [@Lwhieldon](https://github.com/Lwhieldon) — three-in-one PR ([#12](https://github.com/nanami-he/petsonality/pull/12))
+  shipped within 24h of his original bug report ([#2](https://github.com/nanami-he/petsonality/issues/2)):
+  redesigned the golden retriever ASCII art (Bonnie, his actual dog) into a
+  front-facing friendly face matching the project's 10-pet convention; fixed
+  `pet_pet` to render the pet card inline so VSCode integrated terminal users
+  see a visual (closes [#10](https://github.com/nanami-he/petsonality/issues/10));
+  and converged on the same `fileURLToPath` Windows path fix as #7.
 
 GitHub auto-tracks code commit authors in the repository's
 [Contributors tab](https://github.com/nanami-he/petsonality/graphs/contributors).
