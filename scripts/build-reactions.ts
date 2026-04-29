@@ -2,13 +2,19 @@
 /**
  * Build reactions pool JSON for shell hooks (both languages).
  *
- * Output: ~/.petsonality/reactions-pool.json
+ * Outputs:
+ *   - ~/.petsonality/reactions-pool.json (dev runtime — used immediately by your local hooks)
+ *   - dist/reactions-pool.json           (build artifact — shipped in npm tarball; the
+ *                                          installer copies this to ~/.petsonality/ on
+ *                                          npx installs so users don't need bun + sources)
+ *
  * Format: { zh: { pool, meta }, en: { pool, meta } }
  */
 
 import { writeFileSync, mkdirSync, existsSync } from "fs";
-import { join } from "path";
+import { join, resolve, dirname } from "path";
 import { homedir } from "os";
+import { fileURLToPath } from "url";
 import { ANIMALS } from "../server/engine.ts";
 import { getReaction as getReactionZh, type ReactionReason } from "../server/reactions.ts";
 import { getPetById as getPetByIdZh } from "../server/pets.ts";
@@ -17,8 +23,11 @@ import { getPetById as getPetByIdZh } from "../server/pets.ts";
 import { REACTIONS_EN, ANIMAL_REACTIONS_EN } from "../server/reactions-en.ts";
 import { getPetById as getPetByIdEn } from "../server/pets-en.ts";
 
+const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const STATE_DIR = join(homedir(), ".petsonality");
-const OUTPUT = join(STATE_DIR, "reactions-pool.json");
+const RUNTIME_OUTPUT = join(STATE_DIR, "reactions-pool.json");
+const DIST_DIR = join(PROJECT_ROOT, "dist");
+const DIST_OUTPUT = join(DIST_DIR, "reactions-pool.json");
 
 const REASONS: ReactionReason[] = ["error", "test-fail", "large-diff", "turn", "idle", "adopt", "pet"];
 
@@ -69,10 +78,17 @@ function buildLang(
 const zh = buildLang(getReactionZh, getPetByIdZh);
 const en = buildLang(getReactionEn, getPetByIdEn);
 
-if (!existsSync(STATE_DIR)) mkdirSync(STATE_DIR, { recursive: true });
-
 const output = { zh, en };
-writeFileSync(OUTPUT, JSON.stringify(output, null, 2), { mode: 0o600 });
+const json = JSON.stringify(output, null, 2);
+
+// 1. Dev runtime path — your local hooks pick it up immediately.
+if (!existsSync(STATE_DIR)) mkdirSync(STATE_DIR, { recursive: true });
+writeFileSync(RUNTIME_OUTPUT, json, { mode: 0o600 });
+
+// 2. Dist artifact — gets shipped to npm via package.json#files = ["dist/", ...]
+//    so npx users get the JSON without needing bun + scripts/ + server/ on disk.
+if (!existsSync(DIST_DIR)) mkdirSync(DIST_DIR, { recursive: true });
+writeFileSync(DIST_OUTPUT, json);
 
 let totalZh = 0, totalEn = 0;
 for (const animal of ANIMALS) {
@@ -82,4 +98,5 @@ for (const animal of ANIMALS) {
   }
 }
 console.log(`\x1b[32m✓\x1b[0m  reactions-pool.json: zh=${totalZh}, en=${totalEn} reactions`);
-console.log(`\x1b[32m✓\x1b[0m  Written to ${OUTPUT}`);
+console.log(`\x1b[32m✓\x1b[0m  Written to ${RUNTIME_OUTPUT}`);
+console.log(`\x1b[32m✓\x1b[0m  Written to ${DIST_OUTPUT}  (npm artifact)`);

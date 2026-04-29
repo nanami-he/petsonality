@@ -350,11 +350,23 @@ if (hosts.claude) {
   info("Claude Code not detected — skipping Claude-specific setup");
 }
 
-// ─── Build reactions pool (needed by both hosts) ───────────────────────────
+// ─── Install reactions pool (shipped as a build artifact in dist/) ─────────
+// Previously this ran `bun run build:reactions` at install time, which silently
+// failed for every npx user because scripts/ + server/ aren't in the published
+// tarball — every user ended up on fallback reactions. Now we ship the
+// pre-built JSON in dist/ and just copy it into place. No bun runtime needed.
 try {
-  execSync("bun run build:reactions", { cwd: PROJECT_ROOT, stdio: "inherit" });
-} catch {
-  warn("Could not build reactions pool — hooks will use fallback reactions");
+  const builtPool = join(PROJECT_ROOT, "dist", "reactions-pool.json");
+  const runtimePool = join(RUNTIME_DIR, "reactions-pool.json");
+  if (existsSync(builtPool)) {
+    cpSync(builtPool, runtimePool, { force: true });
+    ok("Reactions pool installed (638/lang)");
+  } else {
+    warn("dist/reactions-pool.json missing — hooks will use fallback reactions");
+    info("(this should not happen for npm-installed copies; rebuild with `bun run build:reactions` if developing locally)");
+  }
+} catch (e) {
+  warn(`Could not install reactions pool — hooks will use fallback reactions (${(e as Error).message})`);
 }
 
 // ─── OpenClaw installation ─────────────────────────────────────────────────

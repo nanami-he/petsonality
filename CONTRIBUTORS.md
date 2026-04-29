@@ -21,6 +21,12 @@ Want to be on this list? See [CONTRIBUTING.md](./CONTRIBUTING.md).
   Windows hook-command quoting fix that closed [#3](https://github.com/nanami-he/petsonality/issues/3).
   Bonus: refactored the change into a testable `formatHookCommand()` helper
   and added a unit test guarding the canonical Windows-paths-with-spaces case.
+  Returned for [#11](https://github.com/nanami-he/petsonality/pull/11) (closes
+  [#4](https://github.com/nanami-he/petsonality/issues/4)) — built the entire
+  native PowerShell statusline renderer from scratch (~559 lines of `.ps1`,
+  no jq dependency, multiple HomeDir fallbacks), centralized platform-specific
+  command formatting via `cli/statusline-config.ts`, added shared `pet-art.json`
+  data so bash + PowerShell render from one source of truth, plus tests.
 - [@Lwhieldon](https://github.com/Lwhieldon) — three-in-one PR ([#12](https://github.com/nanami-he/petsonality/pull/12))
   shipped within 24h of his original bug report ([#2](https://github.com/nanami-he/petsonality/issues/2)):
   redesigned the golden retriever ASCII art (Bonnie, his actual dog) into a
