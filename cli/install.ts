@@ -13,8 +13,10 @@ import { findOpenClawTuiFile } from "./openclaw-patch.ts";
 import { whichSync } from "./which.ts";
 import { formatHookCommand } from "./hook-command.ts";
 import { findPackageRoot } from "./find-package-root.ts";
+import { statusLineConfigForPlatform, formatStatusLineCommand } from "./statusline-config.ts";
 
-const IS_WIN = platform() === "win32";
+const CURRENT_PLATFORM = platform();
+const IS_WIN = CURRENT_PLATFORM === "win32";
 
 const CYAN = "\x1b[36m";
 const GREEN = "\x1b[32m";
@@ -68,13 +70,18 @@ function preflight(): boolean {
     pass = false;
   }
 
-  // jq is optional — only needed for statusline bubble display
-  try {
-    execSync("jq --version", { stdio: "ignore" });
-    ok("jq found (used by status line)");
-  } catch {
-    warn("jq not found — status line bubbles will be limited");
-    info("Install: brew install jq (optional)");
+  // jq is optional for the Unix bash status line. The Windows PowerShell status
+  // line uses ConvertFrom-Json and does not need jq.
+  if (IS_WIN) {
+    ok("PowerShell status line available (no jq required on Windows)");
+  } else {
+    try {
+      execSync("jq --version", { stdio: "ignore" });
+      ok("jq found (used by status line)");
+    } catch {
+      warn("jq not found — status line bubbles will be limited");
+      info("Install: brew install jq (optional)");
+    }
   }
 
   const hosts = detectHosts();
@@ -143,13 +150,6 @@ function installSkill() {
 // ─── Step 3: Status line ───────────────────────────────────────────────────
 
 function installStatusLine(settings: Record<string, any>) {
-  if (IS_WIN) {
-    // pet-status.sh requires bash + jq; skip statusline registration on Windows.
-    // MCP + hooks + skill still work — pet just won't bubble in the status bar.
-    warn("Skipping status line on Windows (requires bash + jq).");
-    info("Pet still reacts via MCP + hooks. Statusline support tracked in https://github.com/nanami-he/petsonality/issues");
-    return;
-  }
   if (settings.statusLine?.command && !settings.statusLine.command.includes("petsonality") && !settings.statusLine.command.includes("typet")) {
     warn(`Existing statusLine found: ${settings.statusLine.command}`);
     warn("Replacing with petsonality status line. Old config backed up in ~/.petsonality/statusline.bak");
@@ -157,13 +157,11 @@ function installStatusLine(settings: Record<string, any>) {
     mkdirSync(join(homedir(), ".petsonality"), { recursive: true });
     writeFileSync(join(homedir(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
   }
-  settings.statusLine = {
-    type: "command",
-    command: join(RUNTIME_DIR, "statusline", "pet-status.sh"),
-    padding: 1,
-    refreshInterval: 1,
-  };
-  ok("Status line configured");
+  settings.statusLine = statusLineConfigForPlatform(CURRENT_PLATFORM, RUNTIME_DIR);
+  ok(IS_WIN ? "PowerShell status line configured" : "Status line configured");
+  if (IS_WIN) {
+    info("If Claude Code does not render the status line, accept the project trust dialog and restart Claude Code.");
+  }
 }
 
 // ─── Step 3b: Copy runtime files to ~/.petsonality/ (stable paths) ─────────
@@ -177,8 +175,10 @@ function installRuntimeFiles() {
   cpSync(join(PROJECT_ROOT, "hooks", "react.js"), join(runtimeDir, "hooks", "react.js"), { force: true });
   cpSync(join(PROJECT_ROOT, "hooks", "pet-comment.js"), join(runtimeDir, "hooks", "pet-comment.js"), { force: true });
 
-  // Copy statusline
+  // Copy statusline scripts and generated art data
   cpSync(join(PROJECT_ROOT, "statusline", "pet-status.sh"), join(runtimeDir, "statusline", "pet-status.sh"), { force: true });
+  cpSync(join(PROJECT_ROOT, "statusline", "pet-status.ps1"), join(runtimeDir, "statusline", "pet-status.ps1"), { force: true });
+  cpSync(join(PROJECT_ROOT, "statusline", "pet-art.json"), join(runtimeDir, "statusline", "pet-art.json"), { force: true });
   try { execSync(`chmod +x "${join(runtimeDir, "statusline", "pet-status.sh")}"`); } catch {}
 
   // Copy server
@@ -271,14 +271,14 @@ async function installOpenClaw() {
   ok("MCP server registered in OpenClaw config (with host env)");
 
   // StatusLine: decide based on three-state detection
-  const scriptPath = join(RUNTIME_DIR, "statusline", "pet-status.sh");
+  const statusLineCommand = formatStatusLineCommand(CURRENT_PLATFORM, RUNTIME_DIR);
 
   switch (diag.status) {
     case "native": {
       // PR merged — use native config, clean up old patch artifacts
       if (!ocConfig.ui) ocConfig.ui = {};
       ocConfig.ui.statusLine = {
-        command: scriptPath,
+        command: statusLineCommand,
         refreshInterval: 1000,
       };
       ok("OpenClaw has native statusLine support — using config");
@@ -294,7 +294,7 @@ async function installOpenClaw() {
     case "stale": {
       // OpenClaw updated and removed our patch — re-apply
       warn("OpenClaw updated — patch was removed, re-applying...");
-      const result = applyPatch(scriptPath);
+      const result = applyPatch(statusLineCommand);
       if (result.success) ok(result.message);
       else warn(result.message);
       break;
@@ -303,7 +303,7 @@ async function installOpenClaw() {
       // Fresh OpenClaw without native support — apply patch
       info("Applying temporary statusLine patch...");
       warn("This is a compatibility patch until OpenClaw merges statusLine support");
-      const result = applyPatch(scriptPath);
+      const result = applyPatch(statusLineCommand);
       if (result.success) ok(result.message);
       else warn(result.message);
       break;
