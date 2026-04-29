@@ -1,7 +1,7 @@
 # Petsonality PRD v3 — 路线图
 
 > Your type, your pet.
-> npm: petsonality@0.4.1 | GitHub: nanami-he/petsonality
+> npm: petsonality@0.4.3 | GitHub: nanami-he/petsonality
 
 ## Phase 1 — 已完成 ✅
 
@@ -22,6 +22,9 @@
 ### 15. 跨平台安装器 ✅ (v0.4.1, 2026-04-28) — 第一个 Windows 用户 bug (#2 by @Lwhieldon) → 替换 5 处 `which` + 2 处 `readlink`/`ls` shellout 为纯 Node 实现 + Windows 跳过 statusline + `cli/which.ts` helper
 ### 16. CI 版本三同步 ✅ (2026-04-28) — `scripts/sync-version.mjs` + `npm version` lifecycle hook，未来 `npm version patch` 自动同步 `package.json` / `plugin.json` / `server/index.ts`
 ### 17. OSS 协作脚手架 ✅ (2026-04-28) — `CONTRIBUTORS.md` + `CONTRIBUTING.md` 重写 + 2 个 `good first issue` (#3 hook quoting, #4 native Windows statusline)
+### 18. Windows hook command quoting ✅ (v0.4.2, 2026-04-29) — **第一个外部 PR (#5 by @MestreY0d4-Uninter)** 在 #3 开出 2 小时内交付：双引号包裹 `nodePath` + `reactHook`，修 `C:\Program Files\nodejs\node.exe` 空格被切坏问题。抽出 `cli/hook-command.ts` + 加 unit test guarding canonical case
+### 19. findPackageRoot Windows 死循环 ✅ (v0.4.3, 2026-04-29) — 自己 dogfooding Win 时发现：`while (dir !== "/")` 在 Windows 永不终止（`path.dirname("C:\\")` 返回自己），`npx petsonality doctor` hang 100% CPU + 进程泄漏。改为 "dirname stopped changing" 平台无关检测，DRY 抽 `cli/find-package-root.ts`，加 regression test
+### 20. GitHub Releases 页补建 ✅ (2026-04-29) — v0.4.1 / v0.4.2 / v0.4.3 三个 release pages，每个写完整故事 + 贡献者 credit + 三版本 Windows 修复对照表
 
 ---
 
@@ -31,7 +34,7 @@
 - [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
 - [x] Reddit r/ClaudeCode 互动（"Mobile→PC→Claude" thread reply, cabinet 角度切入）
 - [ ] Reddit r/ClaudeAI 主动发帖（附 GIF + 安装命令）
-- [ ] Hacker News Show HN 帖（建议等 0.4.2 ship + Lwhieldon 反馈再发，避免 Windows hooks 不 fire 被抓现场）
+- [ ] Hacker News Show HN 帖（建议等 Lwhieldon 实测确认 v0.4.3 work 再发，避免发完发现还有 Windows 边界 case）
 - [ ] Claude Code Discord / community 频道分享
 - [ ] OpenClaw Discord 分享（关联 PR #65886）
 - [ ] 中文社区推广（**等产品再完善一点**——主动 defer，先做英文世界）
@@ -82,17 +85,20 @@
 
 ### M5: Windows 完整支持（**新增 2026-04-28，因 #2 触发**）
 - [x] v0.4.1 修了 `which` 报错 + install 跑完不挂
-- [ ] **#3** hook command path quoting（已开 good first issue，等贡献者）
-- [ ] **#4** native Windows status line（PowerShell / cmd 替代 pet-status.sh）
+- [x] **#3 / v0.4.2** hook command path quoting（@MestreY0d4-Uninter PR #5 + unit test）
+- [x] **v0.4.3** findPackageRoot 死循环（自己 dogfooding 发现 + regression test）
+- [ ] **#4** native Windows status line（PowerShell / cmd 替代 pet-status.sh）—— 仍开放 good first issue
 - [ ] doctor.ts 的 Windows fallback（当前 7 个 `tryExec` 在 Windows 都会输出 "(failed)"）
+- [ ] Lwhieldon 实测确认 v0.4.3 work → close #2
 - 触发：Issue #2 by @Lwhieldon (2026-04-28)，第一个真用户
+- 经验：14 小时内 ship 3 个 patch 版本，每个修一层 Windows-only bug。**Windows 不 dogfood 永远抓不到这些**
 
 ### M6: OSS 协作脚手架（**新增 2026-04-28**）
-- [x] `CONTRIBUTORS.md` —— 第一位 contributor @Lwhieldon
+- [x] `CONTRIBUTORS.md` —— 现有 2 位 contributor: @Lwhieldon (Bug reports) + @MestreY0d4-Uninter (Code, 第一个外部 PR)
 - [x] `CONTRIBUTING.md` —— dev setup + commit conv + PR flow + project layout
-- [x] 2 个 `good first issue`（#3 hook quoting, #4 Windows statusline）
+- [x] 2 个 `good first issue`（#3 已 close, #4 仍 open）
+- [x] **首个外部 PR 跑通了**：from issue 开出 → 2h 收到 PR → 6h merge → 同 commit ship → contributor 上 README → 公开 thank-you。**整套 OSS 协作循环验证可用**
 - [ ] Issue / PR template review（已有 bug-report.yml；考虑加 feature_request.yml）
-- [ ] 等首个外部 PR 来 → 看 CONTRIBUTING.md 是否真清晰
 
 ---
 
@@ -144,13 +150,18 @@
 
 ### 发版前
 ```bash
-bun test                    # 302 tests
+bun test                    # 305 tests (was 302; +1 from Mateus, +2 from findPackageRoot)
 bun run build               # server + cli + art + reactions
 bash -n statusline/pet-status.sh  # shell 语法
-npm version patch           # 升版本
-npm publish --access public # 发布
-git push && git push --tags # 同步
+npm version patch           # 升版本（自动跑 sync-version.mjs 同步 plugin.json + server/index.ts）
+git push && git push --tags # 同步 commit + tag 到 GitHub
+npm publish --access public # 发布到 npm
+gh release create vX.Y.Z --latest --notes "..."  # 建 GitHub Release page，写完整故事
 ```
+
+### 发版后
+- 如果是 user-reported bug → 回 issue 通知，等用户验证再 close
+- 如果有外部 contributor → 加进 CONTRIBUTORS.md + 公开 PR thank-you
 
 ### 教训
 - art.ts/shell 双份维护导致覆盖 → art.ts 唯一真源
@@ -162,6 +173,11 @@ git push && git push --tags # 同步
 - 跨平台不能 shell-out 到 Unix 工具 → 纯 Node 实现 (v0.4.1 #2)
 - `npm version` 只动 package.json 但 CI 检查三个 → version lifecycle hook 自动同步 (v0.4.1)
 - commit message 写 `closes #N` 在 fix 还没被用户验证时就自动关 issue → 改用 `references #N`
+- 拼 shell command 用 `${path1} ${path2}` 不加引号 → 路径有空格直接 break，**永远加 `"${path}"`** (v0.4.2 #3)
+- `while (dir !== "/")` 终止条件**不平台无关**——Windows 走到 `C:\` 永远停不下来；改用 `dirname(dir) === dir` "停止变化" 检测 (v0.4.3)
+- 写跨平台代码后**必须自己在 Windows 上 dogfood**——CI test 跑 macOS/Linux 抓不到 Windows-only bug（findPackageRoot 死循环就是 305 tests 全绿但 Windows hang）
+- 单一 issue 报告可能引出多层 bug → 每个 fix 独立小版本 ship，比堆一个大 release 信息密度更高 + user 反馈循环更短
+- GitHub `git push --tags` 只推 tag 不建 Release page → 主页 "Releases" 区会一直挂老版本，需要 `gh release create` 手动建
 
 ---
 
@@ -172,6 +188,13 @@ git push && git push --tags # 同步
 - 开发用 bun，发布给 node / 反应池全覆盖 / 情感核心优先
 - hint 架构：hook 只写事件，模型才说话 / 多语言零配置
 
+### 2026-04-29 Windows 三连击 + 第一个外部 PR
+- **Windows 用户进来当天就拉 24 小时 ship 节奏**：v0.4.0 → 0.4.1 → 0.4.2 → 0.4.3，每个修一层 bug
+- **接受外部 PR vs 自己写**：Mateus 的 #5 比我自己写得好（DRY + helper + test），证明**OSS scaffolding 不是装的**
+- **maintainer 自己 ship 不走 PR 流程**：critical bug + 自己写的 fix + 305 tests 全绿 → 直接 ff merge 到 main，不浪费 PR 摩擦时间
+- **commit `references #N` vs `closes #N`**：前者保留 issue open 等用户验证，后者自动关。critical bug 用 `references` 更安全
+- **每个 patch 配 GitHub Release page**：把 14 小时叙事写下来，三版本对照表让外人 1 分钟理解发生了啥
+
 ---
 
-*PRD v3.7 — 2026-04-28 第一位真用户 + Windows 跨平台 + OSS 协作脚手架*
+*PRD v3.8 — 2026-04-29 Windows 三连击 + 第一个外部 PR + 完整 OSS 协作循环验证*
