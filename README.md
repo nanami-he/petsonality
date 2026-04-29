@@ -61,6 +61,8 @@ Every animal speaks differently. The Fox asks "Are you sure?" with a smirk. The 
 Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.com/openclaw/openclaw).
 
 > **Terminal CLI only.** The pet renders in the terminal status line, which is a CLI feature. The Claude Code desktop app and web client (claude.ai/code) don't expose a status line, so the animated pet won't appear there. MCP tool output (e.g. `/pet show`) still works in any client.
+>
+> **Windows note.** Claude Code for Windows has an upstream status-line trust regression in some versions. If the status line is configured but does not render, accept the project trust dialog or ensure the project is marked trusted in `~/.claude.json`, then restart Claude Code.
 
 ```bash
 # Install
@@ -108,7 +110,7 @@ Chatty pets (Fox, Parrot) speak every 30 seconds. Silent pets (Cat) might go 6 m
 - **`~/.claude.json`** — adds a `petsonality` entry under `mcpServers`. Other entries left alone.
 - **`~/.claude/settings.json`** — adds a `statusLine` and two hooks (`PostToolUse`, `Stop`). If you already had a `statusLine`, the original is backed up to `~/.petsonality/statusline.bak` first.
 - **`~/.claude/skills/pet/SKILL.md`** — copies the `/pet` command skill.
-- **`~/.petsonality/`** — runtime directory (pet state, reactions cache, server, hooks, status-line script).
+- **`~/.petsonality/`** — runtime directory (pet state, reactions cache, server, hooks, status-line scripts).
 
 If OpenClaw is detected, also touches `~/.openclaw/openclaw.json` and (until [PR #65886](https://github.com/openclaw/openclaw/pull/65886) merges) applies a small reversible patch to OpenClaw's TUI source. Both backed up.
 
@@ -145,7 +147,7 @@ petsonality/
 ├── dist/                 Built JS (Node.js runtime)
 ├── server/               MCP server (TypeScript)
 ├── hooks/                PostToolUse + Stop hooks
-├── statusline/           Terminal animation (bash)
+├── statusline/           Terminal animation (bash + PowerShell)
 ├── skills/               /pet command routing
 └── cli/                  Install, doctor, npx entry
 ```

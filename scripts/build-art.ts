@@ -19,6 +19,7 @@ import type { AnimalId } from "../server/engine.ts";
 const SCRIPT_DIR = new URL(".", import.meta.url).pathname;
 const PROJECT_ROOT = join(SCRIPT_DIR, "..");
 const SHELL_PATH = join(PROJECT_ROOT, "statusline", "pet-status.sh");
+const ART_JSON_PATH = join(PROJECT_ROOT, "statusline", "pet-art.json");
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,10 @@ function extractRgb(ansi: string): [number, number, number] {
 
 function shellColor(rgb: [number, number, number]): string {
   return `$'\\033[38;2;${rgb[0]};${rgb[1]};${rgb[2]}m'`;
+}
+
+function ansiColor(rgb: [number, number, number]): string {
+  return `\x1b[38;2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
 }
 
 function shellEscape(s: string): string {
@@ -55,6 +60,26 @@ function applyAccents(line: string, lineIdx: number, animalId: AnimalId): string
       for (const [search, replace] of sorted) {
         // split+join avoids infinite loop when replacement contains search
         line = line.split(search).join(replace);
+      }
+    }
+  }
+  return line;
+}
+
+function applyJsonAccents(line: string, lineIdx: number, animalId: AnimalId, baseColor: string): string {
+  const meta = ART_META[animalId];
+  if (!meta?.accents) return line;
+
+  for (const accent of meta.accents) {
+    const accentColor = ansiColor(accent.rgb);
+    for (const rule of accent.rules) {
+      if (rule.line !== lineIdx) continue;
+      const sorted = [...rule.patterns].sort((a, b) => b[0].length - a[0].length);
+      for (const [search, replaceTemplate] of sorted) {
+        const replacement = replaceTemplate
+          .split(`\${${accent.varName}}`).join(accentColor)
+          .split("${C}").join(baseColor);
+        line = line.split(search).join(replacement);
       }
     }
   }
@@ -183,7 +208,25 @@ shell = replaceSection(shell, BUBBLE_START, BUBBLE_END, bubbleColors);
 shell = replaceSection(shell, ART_START, ART_END, art);
 writeFileSync(SHELL_PATH, shell);
 
+const artJson: {
+  animals: Record<string, { color: string; bubbleColor: string; frames: string[][] }>;
+} = { animals: {} };
+for (const animal of ANIMALS) {
+  const baseColor = ANIMAL_COLOR[animal];
+  const meta = ART_META[animal];
+  const bubbleColor = meta?.bubbleColor ? ansiColor(meta.bubbleColor.rgb) : baseColor;
+  artJson.animals[animal] = {
+    color: baseColor,
+    bubbleColor,
+    frames: ANIMAL_ART[animal].map(frame =>
+      frame.slice(1).map((line, lineIdx) => applyJsonAccents(line, lineIdx, animal, baseColor)),
+    ),
+  };
+}
+writeFileSync(ART_JSON_PATH, JSON.stringify(artJson, null, 2) + "\n");
+
 const totalFrames = ANIMALS.reduce((s, a) => s + ANIMAL_ART[a].length, 0);
 console.log(`✓ Generated colors for ${ANIMALS.length} animals`);
 console.log(`✓ Generated art for ${ANIMALS.length} animals (${totalFrames} total frames)`);
 console.log(`✓ Written to ${SHELL_PATH}`);
+console.log(`✓ Written to ${ART_JSON_PATH}`);
