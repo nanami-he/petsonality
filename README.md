@@ -56,7 +56,7 @@ Every animal speaks differently. The Fox asks "Are you sure?" with a smirk. The 
 
 </details>
 
-## Quick Start
+## Install
 
 Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.com/openclaw/openclaw).
 
@@ -64,12 +64,25 @@ Works with [Claude Code](https://claude.ai/code) and [OpenClaw](https://github.c
 >
 > **Windows note.** Claude Code for Windows has an upstream status-line trust regression in some versions. If the status line is configured but does not render, accept the project trust dialog or ensure the project is marked trusted in `~/.claude.json`, then restart Claude Code.
 
+### npm / npx
+
 ```bash
-# Install
 npx petsonality
 ```
 
-Or build from source (requires [bun](https://bun.sh)):
+This is the recommended path for most users. It installs the MCP server, `/pet` skill, hooks, and status line assets, then stores runtime files in `~/.petsonality/`.
+
+### Claude Code plugin
+
+```bash
+claude plugin install github:nanami-he/petsonality
+```
+
+Use this if you prefer Claude Code's plugin install flow. The plugin runs the built Node.js server from `dist/`, so it does not require Bun.
+
+### From source
+
+Use this path if you want to develop Petsonality locally or inspect the code before installing. Requires [Bun](https://bun.sh).
 
 ```bash
 git clone https://github.com/nanami-he/petsonality.git

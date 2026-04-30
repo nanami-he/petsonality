@@ -17,12 +17,13 @@ import { join, resolve, dirname } from "path";
 import { homedir } from "os";
 import { fileURLToPath } from "url";
 import { ANIMALS } from "../server/engine.ts";
-import { getReaction as getReactionZh, type ReactionReason } from "../server/reactions.ts";
+import { ANIMAL_REACTIONS, REACTIONS, type ReactionReason } from "../server/reactions.ts";
 import { getPetById as getPetByIdZh } from "../server/pets.ts";
 
 // English imports
 import { REACTIONS_EN, ANIMAL_REACTIONS_EN } from "../server/reactions-en.ts";
 import { getPetById as getPetByIdEn } from "../server/pets-en.ts";
+import { collectReactionLines, sortReactionMeta, sortReactionPool } from "./reaction-pool-order.ts";
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const STATE_DIR = join(homedir(), ".petsonality");
@@ -33,36 +34,16 @@ const syncRuntime = process.env.PETSONALITY_SYNC_RUNTIME === "1" || process.argv
 
 const REASONS: ReactionReason[] = ["error", "test-fail", "large-diff", "turn", "idle", "adopt", "pet"];
 
-function collectReactions(
-  getReaction: (reason: ReactionReason, animalId: any) => string,
-  animalId: string,
-  reason: ReactionReason,
-  samples: number = 200,
-): string[] {
-  const seen = new Set<string>();
-  for (let i = 0; i < samples; i++) {
-    seen.add(getReaction(reason, animalId as any));
-  }
-  return [...seen];
-}
-
-// English getReaction (same logic, different pools)
-function getReactionEn(reason: ReactionReason, animalId: any): string {
-  const animalPool = ANIMAL_REACTIONS_EN[animalId]?.[reason];
-  const generalPool = REACTIONS_EN[reason];
-  const pool = animalPool && Math.random() < 0.4 ? animalPool : generalPool;
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
 function buildLang(
-  getReaction: (reason: ReactionReason, animalId: any) => string,
+  generalPool: Record<ReactionReason, string[]>,
+  animalPool: Partial<Record<string, Partial<Record<ReactionReason, string[]>>>>,
   getPetById: (id: string) => any,
 ) {
   const pool: Record<string, Record<string, string[]>> = {};
   for (const animal of ANIMALS) {
     pool[animal] = {};
     for (const reason of REASONS) {
-      pool[animal][reason] = collectReactions(getReaction, animal, reason);
+      pool[animal][reason] = collectReactionLines(generalPool, animalPool, animal, reason);
     }
   }
 
@@ -74,11 +55,11 @@ function buildLang(
     }
   }
 
-  return { pool, meta };
+  return { pool: sortReactionPool(pool), meta: sortReactionMeta(meta) };
 }
 
-const zh = buildLang(getReactionZh, getPetByIdZh);
-const en = buildLang(getReactionEn, getPetByIdEn);
+const zh = buildLang(REACTIONS, ANIMAL_REACTIONS, getPetByIdZh);
+const en = buildLang(REACTIONS_EN, ANIMAL_REACTIONS_EN, getPetByIdEn);
 
 const output = { zh, en };
 const json = JSON.stringify(output, null, 2);
