@@ -86,13 +86,15 @@
 - [ ] **真 Windows host 上 smoke test 0.4.5**（`npx petsonality@latest` + `/pet`）
 - [ ] **测 `claude plugin install github:nanami-he/petsonality`**（需要新装 Claude Code 测）
 - [ ] 提交 petsonality 到 [MCP Server Registry](https://modelcontextprotocol.io) 的 server directory
-- [ ] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）
-- [ ] **dist/reactions-pool.json 改为确定性输出**（当前每次 build 都 reorder ~700 行，commit noise；改为对 array 排序后再 stringify）
+- [x] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）
+- [x] **dist/reactions-pool.json 改为确定性输出**（当前每次 build 都 reorder ~700 行，commit noise；改为对 array 排序后再 stringify）
 - [ ] （长期）写 Homebrew formula
 
 **优先级理由**：npm outage 已经发生过一次，下次会再发生。在更多用户进来前把 multi-channel 架构跑通，等 0.4.5 / 0.5.0 时已经稳了。
 
-**进度（2026-04-29）**：核心架构 4/4 done（v0.4.5 已 ship），剩下都是验证 + 推广 + 优化。multi-channel 已经从「想法」变成「真有这条路径」。
+**进度（2026-04-29）**：核心架构 4/4 done（v0.4.5 已 ship），multi-channel 已经从「想法」变成「真有这条路径」。
+
+**进度（2026-05-01）**：README Install 章节补齐三条路径；`dist/reactions-pool.json` 输出改为确定性排序，减少每次 build 的 generated diff 噪音。剩余 G0 主要是 registry 提交、真实 plugin install smoke test、Windows host smoke test、长期 Homebrew。
 
 ### G1: 社区推广
 - [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
