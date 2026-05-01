@@ -30681,7 +30681,7 @@ function getInstructions() {
 }
 var server = new McpServer({
   name: "petsonality",
-  version: "0.4.5"
+  version: "0.4.6"
 }, {
   instructions: getInstructions()
 });
