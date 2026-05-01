@@ -428,6 +428,38 @@ function statusLineConfigForPlatform(currentPlatform, runtimeDir) {
 }
 
 // cli/install.ts
+import { createInterface } from "readline/promises";
+import { stdin as input, stdout as output } from "process";
+
+// cli/install-transparency.ts
+function isPetsonalityCommand(command) {
+  return typeof command === "string" && (command.includes("petsonality") || command.includes("typet"));
+}
+function statusLineReplacementPreview(existing, next) {
+  if (!existing || typeof existing !== "object")
+    return null;
+  const command = existing.command;
+  if (!command || isPetsonalityCommand(command))
+    return null;
+  return { existing, next };
+}
+function findPetsonalityHookEntries(entries) {
+  if (!Array.isArray(entries))
+    return [];
+  return entries.filter((entry) => Array.isArray(entry.hooks) && entry.hooks.some((hook) => isPetsonalityCommand(hook.command)));
+}
+function formatReplacementPreview(title, preview) {
+  return [
+    title,
+    "Current:",
+    JSON.stringify(preview.existing, null, 2),
+    "Petsonality will write:",
+    JSON.stringify(preview.next, null, 2)
+  ].join(`
+`);
+}
+
+// cli/install.ts
 var CURRENT_PLATFORM = platform3();
 var IS_WIN3 = CURRENT_PLATFORM === "win32";
 var CYAN2 = "\x1B[36m";
@@ -460,6 +492,25 @@ function warn2(msg) {
 }
 function err2(msg) {
   console.log(`${RED2}✗${NC2}  ${msg}`);
+}
+async function confirmChange(title, existing, next) {
+  console.log("");
+  console.log(formatReplacementPreview(`${YELLOW2}${title}${NC2}`, { existing, next }));
+  if (process.env.PETSONALITY_ASSUME_YES === "1") {
+    info2("PETSONALITY_ASSUME_YES=1 set — continuing");
+    return true;
+  }
+  if (!input.isTTY) {
+    warn2("Non-interactive install — continuing for backwards compatibility");
+    return true;
+  }
+  const rl = createInterface({ input, output });
+  try {
+    const answer = await rl.question("Replace this config? [y/N] ");
+    return answer.trim().toLowerCase() === "y" || answer.trim().toLowerCase() === "yes";
+  } finally {
+    rl.close();
+  }
 }
 function detectHosts() {
   const claude = existsSync4(CLAUDE_DIR) && existsSync4(join5(homedir2(), ".claude.json"));
@@ -541,14 +592,21 @@ function installSkill() {
   cpSync(srcSkill, join5(SKILL_DIR, "SKILL.md"), { force: true });
   ok2("Skill installed: ~/.claude/skills/pet/SKILL.md");
 }
-function installStatusLine(settings) {
-  if (settings.statusLine?.command && !settings.statusLine.command.includes("petsonality") && !settings.statusLine.command.includes("typet")) {
-    warn2(`Existing statusLine found: ${settings.statusLine.command}`);
-    warn2("Replacing with petsonality status line. Old config backed up in ~/.petsonality/statusline.bak");
+async function installStatusLine(settings) {
+  const nextStatusLine = statusLineConfigForPlatform(CURRENT_PLATFORM, RUNTIME_DIR);
+  const preview = statusLineReplacementPreview(settings.statusLine, nextStatusLine);
+  if (preview) {
+    warn2("Existing non-petsonality statusLine found.");
+    const confirmed = await confirmChange("Petsonality statusLine replacement", preview.existing, preview.next);
+    if (!confirmed) {
+      warn2("Skipped status line configuration at your request");
+      return;
+    }
     mkdirSync(join5(homedir2(), ".petsonality"), { recursive: true });
     writeFileSync2(join5(homedir2(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
+    warn2("Old config backed up in ~/.petsonality/statusline.bak");
   }
-  settings.statusLine = statusLineConfigForPlatform(CURRENT_PLATFORM, RUNTIME_DIR);
+  settings.statusLine = nextStatusLine;
   ok2(IS_WIN3 ? "PowerShell status line configured" : "Status line configured");
   if (IS_WIN3) {
     info2("If Claude Code does not render the status line, accept the project trust dialog and restart Claude Code.");
@@ -571,25 +629,37 @@ function installRuntimeFiles() {
   ok2("Runtime files copied to ~/.petsonality/");
 }
 var RUNTIME_DIR = join5(homedir2(), ".petsonality");
-function installHooks(settings) {
+async function replacePetsonalityHookEntries(settings, hookType, nextEntry) {
+  if (!settings.hooks[hookType])
+    settings.hooks[hookType] = [];
+  const existingEntries = findPetsonalityHookEntries(settings.hooks[hookType]);
+  if (existingEntries.length > 0) {
+    const confirmed = await confirmChange(`Petsonality ${hookType} hook replacement`, existingEntries, nextEntry);
+    if (!confirmed) {
+      warn2(`Skipped ${hookType} hook replacement at your request`);
+      return false;
+    }
+  }
+  settings.hooks[hookType] = settings.hooks[hookType].filter((h) => !h.hooks?.some((hh) => hh.command?.includes("petsonality") || hh.command?.includes("typet")));
+  settings.hooks[hookType].push(nextEntry);
+  return true;
+}
+async function installHooks(settings) {
   const reactHook = join5(RUNTIME_DIR, "hooks", "react.js");
   const commentHook = join5(RUNTIME_DIR, "hooks", "pet-comment.js");
   if (!settings.hooks)
     settings.hooks = {};
   const nodePath = process.execPath;
-  if (!settings.hooks.PostToolUse)
-    settings.hooks.PostToolUse = [];
-  settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter((h) => !h.hooks?.some((hh) => hh.command?.includes("petsonality") || hh.command?.includes("typet")));
-  settings.hooks.PostToolUse.push({
+  const postToolUseEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, reactHook) }]
-  });
-  if (!settings.hooks.Stop)
-    settings.hooks.Stop = [];
-  settings.hooks.Stop = settings.hooks.Stop.filter((h) => !h.hooks?.some((hh) => hh.command?.includes("petsonality") || hh.command?.includes("typet")));
-  settings.hooks.Stop.push({
+  };
+  const stopEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, commentHook) }]
-  });
-  ok2("Hooks registered: PostToolUse + Stop");
+  };
+  const postToolUseInstalled = await replacePetsonalityHookEntries(settings, "PostToolUse", postToolUseEntry);
+  const stopInstalled = await replacePetsonalityHookEntries(settings, "Stop", stopEntry);
+  if (postToolUseInstalled || stopInstalled)
+    ok2("Hooks registered: PostToolUse + Stop");
 }
 function ensurePermissions(settings) {
   if (!settings.permissions)
@@ -697,8 +767,8 @@ if (hosts.claude) {
   const settings = loadSettings();
   installMcp();
   installSkill();
-  installStatusLine(settings);
-  installHooks(settings);
+  await installStatusLine(settings);
+  await installHooks(settings);
   ensurePermissions(settings);
   saveSettings(settings);
 } else {

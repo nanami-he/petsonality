@@ -14,6 +14,13 @@ import { whichSync } from "./which.ts";
 import { formatHookCommand } from "./hook-command.ts";
 import { findPackageRoot } from "./find-package-root.ts";
 import { statusLineConfigForPlatform, formatStatusLineCommand } from "./statusline-config.ts";
+import { createInterface } from "readline/promises";
+import { stdin as input, stdout as output } from "process";
+import {
+  findPetsonalityHookEntries,
+  formatReplacementPreview,
+  statusLineReplacementPreview,
+} from "./install-transparency.ts";
 
 const CURRENT_PLATFORM = platform();
 const IS_WIN = CURRENT_PLATFORM === "win32";
@@ -44,6 +51,28 @@ function ok(msg: string) { console.log(`${GREEN}✓${NC}  ${msg}`); }
 function info(msg: string) { console.log(`${CYAN}→${NC}  ${msg}`); }
 function warn(msg: string) { console.log(`${YELLOW}⚠${NC}  ${msg}`); }
 function err(msg: string) { console.log(`${RED}✗${NC}  ${msg}`); }
+
+async function confirmChange(title: string, existing: unknown, next: unknown): Promise<boolean> {
+  console.log("");
+  console.log(formatReplacementPreview(`${YELLOW}${title}${NC}`, { existing, next }));
+
+  if (process.env.PETSONALITY_ASSUME_YES === "1") {
+    info("PETSONALITY_ASSUME_YES=1 set — continuing");
+    return true;
+  }
+  if (!input.isTTY) {
+    warn("Non-interactive install — continuing for backwards compatibility");
+    return true;
+  }
+
+  const rl = createInterface({ input, output });
+  try {
+    const answer = await rl.question("Replace this config? [y/N] ");
+    return answer.trim().toLowerCase() === "y" || answer.trim().toLowerCase() === "yes";
+  } finally {
+    rl.close();
+  }
+}
 
 // ─── Preflight checks ──────────────────────────────────────────────────────
 
@@ -149,15 +178,21 @@ function installSkill() {
 
 // ─── Step 3: Status line ───────────────────────────────────────────────────
 
-function installStatusLine(settings: Record<string, any>) {
-  if (settings.statusLine?.command && !settings.statusLine.command.includes("petsonality") && !settings.statusLine.command.includes("typet")) {
-    warn(`Existing statusLine found: ${settings.statusLine.command}`);
-    warn("Replacing with petsonality status line. Old config backed up in ~/.petsonality/statusline.bak");
-
+async function installStatusLine(settings: Record<string, any>) {
+  const nextStatusLine = statusLineConfigForPlatform(CURRENT_PLATFORM, RUNTIME_DIR);
+  const preview = statusLineReplacementPreview(settings.statusLine, nextStatusLine);
+  if (preview) {
+    warn("Existing non-petsonality statusLine found.");
+    const confirmed = await confirmChange("Petsonality statusLine replacement", preview.existing, preview.next);
+    if (!confirmed) {
+      warn("Skipped status line configuration at your request");
+      return;
+    }
     mkdirSync(join(homedir(), ".petsonality"), { recursive: true });
     writeFileSync(join(homedir(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
+    warn("Old config backed up in ~/.petsonality/statusline.bak");
   }
-  settings.statusLine = statusLineConfigForPlatform(CURRENT_PLATFORM, RUNTIME_DIR);
+  settings.statusLine = nextStatusLine;
   ok(IS_WIN ? "PowerShell status line configured" : "Status line configured");
   if (IS_WIN) {
     info("If Claude Code does not render the status line, accept the project trust dialog and restart Claude Code.");
@@ -192,7 +227,26 @@ const RUNTIME_DIR = join(homedir(), ".petsonality");
 
 // ─── Step 4: Hooks ─────────────────────────────────────────────────────────
 
-function installHooks(settings: Record<string, any>) {
+async function replacePetsonalityHookEntries(settings: Record<string, any>, hookType: "PostToolUse" | "Stop", nextEntry: Record<string, any>): Promise<boolean> {
+  if (!settings.hooks[hookType]) settings.hooks[hookType] = [];
+
+  const existingEntries = findPetsonalityHookEntries(settings.hooks[hookType]);
+  if (existingEntries.length > 0) {
+    const confirmed = await confirmChange(`Petsonality ${hookType} hook replacement`, existingEntries, nextEntry);
+    if (!confirmed) {
+      warn(`Skipped ${hookType} hook replacement at your request`);
+      return false;
+    }
+  }
+
+  settings.hooks[hookType] = settings.hooks[hookType].filter(
+    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
+  );
+  settings.hooks[hookType].push(nextEntry);
+  return true;
+}
+
+async function installHooks(settings: Record<string, any>) {
   const reactHook = join(RUNTIME_DIR, "hooks", "react.js");
   const commentHook = join(RUNTIME_DIR, "hooks", "pet-comment.js");
 
@@ -201,25 +255,18 @@ function installHooks(settings: Record<string, any>) {
   // Resolve node path for hooks (cross-platform; same node that's running this installer).
   const nodePath = process.execPath;
 
-  // PostToolUse — clean up both old (typet) and new (petsonality) entries
-  if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
-  settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
-    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
-  );
-  settings.hooks.PostToolUse.push({
+  const postToolUseEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, reactHook) }],
-  });
+  };
 
-  // Stop — same cleanup
-  if (!settings.hooks.Stop) settings.hooks.Stop = [];
-  settings.hooks.Stop = settings.hooks.Stop.filter(
-    (h: any) => !h.hooks?.some((hh: any) => hh.command?.includes("petsonality") || hh.command?.includes("typet")),
-  );
-  settings.hooks.Stop.push({
+  const stopEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, commentHook) }],
-  });
+  };
 
-  ok("Hooks registered: PostToolUse + Stop");
+  const postToolUseInstalled = await replacePetsonalityHookEntries(settings, "PostToolUse", postToolUseEntry);
+  const stopInstalled = await replacePetsonalityHookEntries(settings, "Stop", stopEntry);
+
+  if (postToolUseInstalled || stopInstalled) ok("Hooks registered: PostToolUse + Stop");
 }
 
 // ─── Step 5: Permissions ───────────────────────────────────────────────────
@@ -342,8 +389,8 @@ if (hosts.claude) {
   const settings = loadSettings();
   installMcp();
   installSkill();
-  installStatusLine(settings);
-  installHooks(settings);
+  await installStatusLine(settings);
+  await installHooks(settings);
   ensurePermissions(settings);
   saveSettings(settings);
 } else {
