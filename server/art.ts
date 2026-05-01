@@ -55,13 +55,13 @@ export const ANIMAL_ART: Record<AnimalId, string[][]> = {
   ],
   // 6. INFP deer — gentle fawn, 7 frames (graze/tilt/gaze/nuzzle)
   deer: [
-    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /| |     ", "    u u     "],
-    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /| |     ", "    u u~    "],
-    ["            ", "  \\Y/  \\Y/  ", "   (- v o)  ", "   /| |     ", "    u u     "],
-    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /|_|     ", "    u u     "],  // graze
-    ["            ", "  \\Y/  \\Y/  ", "   (o v o)> ", "   /| |     ", "    u u     "],  // tilt
-    ["            ", "  \\Y/  \\Y/  ", "  ( o v o ) ", "   /| |     ", "    u u     "],  // gaze
-    ["            ", "  \\Y/  \\Y/  ", "   (o v o)~ ", "   /| |     ", "    u u     "],  // nuzzle
+    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /| |\\    ", "  _/   \\_   "],
+    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /| |\\ ~  ", "  _/   \\_   "],
+    ["            ", "  \\Y/  \\Y/  ", "   (- v o)  ", "   /| |\\    ", "  _/   \\_   "],
+    ["            ", "  \\Y/  \\Y/  ", "   (o v o)  ", "   /|_|\\    ", "  _/   \\_   "],  // graze
+    ["            ", "  \\Y/  \\Y/  ", "   (o v o)> ", "   /| |\\    ", "  _/   \\_   "],  // tilt
+    ["            ", "  \\Y/  \\Y/  ", "  ( o v o ) ", "   /| |\\    ", "  _/   \\_   "],  // gaze
+    ["            ", "  \\Y/  \\Y/  ", "   (o v o)~ ", "   /| |\\    ", "  _/   \\_   "],  // nuzzle
   ],
   // 7. ENFJ labrador — side profile, @ eye, O nose, U tongue, 9 frames (nuzzle/yawn/pant/liedown)
   labrador: [
