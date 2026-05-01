@@ -59,14 +59,22 @@ def render_frame(lines, color, width_chars=12, height_lines=5, accents=None):
     body_color = tuple(color)
     accent_map = build_accent_map(accents) if accents else {}
 
+    # Generated statusline art omits the reserved hat slot, so most animals
+    # arrive as 4 visible lines inside a 5-line GIF canvas. Bottom-align those
+    # lines so README grid previews sit on the same baseline as the statusline.
+    row_offset = max(0, height_lines - len(lines))
+
     for row, line in enumerate(lines):
         if row >= height_lines:
             break
-        y = PADDING + row * char_h
+        draw_row = row + row_offset
+        if draw_row >= height_lines:
+            break
+        y = PADDING + draw_row * char_h
 
         # Check if this line has any accent colors
-        has_accents = row in accent_map and any(
-            line.find(pat) != -1 for pat, _ in accent_map.get(row, [])
+        has_accents = draw_row in accent_map and any(
+            line.find(pat) != -1 for pat, _ in accent_map.get(draw_row, [])
         )
 
         if not has_accents:
@@ -75,7 +83,7 @@ def render_frame(lines, color, width_chars=12, height_lines=5, accents=None):
         else:
             # Slow path: per-character coloring for accents
             char_colors = [body_color] * len(line)
-            for pattern, rgb in accent_map[row]:
+            for pattern, rgb in accent_map[draw_row]:
                 start = 0
                 while True:
                     idx = line.find(pattern, start)
