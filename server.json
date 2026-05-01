@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.nanami-he/petsonality",
+  "title": "Petsonality",
+  "description": "An MBTI-powered terminal pet companion for Claude Code and OpenClaw.",
+  "repository": {
+    "url": "https://github.com/nanami-he/petsonality",
+    "source": "github"
+  },
+  "version": "0.4.5",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "petsonality",
+      "version": "0.4.5",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

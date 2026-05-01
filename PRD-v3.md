@@ -86,6 +86,7 @@
 - [ ] **真 Windows host 上 smoke test 0.4.5**（`npx petsonality@latest` + `/pet`）
 - [ ] **测 `claude plugin install github:nanami-he/petsonality`**（需要新装 Claude Code 测）
 - [ ] 提交 petsonality 到 [MCP Server Registry](https://modelcontextprotocol.io) 的 server directory
+- [x] MCP Registry 元数据准备：`server.json` + `package.json#mcpName`（正式 publish 要等下一次 npm 版本，让 npm registry 里的 package.json 带上 `mcpName`）
 - [x] README 加「Install」章节，列出 3 条路径（npx 主推，plugin 次推，git clone 给开发者）
 - [x] **dist/reactions-pool.json 改为确定性输出**（当前每次 build 都 reorder ~700 行，commit noise；改为对 array 排序后再 stringify）
 - [ ] （长期）写 Homebrew formula
@@ -94,7 +95,7 @@
 
 **进度（2026-04-29）**：核心架构 4/4 done（v0.4.5 已 ship），multi-channel 已经从「想法」变成「真有这条路径」。
 
-**进度（2026-05-01）**：README Install 章节补齐三条路径；`dist/reactions-pool.json` 输出改为确定性排序，减少每次 build 的 generated diff 噪音。剩余 G0 主要是 registry 提交、真实 plugin install smoke test、Windows host smoke test、长期 Homebrew。
+**进度（2026-05-01）**：README Install 章节补齐三条路径；`dist/reactions-pool.json` 输出改为确定性排序，减少每次 build 的 generated diff 噪音；MCP Registry 元数据已准备，下一次 npm publish 后即可跑 `mcp-publisher publish`。剩余 G0 主要是 registry 正式提交、真实 plugin install smoke test、Windows host smoke test、长期 Homebrew。
 
 ### G1: 社区推广
 - [x] Twitter/X 发帖（v0.4.0 launch tweet, 2026-04-18，reach 小但已发）
@@ -144,8 +145,8 @@
 
 ### M4: 安装侵入性透明化
 现状：`installStatusLine` 自动替换已有 statusLine（虽有 `.bak`），`installHooks` 重写既有 hook 条目。
-- [ ] 检测到现有非空 statusLine 时，prompt 用户确认 + 显示即将被覆盖的内容
-- [ ] hook 重写也走同样的"先 diff 再写"流程
+- [x] 检测到现有非空 statusLine 时，prompt 用户确认 + 显示即将被覆盖的内容
+- [x] hook 重写也走同样的"先 diff 再写"流程
 - [ ] 长期等 OpenClaw merge PR #65886 后，TUI patch 路径完全废弃
 - 决策记录：短期接受侵入式安装 + 自动 backup 兜底是 conscious choice，优先开发速度，但推广开始后用户初见信任成本会上升
 
@@ -164,7 +165,7 @@
 - [x] `CONTRIBUTING.md` —— dev setup + commit conv + PR flow + project layout
 - [x] 2 个 `good first issue`（#3 已 close, #4 仍 open）
 - [x] **首个外部 PR 跑通了**：from issue 开出 → 2h 收到 PR → 6h merge → 同 commit ship → contributor 上 README → 公开 thank-you。**整套 OSS 协作循环验证可用**
-- [ ] Issue / PR template review（已有 bug-report.yml；考虑加 feature_request.yml）
+- [x] Issue / PR template review（bug report statusline smoke 命令修正，feature request 增加受众/补充材料字段）
 
 ---
 
