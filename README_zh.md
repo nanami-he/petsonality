@@ -1,4 +1,4 @@
-🌐 [English](./README.md) | 中文
+<p align="center">🌐 <a href="./README.md">English</a> | 中文</p>
 
 ---
 
