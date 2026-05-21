@@ -1,3 +1,7 @@
+🌐 English | [中文](./README_zh.md)
+
+---
+
 <p align="center">
   <strong>petsonality</strong><br>
   <em>Your type, your pet.</em>
