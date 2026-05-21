@@ -63,8 +63,10 @@ try {
 } catch {}
 NODE
 }
-# Session ID: TMUX_PANE > TTY > "default"
-if [ -n "$TMUX_PANE" ]; then
+# Session ID: PETSONALITY_SID > TMUX_PANE > TTY > "default"
+if [ -n "$PETSONALITY_SID" ]; then
+  SID=$(echo "$PETSONALITY_SID" | sed 's/[^a-zA-Z0-9_.-]/_/g')
+elif [ -n "$TMUX_PANE" ]; then
   SID="${TMUX_PANE#%}"
 else
   TTY_ID=$(ps -o tty= -p $$ 2>/dev/null | tr -d ' ')

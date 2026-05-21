@@ -16,6 +16,7 @@ import { execSync } from "child_process";
 const STATE_DIR = join(homedir(), ".petsonality");
 
 function sessionId() {
+  if (process.env.PETSONALITY_SID) return process.env.PETSONALITY_SID.replace(/[^a-zA-Z0-9_.-]/g, "_");
   if (process.env.TMUX_PANE) return process.env.TMUX_PANE.replace(/^%/, "");
   try {
     const tty = execSync("ps -o tty= -p " + process.pid, { encoding: "utf8", timeout: 500 }).trim();

@@ -18,6 +18,14 @@ describe("PowerShell statusline", () => {
     expect(script).not.toContain("jq");
   });
 
+  test("PowerShell renderer honors PETSONALITY_SID before TMUX/default", () => {
+    const script = readFileSync(join(STATUSLINE_DIR, "pet-status.ps1"), "utf8");
+
+    expect(script).toContain("$env:PETSONALITY_SID");
+    expect(script).toContain("-replace '[^a-zA-Z0-9_.-]', '_'");
+    expect(script.indexOf("$env:PETSONALITY_SID")).toBeLessThan(script.indexOf("$env:TMUX_PANE"));
+  });
+
   test("ships generated JSON art data for every animal", () => {
     const data = JSON.parse(readFileSync(join(STATUSLINE_DIR, "pet-art.json"), "utf8"));
 

@@ -33,6 +33,10 @@ function First-Text($Value) {
 }
 
 function Get-SessionId {
+  $override = $env:PETSONALITY_SID
+  if (-not [string]::IsNullOrWhiteSpace($override)) {
+    return ($override -replace '[^a-zA-Z0-9_.-]', '_')
+  }
   $sid = $env:TMUX_PANE
   if ([string]::IsNullOrWhiteSpace($sid)) { return "default" }
   return $sid.TrimStart('%')
