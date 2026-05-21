@@ -13,7 +13,7 @@ If anything here is wrong, unclear, or missing — **that itself is a valid PR**
 git clone https://github.com/nanami-he/petsonality.git
 cd petsonality
 bun install         # uses Bun >= 1.3 (https://bun.sh)
-bun test            # ~70ms, 302 tests, all green
+bun test            # fast test suite, all green
 bun run build       # rebuilds dist/, regenerates art + reactions
 ```
 
@@ -29,9 +29,6 @@ That's it.
 - **Bun ≥ 1.3** — `curl -fsSL https://bun.sh/install | bash`
 - **Node ≥ 20** — for the bundled CLI's runtime path; the source builds with Bun
   but ships as a Node-compatible bundle
-- **jq** _(optional)_ — used by `statusline/pet-status.sh` at runtime, not by the
-  build. Install via `brew install jq` on macOS.
-
 ### One-time setup
 
 ```bash
@@ -46,7 +43,7 @@ That's the entire setup. No env vars, no API keys — petsonality runs fully loc
 bun test
 ```
 
-302 tests. They run in ~70ms. If yours don't pass on a fresh clone of `main`,
+The suite runs quickly. If yours doesn't pass on a fresh clone of `main`,
 that's a bug — please open an issue.
 
 ### Build the bundle
@@ -113,11 +110,18 @@ Don't add `Co-Authored-By` trailers from AI tools.
    server/index.ts must match) — `npm version` handles this for you, but if you
    touch versions manually, run `node scripts/sync-version.mjs`.
 
-4. **PR description**: link the issue, describe the change in 2-3 sentences,
+4. **Keep the English and Chinese READMEs in sync.** `README.md` is the GitHub
+   homepage, and `README_zh.md` is the linked Chinese homepage. If a change adds
+   or updates user-facing README content, installation notes, release notes,
+   screenshots, roadmap bullets, or marketing copy in one language, update the
+   other language in the same PR/commit. If a README-only change intentionally
+   applies to one language only, say so in the PR description.
+
+5. **PR description**: link the issue, describe the change in 2-3 sentences,
    note anything you're unsure about. Screenshots welcome for status-line / art
    changes.
 
-5. **Reviews are quick.** Expect a response within a day or two for small PRs.
+6. **Reviews are quick.** Expect a response within a day or two for small PRs.
 
 ---
 
