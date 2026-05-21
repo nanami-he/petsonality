@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, existsSync, rmSync, readdirSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { isPetsonalityCommand } from "./install-transparency.ts";
 
 const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
@@ -74,7 +75,7 @@ try {
   const settings = JSON.parse(readFileSync(SETTINGS_FILE, "utf8"));
   let changed = false;
 
-  if (settings.statusLine?.command?.includes("pet")) {
+  if (isPetsonalityCommand(settings.statusLine?.command)) {
     delete settings.statusLine;
     ok("Status line removed");
     changed = true;

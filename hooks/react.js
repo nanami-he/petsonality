@@ -257,9 +257,9 @@ function main() {
   const summary = result.slice(0, 100).replace(/\n/g, " ");
   writeHint(reason, priority, summary);
 
-  // Reset streak + cooldown (hint counts as "spoke")
+  // Reset streak only. The cooldown is recorded when the model comment is
+  // consumed by the Stop hook, or by fallbackFromHint if the model stays silent.
   mkdirSync(STATE_DIR, { recursive: true });
-  writeFileSync(COOLDOWN_FILE, String(Math.floor(Date.now() / 1000)), { mode: 0o600 });
   writeFileSync(STREAK_FILE, "0", { mode: 0o600 });
 }
 

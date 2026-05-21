@@ -532,15 +532,9 @@ function preflight() {
     pass = false;
   }
   if (IS_WIN3) {
-    ok2("PowerShell status line available (no jq required on Windows)");
+    ok2("PowerShell status line available");
   } else {
-    try {
-      execSync("jq --version", { stdio: "ignore" });
-      ok2("jq found (used by status line)");
-    } catch {
-      warn2("jq not found — status line bubbles will be limited");
-      info2("Install: brew install jq (optional)");
-    }
+    ok2("Bash status line available (uses Node.js for JSON parsing)");
   }
   const hosts = detectHosts();
   if (hosts.claude)

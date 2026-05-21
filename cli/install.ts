@@ -2,7 +2,7 @@
  * petsonality installer
  *
  * Registers: MCP server (in ~/.claude.json), skill, hooks, status line (in settings.json)
- * Checks: bun, jq, ~/.claude/ directory
+ * Checks: node, ~/.claude/ directory
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "fs";
@@ -99,18 +99,10 @@ function preflight(): boolean {
     pass = false;
   }
 
-  // jq is optional for the Unix bash status line. The Windows PowerShell status
-  // line uses ConvertFrom-Json and does not need jq.
   if (IS_WIN) {
-    ok("PowerShell status line available (no jq required on Windows)");
+    ok("PowerShell status line available");
   } else {
-    try {
-      execSync("jq --version", { stdio: "ignore" });
-      ok("jq found (used by status line)");
-    } catch {
-      warn("jq not found — status line bubbles will be limited");
-      info("Install: brew install jq (optional)");
-    }
+    ok("Bash status line available (uses Node.js for JSON parsing)");
   }
 
   const hosts = detectHosts();

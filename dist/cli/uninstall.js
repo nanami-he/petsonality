@@ -379,6 +379,13 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
 import { readFileSync as readFileSync2, writeFileSync as writeFileSync2, existsSync as existsSync3, rmSync, readdirSync as readdirSync2 } from "fs";
 import { join as join3 } from "path";
 import { homedir as homedir2 } from "os";
+
+// cli/install-transparency.ts
+function isPetsonalityCommand(command) {
+  return typeof command === "string" && (command.includes("petsonality") || command.includes("typet"));
+}
+
+// cli/uninstall.ts
 var GREEN2 = "\x1B[32m";
 var YELLOW2 = "\x1B[33m";
 var NC2 = "\x1B[0m";
@@ -453,7 +460,7 @@ try {
 try {
   const settings = JSON.parse(readFileSync2(SETTINGS_FILE, "utf8"));
   let changed = false;
-  if (settings.statusLine?.command?.includes("pet")) {
+  if (isPetsonalityCommand(settings.statusLine?.command)) {
     delete settings.statusLine;
     ok2("Status line removed");
     changed = true;

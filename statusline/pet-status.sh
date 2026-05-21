@@ -9,6 +9,60 @@
 # Uses Braille Blank (U+2800) for padding — survives JS .trim()
 
 STATE="$HOME/.petsonality/status.json"
+json_status_assign() {
+  node - "$1" <<'NODE' 2>/dev/null
+const fs = require("fs");
+const path = process.argv[2];
+function sh(value) {
+  return "'" + String(value ?? "").replace(/'/g, "'\\''") + "'";
+}
+try {
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  console.log(`MUTED=${sh(data.muted ?? false)}`);
+  console.log(`NAME=${sh(data.name ?? "")}`);
+  console.log(`PET_ID=${sh(data.petId ?? "")}`);
+  console.log(`REACTION=${sh(data.reaction ?? "")}`);
+} catch {}
+NODE
+}
+json_reaction_assign() {
+  node - "$1" <<'NODE' 2>/dev/null
+const fs = require("fs");
+const path = process.argv[2];
+function sh(value) {
+  return "'" + String(value ?? "").replace(/'/g, "'\\''") + "'";
+}
+try {
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  console.log(`R_TEXT=${sh(data.reaction ?? "")}`);
+  console.log(`R_TS=${sh(data.timestamp ?? 0)}`);
+} catch {}
+NODE
+}
+json_number() {
+  node - "$1" "$2" "${3:-0}" <<'NODE' 2>/dev/null
+const fs = require("fs");
+const [path, key, fallback] = process.argv.slice(2);
+try {
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  const value = data[key];
+  console.log(typeof value === "number" || typeof value === "string" ? value : fallback);
+} catch {
+  console.log(fallback);
+}
+NODE
+}
+json_array_lines() {
+  node - "$1" "$2" <<'NODE' 2>/dev/null
+const fs = require("fs");
+const [path, key] = process.argv.slice(2);
+try {
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  const values = Array.isArray(data[key]) ? data[key] : [];
+  for (const value of values) console.log(String(value));
+} catch {}
+NODE
+}
 # Session ID: TMUX_PANE > TTY > "default"
 if [ -n "$TMUX_PANE" ]; then
   SID="${TMUX_PANE#%}"
@@ -23,12 +77,7 @@ fi
 
 [ -f "$STATE" ] || exit 0
 
-eval "$(jq -r '
-  @sh "MUTED=\(.muted // false)",
-  @sh "NAME=\(.name // "")",
-  @sh "PET_ID=\(.petId // "")",
-  @sh "REACTION=\(.reaction // "")"
-' "$STATE" 2>/dev/null)"
+eval "$(json_status_assign "$STATE")"
 
 [ "$MUTED" = "true" ] && exit 0
 [ -z "$NAME" ] && exit 0
@@ -37,7 +86,7 @@ eval "$(jq -r '
 REACTION_FILE="$HOME/.petsonality/reaction.$SID.json"
 if [ -f "$REACTION_FILE" ]; then
   NOW_MS=$(($(date +%s) * 1000))
-  eval "$(jq -r '@sh "R_TEXT=\(.reaction // "")", @sh "R_TS=\(.timestamp // 0)"' "$REACTION_FILE" 2>/dev/null)"
+  eval "$(json_reaction_assign "$REACTION_FILE")"
   R_TS_INT=${R_TS%.*}
   AGE=$(( NOW_MS - R_TS_INT ))
   if [ "$AGE" -lt 10000 ] && [ -n "$R_TEXT" ]; then
@@ -141,7 +190,7 @@ if [ "$PET_ID" = "dolphin" ]; then
     # Check if bubble is active — freeze cycle if so
     _BUBBLE_ON=0
     if [ -f "$REACTION_FILE" ]; then
-        _BTS=$(jq -r '.timestamp // 0' "$REACTION_FILE" 2>/dev/null)
+        _BTS=$(json_number "$REACTION_FILE" timestamp 0)
         _BAGE=$(( $(date +%s) * 1000 - ${_BTS%.*} ))
         [ "$_BAGE" -lt 10000 ] && _BUBBLE_ON=1
     fi
@@ -796,12 +845,12 @@ dw() {
 
 TEXT_LINES=()
 if [ -n "$R_TEXT" ] && [ "${AGE:-999999}" -lt 10000 ] && [ -f "$REACTION_FILE" ]; then
-    # Read pre-wrapped lines from hook (CJK-aware wrap done by python3 in hook)
+    # Read pre-wrapped lines from hook (CJK-aware wrap done by Node hook)
     while IFS= read -r line; do
         [ -n "$line" ] && TEXT_LINES+=("$line")
-    done < <(jq -r '.wrapped[]? // empty' "$REACTION_FILE" 2>/dev/null)
+    done < <(json_array_lines "$REACTION_FILE" wrapped)
     # Read precise max display width from hook
-    MAX_DW=$(jq -r '.maxWidth // 0' "$REACTION_FILE" 2>/dev/null)
+    MAX_DW=$(json_number "$REACTION_FILE" maxWidth 0)
     # Fallback: if no wrapped field, use raw text as single line
     if [ ${#TEXT_LINES[@]} -eq 0 ] && [ -n "$R_TEXT" ]; then
         TEXT_LINES+=("$R_TEXT")
@@ -810,7 +859,7 @@ if [ -n "$R_TEXT" ] && [ "${AGE:-999999}" -lt 10000 ] && [ -f "$REACTION_FILE" ]
 fi
 TEXT_COUNT=${#TEXT_LINES[@]}
 
-# Use precise width from python3, or fallback to 28
+# Use precise width from hook, or fallback to 28
 if [ "${MAX_DW:-0}" -gt 0 ]; then
     INNER_W=$(( MAX_DW + 2 ))  # +2 for left/right padding inside box
 else
@@ -829,7 +878,7 @@ if [ $TEXT_COUNT -gt 0 ]; then
     if [ -f "$REACTION_FILE" ]; then
         while IFS= read -r w; do
             LINE_WIDTHS+=("$w")
-        done < <(jq -r '.widths[]? // empty' "$REACTION_FILE" 2>/dev/null)
+        done < <(json_array_lines "$REACTION_FILE" widths)
     fi
     for idx in "${!TEXT_LINES[@]}"; do
         tl="${TEXT_LINES[$idx]}"
