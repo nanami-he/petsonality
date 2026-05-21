@@ -12,9 +12,19 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { execSync } from "child_process";
 
 const STATE_DIR = join(homedir(), ".petsonality");
-const SID = (process.env.TMUX_PANE || "default").replace(/^%/, "");
+
+function sessionId() {
+  if (process.env.TMUX_PANE) return process.env.TMUX_PANE.replace(/^%/, "");
+  try {
+    const tty = execSync("ps -o tty= -p " + process.pid, { encoding: "utf8", timeout: 500 }).trim();
+    if (tty && tty !== "??" && tty !== "") return tty.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  } catch {}
+  return "default";
+}
+const SID = sessionId();
 const REACTION_FILE = join(STATE_DIR, `reaction.${SID}.json`);
 const PET_FILE = join(STATE_DIR, "pet.json");
 const COOLDOWN_FILE = join(STATE_DIR, `.last_speak.${SID}`);

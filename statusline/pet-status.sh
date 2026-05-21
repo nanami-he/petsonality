@@ -9,8 +9,17 @@
 # Uses Braille Blank (U+2800) for padding — survives JS .trim()
 
 STATE="$HOME/.petsonality/status.json"
-SID="${TMUX_PANE#%}"
-SID="${SID:-default}"
+# Session ID: TMUX_PANE > TTY > "default"
+if [ -n "$TMUX_PANE" ]; then
+  SID="${TMUX_PANE#%}"
+else
+  TTY_ID=$(ps -o tty= -p $$ 2>/dev/null | tr -d ' ')
+  if [ -n "$TTY_ID" ] && [ "$TTY_ID" != "??" ]; then
+    SID=$(echo "$TTY_ID" | sed 's/[^a-zA-Z0-9_.-]/_/g')
+  else
+    SID="default"
+  fi
+fi
 
 [ -f "$STATE" ] || exit 0
 

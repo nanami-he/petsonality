@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync, renameSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { execSync } from "child_process";
 import type { Pet, AnimalId } from "./engine.ts";
 import { charWidth, stringWidth } from "./utils.ts";
 
@@ -12,12 +13,16 @@ const STATE_DIR = join(homedir(), ".petsonality");
 const PET_FILE = join(STATE_DIR, "pet.json");
 const CONFIG_FILE = join(STATE_DIR, "config.json");
 
-// Session ID: PETSONALITY_SID (set by installer for OpenClaw), TMUX_PANE, or "default"
+// Session ID: PETSONALITY_SID (manual override), TMUX_PANE, TTY, or "default"
 function sessionId(): string {
   const sid = process.env.PETSONALITY_SID;
   if (sid) return sid.replace(/[^a-zA-Z0-9_.-]/g, "_");
   const pane = process.env.TMUX_PANE;
   if (pane) return pane.replace(/^%/, "");
+  try {
+    const tty = execSync("ps -o tty= -p " + process.pid, { encoding: "utf8", timeout: 500 }).trim();
+    if (tty && tty !== "??" && tty !== "") return tty.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  } catch {}
   return "default";
 }
 

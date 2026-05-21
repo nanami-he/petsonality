@@ -4,6 +4,10 @@ node_modules/
 .petsonality/
 bun.lock
 
+# local dev config
+.claude/
+.vscode/
+
 # promo working materials (large binaries, transient assets)
 xuanfa/
 test-i18n-en.ts
