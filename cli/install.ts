@@ -10,7 +10,7 @@ import { execSync } from "child_process";
 import { join } from "path";
 import { homedir, platform } from "os";
 import { findOpenClawTuiFile } from "./openclaw-patch.ts";
-import { whichSync } from "./which.ts";
+import { whichSync, stableNodePath } from "./which.ts";
 import { formatHookCommand } from "./hook-command.ts";
 import { findPackageRoot } from "./find-package-root.ts";
 import { statusLineConfigForPlatform, formatStatusLineCommand } from "./statusline-config.ts";
@@ -135,7 +135,7 @@ function saveSettings(settings: Record<string, any>) {
 function installMcp() {
   // process.execPath is the absolute path of the node binary running this script —
   // always correct, no shell-out needed (works on Windows too).
-  const nodePath = process.execPath;
+  const nodePath = stableNodePath(process.execPath);
   const serverPath = join(RUNTIME_DIR, "dist", "server.js");
   const claudeJsonPath = join(homedir(), ".claude.json");
 
@@ -245,7 +245,7 @@ async function installHooks(settings: Record<string, any>) {
   if (!settings.hooks) settings.hooks = {};
 
   // Resolve node path for hooks (cross-platform; same node that's running this installer).
-  const nodePath = process.execPath;
+  const nodePath = stableNodePath(process.execPath);
 
   const postToolUseEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, reactHook) }],
@@ -296,7 +296,7 @@ async function installOpenClaw() {
   try { ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8")); } catch { /* fresh */ }
 
   // Register MCP server in OpenClaw config (cross-platform node lookup).
-  const ocNodePath = process.execPath;
+  const ocNodePath = stableNodePath(process.execPath);
   const ocServerPath = join(RUNTIME_DIR, "dist", "server.js");
   if (!ocConfig.mcp) ocConfig.mcp = {};
   if (!ocConfig.mcp.servers) ocConfig.mcp.servers = {};

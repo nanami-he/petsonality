@@ -33,6 +33,8 @@
 | 3 | skill 格式写死 | `skills/pet/SKILL.md` 是 Claude Code 专用格式 |
 | 4 | 品牌/路径混杂 | 同时出现 `petsonality`、`typet`、`mbti-pet` |
 
+> **#1 的具体 bug（2026-06-02 发现）**：`install.ts` 用 `process.execPath` 把 node 路径写进配置，homebrew 下存成带版本号的 keg 路径（`Cellar/node/<ver>/bin/node`），node 升级即失效。本机实测 `.claude.json` 的 MCP server 写死的 `25.8.0` 已失效（petsonality MCP 当前连不上）。**可不等本重构、用 `stableNodePath()` 单独 quick fix** —— 完整修法见 `STATUS.md`「已知问题（待修）」。
+
 ---
 
 ## 三、设计原则

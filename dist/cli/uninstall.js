@@ -19,7 +19,7 @@ var __require = /* @__PURE__ */ createRequire(import.meta.url);
 // cli/which.ts
 import { existsSync, statSync, realpathSync } from "fs";
 import { join, delimiter } from "path";
-import { platform } from "os";
+import { platform, homedir } from "os";
 function whichSync(name) {
   if (name.includes("/") || name.includes("\\")) {
     return existsAndFile(name) ? name : null;
@@ -70,7 +70,7 @@ __export(exports_openclaw_patch, {
 });
 import { readFileSync, writeFileSync, existsSync as existsSync2, copyFileSync, unlinkSync, readdirSync } from "fs";
 import { join as join2, dirname } from "path";
-import { homedir, platform as platform2 } from "os";
+import { homedir as homedir2, platform as platform2 } from "os";
 import { fileURLToPath } from "url";
 function ok(msg) {
   console.log(`${GREEN}✓${NC}  ${msg}`);
@@ -104,7 +104,7 @@ function findOpenClawTuiFile() {
     join2(process.env.LOCALAPPDATA || "", "pnpm", "global", "5", "node_modules", "openclaw", "dist")
   ] : [
     "/opt/homebrew/lib/node_modules/openclaw/dist",
-    join2(homedir(), ".npm-global/lib/node_modules/openclaw/dist"),
+    join2(homedir2(), ".npm-global/lib/node_modules/openclaw/dist"),
     "/usr/local/lib/node_modules/openclaw/dist"
   ];
   for (const dir of paths) {
@@ -340,7 +340,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
             console.log(`${DIM}  Run 'bun cli/install.ts' to set up${NC}`);
             break;
         }
-        const ocConfigPath = join2(homedir(), ".openclaw", "openclaw.json");
+        const ocConfigPath = join2(homedir2(), ".openclaw", "openclaw.json");
         try {
           const ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8"));
           const petServer = ocConfig?.mcp?.servers?.petsonality;
@@ -357,7 +357,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
         } catch {
           warn("OpenClaw config not found or unreadable");
         }
-        const statusPath = join2(homedir(), ".petsonality", "status.json");
+        const statusPath = join2(homedir2(), ".petsonality", "status.json");
         try {
           const status = JSON.parse(readFileSync(statusPath, "utf8"));
           ok(`Pet: ${status.name} (${status.petId})${status.muted ? " [muted]" : ""}`);
@@ -378,7 +378,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
 // cli/uninstall.ts
 import { readFileSync as readFileSync2, writeFileSync as writeFileSync2, existsSync as existsSync3, rmSync, readdirSync as readdirSync2 } from "fs";
 import { join as join3 } from "path";
-import { homedir as homedir2 } from "os";
+import { homedir as homedir3 } from "os";
 
 // cli/install-transparency.ts
 function isPetsonalityCommand(command) {
@@ -395,11 +395,11 @@ function ok2(msg) {
 function warn2(msg) {
   console.log(`${YELLOW2}⚠${NC2}  ${msg}`);
 }
-var CLAUDE_DIR = join3(homedir2(), ".claude");
+var CLAUDE_DIR = join3(homedir3(), ".claude");
 var SETTINGS_FILE = join3(CLAUDE_DIR, "settings.json");
 var SKILL_DIR = join3(CLAUDE_DIR, "skills", "pet");
-var STATE_DIR = join3(homedir2(), ".petsonality");
-var LEGACY_STATE_DIR = join3(homedir2(), ".mbti-pet");
+var STATE_DIR = join3(homedir3(), ".petsonality");
+var LEGACY_STATE_DIR = join3(homedir3(), ".mbti-pet");
 console.log(`
 petsonality uninstall
 `);
@@ -439,7 +439,7 @@ try {
   ok2("Popup stopped");
 } catch {}
 try {
-  const claudeJsonPath = join3(homedir2(), ".claude.json");
+  const claudeJsonPath = join3(homedir3(), ".claude.json");
   const claudeJson = JSON.parse(readFileSync2(claudeJsonPath, "utf8"));
   let removed = false;
   for (const key of ["petsonality", "typet"]) {
@@ -498,7 +498,7 @@ try {
   if (result.success && result.message !== "No patch to remove") {
     ok2(result.message);
   }
-  const ocConfigPath = join3(homedir2(), ".openclaw", "openclaw.json");
+  const ocConfigPath = join3(homedir3(), ".openclaw", "openclaw.json");
   if (existsSync3(ocConfigPath)) {
     const ocConfig = JSON.parse(readFileSync2(ocConfigPath, "utf8"));
     let changed = false;

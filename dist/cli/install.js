@@ -17,7 +17,7 @@ var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
 // cli/which.ts
 import { existsSync, statSync, realpathSync } from "fs";
 import { join, delimiter } from "path";
-import { platform } from "os";
+import { platform, homedir } from "os";
 function whichSync(name) {
   if (name.includes("/") || name.includes("\\")) {
     return existsAndFile(name) ? name : null;
@@ -49,6 +49,30 @@ function realPathOf(name) {
     return found;
   }
 }
+function stableNodePath(execPath, candidates) {
+  if (platform() === "win32") {
+    return execPath;
+  }
+  const pathNode = candidates ? null : whichSync("node");
+  const resolvedCandidates = candidates || [
+    pathNode,
+    "/opt/homebrew/bin/node",
+    "/usr/local/bin/node",
+    "/home/linuxbrew/.linuxbrew/bin/node",
+    join(homedir(), ".volta/bin/node")
+  ].filter((candidate) => !!candidate);
+  try {
+    const realExec = realpathSync(execPath);
+    for (const candidate of resolvedCandidates) {
+      try {
+        if (existsSync(candidate) && realpathSync(candidate) === realExec) {
+          return candidate;
+        }
+      } catch {}
+    }
+  } catch {}
+  return execPath;
+}
 var IS_WIN, PATH_EXT;
 var init_which = __esm(() => {
   IS_WIN = platform() === "win32";
@@ -68,7 +92,7 @@ __export(exports_openclaw_patch, {
 });
 import { readFileSync, writeFileSync, existsSync as existsSync2, copyFileSync, unlinkSync, readdirSync } from "fs";
 import { join as join2, dirname } from "path";
-import { homedir, platform as platform2 } from "os";
+import { homedir as homedir2, platform as platform2 } from "os";
 import { fileURLToPath } from "url";
 function ok(msg) {
   console.log(`${GREEN}✓${NC}  ${msg}`);
@@ -102,7 +126,7 @@ function findOpenClawTuiFile() {
     join2(process.env.LOCALAPPDATA || "", "pnpm", "global", "5", "node_modules", "openclaw", "dist")
   ] : [
     "/opt/homebrew/lib/node_modules/openclaw/dist",
-    join2(homedir(), ".npm-global/lib/node_modules/openclaw/dist"),
+    join2(homedir2(), ".npm-global/lib/node_modules/openclaw/dist"),
     "/usr/local/lib/node_modules/openclaw/dist"
   ];
   for (const dir of paths) {
@@ -338,7 +362,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
             console.log(`${DIM}  Run 'bun cli/install.ts' to set up${NC}`);
             break;
         }
-        const ocConfigPath = join2(homedir(), ".openclaw", "openclaw.json");
+        const ocConfigPath = join2(homedir2(), ".openclaw", "openclaw.json");
         try {
           const ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8"));
           const petServer = ocConfig?.mcp?.servers?.petsonality;
@@ -355,7 +379,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
         } catch {
           warn("OpenClaw config not found or unreadable");
         }
-        const statusPath = join2(homedir(), ".petsonality", "status.json");
+        const statusPath = join2(homedir2(), ".petsonality", "status.json");
         try {
           const status = JSON.parse(readFileSync(statusPath, "utf8"));
           ok(`Pet: ${status.name} (${status.petId})${status.muted ? " [muted]" : ""}`);
@@ -379,7 +403,7 @@ init_which();
 import { readFileSync as readFileSync2, writeFileSync as writeFileSync2, mkdirSync, existsSync as existsSync4, cpSync } from "fs";
 import { execSync } from "child_process";
 import { join as join5 } from "path";
-import { homedir as homedir2, platform as platform3 } from "os";
+import { homedir as homedir3, platform as platform3 } from "os";
 
 // cli/hook-command.ts
 function formatHookCommand(nodePath, hookPath) {
@@ -469,7 +493,7 @@ var RED2 = "\x1B[31m";
 var BOLD = "\x1B[1m";
 var DIM2 = "\x1B[2m";
 var NC2 = "\x1B[0m";
-var CLAUDE_DIR = join5(homedir2(), ".claude");
+var CLAUDE_DIR = join5(homedir3(), ".claude");
 var SETTINGS_FILE = join5(CLAUDE_DIR, "settings.json");
 var SKILL_DIR = join5(CLAUDE_DIR, "skills", "pet");
 var PROJECT_ROOT = findPackageRoot(import.meta.url);
@@ -513,7 +537,7 @@ async function confirmChange(title, existing, next) {
   }
 }
 function detectHosts() {
-  const claude = existsSync4(CLAUDE_DIR) && existsSync4(join5(homedir2(), ".claude.json"));
+  const claude = existsSync4(CLAUDE_DIR) && existsSync4(join5(homedir3(), ".claude.json"));
   let openclaw = false;
   try {
     openclaw = !!findOpenClawTuiFile();
@@ -561,9 +585,9 @@ function saveSettings(settings) {
 `);
 }
 function installMcp() {
-  const nodePath = process.execPath;
+  const nodePath = stableNodePath(process.execPath);
   const serverPath = join5(RUNTIME_DIR, "dist", "server.js");
-  const claudeJsonPath = join5(homedir2(), ".claude.json");
+  const claudeJsonPath = join5(homedir3(), ".claude.json");
   let claudeJson = {};
   try {
     claudeJson = JSON.parse(readFileSync2(claudeJsonPath, "utf8"));
@@ -596,8 +620,8 @@ async function installStatusLine(settings) {
       warn2("Skipped status line configuration at your request");
       return;
     }
-    mkdirSync(join5(homedir2(), ".petsonality"), { recursive: true });
-    writeFileSync2(join5(homedir2(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
+    mkdirSync(join5(homedir3(), ".petsonality"), { recursive: true });
+    writeFileSync2(join5(homedir3(), ".petsonality", "statusline.bak"), JSON.stringify(settings.statusLine, null, 2));
     warn2("Old config backed up in ~/.petsonality/statusline.bak");
   }
   settings.statusLine = nextStatusLine;
@@ -607,7 +631,7 @@ async function installStatusLine(settings) {
   }
 }
 function installRuntimeFiles() {
-  const runtimeDir = join5(homedir2(), ".petsonality");
+  const runtimeDir = join5(homedir3(), ".petsonality");
   mkdirSync(join5(runtimeDir, "hooks"), { recursive: true });
   mkdirSync(join5(runtimeDir, "statusline"), { recursive: true });
   cpSync(join5(PROJECT_ROOT, "hooks", "react.js"), join5(runtimeDir, "hooks", "react.js"), { force: true });
@@ -622,7 +646,7 @@ function installRuntimeFiles() {
   cpSync(join5(PROJECT_ROOT, "dist", "server.js"), join5(runtimeDir, "dist", "server.js"), { force: true });
   ok2("Runtime files copied to ~/.petsonality/");
 }
-var RUNTIME_DIR = join5(homedir2(), ".petsonality");
+var RUNTIME_DIR = join5(homedir3(), ".petsonality");
 async function replacePetsonalityHookEntries(settings, hookType, nextEntry) {
   if (!settings.hooks[hookType])
     settings.hooks[hookType] = [];
@@ -643,7 +667,7 @@ async function installHooks(settings) {
   const commentHook = join5(RUNTIME_DIR, "hooks", "pet-comment.js");
   if (!settings.hooks)
     settings.hooks = {};
-  const nodePath = process.execPath;
+  const nodePath = stableNodePath(process.execPath);
   const postToolUseEntry = {
     hooks: [{ type: "command", command: formatHookCommand(nodePath, reactHook) }]
   };
@@ -677,12 +701,12 @@ async function installOpenClaw() {
   if (diag.status === "not-installed")
     return;
   info2("OpenClaw detected");
-  const ocConfigPath = join5(homedir2(), ".openclaw", "openclaw.json");
+  const ocConfigPath = join5(homedir3(), ".openclaw", "openclaw.json");
   let ocConfig = {};
   try {
     ocConfig = JSON.parse(readFileSync2(ocConfigPath, "utf8"));
   } catch {}
-  const ocNodePath = process.execPath;
+  const ocNodePath = stableNodePath(process.execPath);
   const ocServerPath = join5(RUNTIME_DIR, "dist", "server.js");
   if (!ocConfig.mcp)
     ocConfig.mcp = {};

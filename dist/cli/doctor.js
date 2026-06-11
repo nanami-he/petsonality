@@ -21,7 +21,7 @@ var __require = /* @__PURE__ */ createRequire(import.meta.url);
 // cli/which.ts
 import { existsSync as existsSync2, statSync, realpathSync } from "fs";
 import { join as join2, delimiter } from "path";
-import { platform } from "os";
+import { platform, homedir } from "os";
 function whichSync(name) {
   if (name.includes("/") || name.includes("\\")) {
     return existsAndFile(name) ? name : null;
@@ -72,7 +72,7 @@ __export(exports_openclaw_patch, {
 });
 import { readFileSync, writeFileSync, existsSync as existsSync3, copyFileSync, unlinkSync, readdirSync } from "fs";
 import { join as join3, dirname as dirname2 } from "path";
-import { homedir, platform as platform2 } from "os";
+import { homedir as homedir2, platform as platform2 } from "os";
 import { fileURLToPath as fileURLToPath2 } from "url";
 function ok(msg) {
   console.log(`${GREEN}✓${NC}  ${msg}`);
@@ -106,7 +106,7 @@ function findOpenClawTuiFile() {
     join3(process.env.LOCALAPPDATA || "", "pnpm", "global", "5", "node_modules", "openclaw", "dist")
   ] : [
     "/opt/homebrew/lib/node_modules/openclaw/dist",
-    join3(homedir(), ".npm-global/lib/node_modules/openclaw/dist"),
+    join3(homedir2(), ".npm-global/lib/node_modules/openclaw/dist"),
     "/usr/local/lib/node_modules/openclaw/dist"
   ];
   for (const dir of paths) {
@@ -342,7 +342,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
             console.log(`${DIM}  Run 'bun cli/install.ts' to set up${NC}`);
             break;
         }
-        const ocConfigPath = join3(homedir(), ".openclaw", "openclaw.json");
+        const ocConfigPath = join3(homedir2(), ".openclaw", "openclaw.json");
         try {
           const ocConfig = JSON.parse(readFileSync(ocConfigPath, "utf8"));
           const petServer = ocConfig?.mcp?.servers?.petsonality;
@@ -359,7 +359,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
         } catch {
           warn("OpenClaw config not found or unreadable");
         }
-        const statusPath = join3(homedir(), ".petsonality", "status.json");
+        const statusPath = join3(homedir2(), ".petsonality", "status.json");
         try {
           const status = JSON.parse(readFileSync(statusPath, "utf8"));
           ok(`Pet: ${status.name} (${status.petId})${status.muted ? " [muted]" : ""}`);
@@ -381,7 +381,7 @@ ${CYAN}Petsonality OpenClaw Doctor${NC}
 import { readFileSync as readFileSync2, existsSync as existsSync4 } from "fs";
 import { execSync } from "child_process";
 import { join as join4 } from "path";
-import { homedir as homedir2, platform as platform3 } from "os";
+import { homedir as homedir3, platform as platform3 } from "os";
 
 // cli/find-package-root.ts
 import { existsSync } from "fs";
@@ -400,7 +400,7 @@ function findPackageRoot(startUrl) {
 
 // cli/doctor.ts
 var PROJECT_ROOT = findPackageRoot(import.meta.url);
-var HOME = homedir2();
+var HOME = homedir3();
 var IS_WIN3 = platform3() === "win32";
 var STATUS_SCRIPT = join4(PROJECT_ROOT, "statusline", IS_WIN3 ? "pet-status.ps1" : "pet-status.sh");
 var RED2 = "\x1B[31m";

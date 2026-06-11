@@ -20,7 +20,7 @@ function runNode(script: string, stdin: string, home: string) {
     cmd: [NODE_PATH, script],
     cwd: ROOT,
     stdin: Buffer.from(stdin),
-    env: { ...process.env, HOME: home, TMUX_PANE: "%pettest" },
+    env: { ...process.env, HOME: home, TMUX_PANE: "%pettest", LANG: "en_US.UTF-8" },
   });
 }
 
@@ -29,7 +29,7 @@ function runNodeWithEnv(script: string, stdin: string, home: string, env: Record
     cmd: [NODE_PATH, script],
     cwd: ROOT,
     stdin: Buffer.from(stdin),
-    env: { ...process.env, HOME: home, ...env },
+    env: { ...process.env, HOME: home, LANG: "en_US.UTF-8", ...env },
   });
 }
 

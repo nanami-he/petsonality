@@ -7,7 +7,7 @@
 
 import { existsSync, statSync, realpathSync } from "fs";
 import { join, delimiter } from "path";
-import { platform } from "os";
+import { platform, homedir } from "os";
 
 const IS_WIN = platform() === "win32";
 
@@ -62,3 +62,45 @@ export function realPathOf(name: string): string | null {
     return found;
   }
 }
+
+/**
+ * Normalizes a node binary path (like a Homebrew keg path `/opt/homebrew/Cellar/node/...`)
+ * to its stable, version-agnostic symlink path if they point to the exact same binary.
+ *
+ * For Windows and other environments where no stable candidate matches, the original path is returned.
+ */
+export function stableNodePath(
+  execPath: string,
+  candidates?: string[]
+): string {
+  if (platform() === "win32") {
+    return execPath;
+  }
+
+  const pathNode = candidates ? null : whichSync("node");
+  const resolvedCandidates = candidates || [
+    pathNode,
+    "/opt/homebrew/bin/node",
+    "/usr/local/bin/node",
+    "/home/linuxbrew/.linuxbrew/bin/node",
+    join(homedir(), ".volta/bin/node"),
+  ].filter((candidate): candidate is string => !!candidate);
+
+  try {
+    const realExec = realpathSync(execPath);
+    for (const candidate of resolvedCandidates) {
+      try {
+        if (existsSync(candidate) && realpathSync(candidate) === realExec) {
+          return candidate;
+        }
+      } catch {
+        // Individual candidate resolution failed; skip and continue
+      }
+    }
+  } catch {
+    // Fallback to original input if realpath resolution of execPath fails
+  }
+
+  return execPath;
+}
+
